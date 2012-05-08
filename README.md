@@ -1,4 +1,0 @@
-MToolkit
-========
-
-A PHP Toolkit.
