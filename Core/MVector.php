@@ -46,7 +46,6 @@ class MVector
     // T * Data () 
     //_iterator End () 
     
-    
     public function contains ( /* mixed */ $value )
     {
         return in_array($value, $this->vector);
