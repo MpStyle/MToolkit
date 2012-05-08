@@ -20,6 +20,8 @@
  * @version 0.01
  */
 
+require_once 'MToolkit/Core/Exception/WrongTypeException.php';
+
 class MVector
 {
     private $vector=array();

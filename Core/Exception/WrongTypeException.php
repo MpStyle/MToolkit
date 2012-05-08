@@ -20,7 +20,7 @@
  * @version 0.01
  */
 
-class MWrongTypeException extends InvalidArgumentException
+class WrongTypeException extends InvalidArgumentException
 {
     public function __construct( $varName, $typeRequired, $typeGiven, $code=0, $previous=null )
     {

@@ -20,7 +20,8 @@
  * @version 0.01
  */
 
-require_once 'MToolkit/Core/Enum/CaseSensitive.php';
+require_once 'MToolkit/Core/Enums/CaseSensitive.php';
+require_once 'MToolkit/Core/Exception/WrongTypeException.php';
 
 class MString
 {
@@ -30,7 +31,7 @@ class MString
     {
         if( is_string($text)===false )
         {
-            throw new MWrongTypeException( "\$text", "string", gettype($text) );
+            throw new WrongTypeException( "\$text", "string", gettype($text) );
         }
         
         $this->text=$text;
@@ -40,7 +41,7 @@ class MString
     {
         if( ($text instanceof MString)===false )
         {
-            throw new MWrongTypeException( "\$text", "MString", gettype($text) );
+            throw new WrongTypeException( "\$text", "MString", gettype($text) );
         }
         
         $this->text=(string)$text;
@@ -55,7 +56,7 @@ class MString
     {
         if( is_int($i)===false )
         {
-            throw new MWrongTypeException( "\$i", "int", gettype($i) );
+            throw new WrongTypeException( "\$i", "int", gettype($i) );
         }
         
         $result=substr($this->text, $i, 1);
@@ -72,7 +73,7 @@ class MString
     {
         if( is_int($n)===false )
         {
-            throw new MWrongTypeException( "\$n", "int", gettype($n) );
+            throw new WrongTypeException( "\$n", "int", gettype($n) );
         }
         
         $result=substr($this->text, $i, strlen($this->text)-$n);

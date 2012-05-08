@@ -20,7 +20,7 @@
  * @version 0.01
  */
 
-class MOutOfBoundsException extends Exception
+class OutOfBoundsException extends Exception
 {
     public function __construct($code=-1, $previous=null) {
         parent::__construct( "Out of bound.", $code, $previous);
