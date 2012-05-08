@@ -46,6 +46,7 @@ class MVector
     // T * Data () 
     //_iterator End () 
     
+    
     public function contains ( /* mixed */ $value )
     {
         return in_array($value, $this->vector);
@@ -73,7 +74,7 @@ class MVector
     {
         return ( $this->vector[ $this->size()-1 ]==$value );
     }
-    
+
     //iterator erase ( iterator pos )
     //iterator erase ( iterator begin, iterator end )
     //QVector<T> & fill (  T & value, int size = -1 )
@@ -243,7 +244,7 @@ class MVector
     {
         return ( $this->vector[ 0 ]==$value );
     }
-    
+
     //public function /* void */ swap ( QVector<T> & other )            
     //QList<T> toList () 
     //std::vector<T> toStdVector () 
