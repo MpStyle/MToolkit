@@ -48,8 +48,13 @@ abstract class MControl extends MObject
         return $this->id;
     }
     
-    public function setId( $id )
+    public function setId( /* string */ $id )
     {
+        if( is_string( $id )===false )
+        {
+            throw new WrongTypeException( "\$id", "string", gettype($id) );
+        }
+        
         $this->id=$id;
     }
     
