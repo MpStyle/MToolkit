@@ -21,20 +21,33 @@
 
 require_once 'MToolkit/View/MControl.php';
 
-class MTextHtmlControl extends MControl
+class MLiteral extends MControl
 {
-    private $value=null;
-    
-    public function __construct( $value )
+    public function __construct( /* string */ $text="" )
     {
         parent::__construct();
         
-        $this->value=$value;
+        $this->setText( $text );
+    }
+    
+    public function setText( $text )
+    {
+        if( is_string( $text )===false )
+        {
+            throw new WrongTypeException( "\$text", "string", gettype($text) );
+        }
+        
+        $this->properties->insert( "text", $text );
+    }
+    
+    public function text()
+    {
+        return $this->properties->value( "text", "" );
     }
     
     public function render( &$output )
     {
-        $output.=$this->value;
+        $output.=$this->text();
     }
 
     protected function init()
