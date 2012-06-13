@@ -80,19 +80,6 @@ class MHtmlControl extends MControl
         $output.="</".$this->name.">";
     }
     
-    public static /* string */ function __namespace( $tagName )
-    {
-        $pos=strpos($tagName, ":");
-        
-        if($pos===false)
-        {
-            return "";
-        }
-        
-        $namespace=substr($tagName, 0, $pos );
-        return $namespace;
-    }
-
     protected function init()
     {
         
