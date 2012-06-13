@@ -26,7 +26,7 @@ class MMap
 {
     private $map=array();
     
-    public function __construct( array $other )
+    public function __construct( array $other = array() )
     {
         $this->map=  array_merge($this->map, $other);
     }
@@ -170,16 +170,19 @@ class MMap
     //iterator	upperBound ( const Key & key )
     //const_iterator	upperBound ( const Key & key ) const
         
-    public function value ( $key, $defaultValue=null )
+    public function value ( /* string */ $key, /* mixed */ $defaultValue=null )
     {
         if( is_string( $key )===false )
         {
             throw new WrongTypeException( "\$key", "string", gettype($key) );
         }
         
+        //var_dump( $this->map );
+        //echo "<br /><br />";
+        
         $value=$this->map[ $key ];
         
-        if( is_null( $value )===true && is_null($defaultValue)===false )
+        if( is_null( $value )===true )
         {
             $value=$defaultValue;
         }
@@ -190,6 +193,13 @@ class MMap
     public function values ()
     {
         return array_values($this->map);
+    }
+    
+    public function __toArray()
+    {
+        //$return = clone $this->map;
+        
+        return $this->map;
     }
     
     //public function values ( $key )

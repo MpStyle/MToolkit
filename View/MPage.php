@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of MToolkit.
  *
@@ -29,7 +28,7 @@ class MPage extends MUserControl
         parent::__construct();
     }
     
-    public static function show( $istance )
+    public static function show( MControl $istance )
     {
         $output="";
         $istance->render( $output );

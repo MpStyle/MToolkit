@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of MToolkit.
  *
@@ -20,34 +19,23 @@
  * @version 0.01
  */
 
+require_once 'MToolkit/Core/MSettings.php';
+require_once 'MToolkit/Core/MMap.php';
+
 class MObject
 {
-    private $properties=Array();
+    public $properties=null;
     
-    public function /* void */ addProperty( $key, $value )
+    public function __construct()
     {
-        $this->properties[$key]=$value;
+        MSettings::load();
+        
+        $this->properties=new MMap();
     }
     
-    public function /* void */ addProperties( array $properties )
+    public function properties()
     {
-        $this->properties=array_merge($this->properties, $properties);
-    }
-    
-    public function /* int */ propertyCount()
-    {
-        return count( $this->properties );
-    }
-    
-    public function /* void */ propertyByPos( $i )
-    {
-        $keys = key($this->properties);
-        return $this->properties[ $keys[$i] ];
-    }
-    
-    public function /* string */ propertyByKey( $key )
-    {
-        return $this->properties[ $key ];
+        return $this->properties;
     }
 }
 

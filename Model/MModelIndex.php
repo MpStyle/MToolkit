@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of MToolkit.
  *
@@ -25,4 +24,5 @@ class MModelIndex
     public $row;
     public $column;
 }
+
 

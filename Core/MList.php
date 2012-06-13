@@ -21,7 +21,6 @@
  */
 
 require_once 'MToolkit/Core/Exception/WrongTypeException.php';
-require_once 'MToolkit/Core/Exception/OutOfBoundException.php';
 
 class MList
 {

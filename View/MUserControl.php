@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of MToolkit.
  *
@@ -28,6 +27,10 @@ abstract class MUserControl extends MControl
 {
     private $html=null;
     
+    /**
+     * 
+     * @param type $html Path all'html del controllo.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -53,20 +56,22 @@ abstract class MUserControl extends MControl
         {
             switch( $childNode->nodeType )
             {
+                // TODO: questa è una pagina e setto il document type
                 case XML_DOCUMENT_TYPE_NODE:
-                    // TODO: questa è una pagina e setto il document type
                     break;
                 
+                // Parse text node
                 case XML_TEXT_NODE:
                     $resultCount=preg_match('/^[\s]*$/', $childNode->nodeValue, $matches, PREG_OFFSET_CAPTURE);
                     
                     if( $resultCount!==false && $resultCount==0 )
                     {
                         $control=new MTextHtmlControl( $childNode->nodeValue );
-                        $parent->addControl( $control->id(), $control );
+                        $parent->children->add( $control->id(), $control );
                     }
                     break;
                 
+                // Parse a tag
                 case XML_ELEMENT_NODE:
                     $namespace=MHtmlControl::__namespace($childNode->nodeName);
                 
@@ -79,9 +84,11 @@ abstract class MUserControl extends MControl
                             $control=$this->initHtmlControl( $childNode );
                             break;
                     }
+                    
+                    // Add control to the parent
+                    $parent->children->add( $control->id(), $control );
 
-                    $parent->addControl( $control->id(), $control );
-
+                    // Parse th children
                     if ($childNode->hasChildNodes())
                     {
                         $this->parseHtmlControl($control, $childNode);
@@ -90,6 +97,9 @@ abstract class MUserControl extends MControl
                     break;
             }
         }
+        
+        //var_dump($parent);
+        //echo "<br /><br />\n\n";
     }
     
     private function /* MUserControl */ initUserControl( $childNode )
@@ -100,6 +110,7 @@ abstract class MUserControl extends MControl
         require $include;
         $control=new $class();
         
+        // Parse the properties
         if ($childNode->hasAttributes())
         {
             foreach ($childNode->attributes as $attr)
@@ -108,8 +119,8 @@ abstract class MUserControl extends MControl
                 {
                     $control->setId( $attr->nodeValue );
                 }
-                
-                $control->addProperty( $attr->nodeName, $attr->nodeValue );
+
+                $control->properties->add( $attr->nodeName, $attr->nodeValue );
             }
         }
         
@@ -118,8 +129,11 @@ abstract class MUserControl extends MControl
     
     private function /* MHtmlControl */ initHtmlControl( $childNode )
     {
+        //echo $childNode->nodeName."<br /><br />\n\n";
+        
         $control=new MHtmlControl( $childNode->nodeName );
-
+        
+        // Parse the attributes
         if ($childNode->hasAttributes())
         {
             foreach ($childNode->attributes as $attr)
@@ -128,12 +142,11 @@ abstract class MUserControl extends MControl
                 {
                     $control->setId( $attr->nodeValue );
                 }
-                
-                $control->addAttribute( $attr->nodeName, $attr->nodeValue );
+
+                $control->attributes->add( $attr->nodeName, $attr->nodeValue );
             }
         }
-
+        
         return $control;
     }
 }
-
