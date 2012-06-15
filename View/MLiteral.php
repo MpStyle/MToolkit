@@ -16,7 +16,6 @@
  * along with Nome-Programma.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * @author  Michele Pagnin
- * @version 0.01
  */
 
 require_once 'MToolkit/View/MControl.php';
