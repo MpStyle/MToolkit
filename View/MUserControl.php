@@ -13,7 +13,7 @@
  * LGNU Lesser General Public License for more details.
  *
  * You should have received a copy of the LGNU Lesser General Public License
- * along with Nome-Programma.  If not, see <http://www.gnu.org/licenses/>.
+ * along with MToolkit.  If not, see <http://www.gnu.org/licenses/>.
  * 
  * @author  Michele Pagnin
  */
