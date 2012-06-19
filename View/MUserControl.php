@@ -20,11 +20,15 @@
 
 require_once 'MToolkit/View/MControl.php';
 require_once 'MToolkit/View/MHtmlControl.php';
-require_once 'MToolkit/View/MLiteral.php';
+require_once 'MToolkit/View/Control/MLiteral.php';
 
 abstract class MUserControl extends MControl
 {
     private $html=null;
+    private static $controlsRegistered=array(
+        "php:mliteral" => "MToolkit/View/Control/MLiteral.php"
+        , "php:mpage" => "MToolkit/View/Control/MPage.php"
+    );
     
     /**
      * 
@@ -40,19 +44,26 @@ abstract class MUserControl extends MControl
         
     }
     
-    public function setTemplate( $html )
+    public function /* void */ setTemplate( /* string */ $html )
     {
+        if( file_exists($html)===false )
+        {
+            throw new Exception("Template file not found!");
+        }
+        
         $this->html=$html;
         
         $dom=new DomDocument();
-        $dom->loadHTMLFile( $this->html );
+        $dom->load( $this->html );
         $this->parseHtmlControl( $this, $dom );
     }
     
     private function parseHtmlControl( $parent, $node )
     {
+        //echo "a";
         foreach ($node->childNodes as $childNode)
         {
+            //echo "s";
             switch( $childNode->nodeType )
             {
                 // Parse document type
@@ -62,6 +73,13 @@ abstract class MUserControl extends MControl
                     
                     $control=new MLiteral( $doctype );
                     $parent->children->add( $control->id(), $control );
+                    break;
+                
+                // Comments (or Javascript)
+                case XML_COMMENT_NODE:
+                    $control=new MLiteral( "<!--".$childNode->nodeValue."-->" );
+                    $parent->children->add( $control->id(), $control );
+                    
                     break;
                 
                 // Parse text node
@@ -77,21 +95,31 @@ abstract class MUserControl extends MControl
                 
                 // Parse a tag
                 case XML_ELEMENT_NODE:
-                    // If the tag is an user control, in other words
-                    // if the tag name is "user_control"
-                    if( $childNode->nodeName=="user_control" )
+                    //var_dump( $childNode );
+                    //echo $childNode->nodeName . " " . $childNode->prefix . "<br />";
+                    
+                    if( $childNode->nodeName=="php:register" && $childNode->prefix=="php" )
                     {
-                        $control=$this->initUserControl( $childNode );
+                        $this->registerNewControl( $childNode );
                     }
                     else
                     {
-                        $control=$this->initHtmlControl( $childNode );
+                        // If the tag is an user control, in other words
+                        // if the tag name is "user_control"
+                        if( array_key_exists( $childNode->nodeName, MUserControl::$controlsRegistered) )
+                        {
+                            $control=$this->initUserControl( $childNode );
+                        }
+                        else
+                        {
+                            $control=$this->initHtmlControl( $childNode );
+                        }
                     }
                     
                     // Add control to the parent
                     $parent->children->add( $control->id(), $control );
 
-                    // Parse th children
+                    // Parse the children
                     if ($childNode->hasChildNodes())
                     {
                         $this->parseHtmlControl($control, $childNode);
@@ -107,11 +135,28 @@ abstract class MUserControl extends MControl
     
     private function /* MUserControl */ initUserControl( $childNode )
     {
-        $include= str_replace(" ", "/", $childNode->getAttribute("include") );
-        $class=  $childNode->getAttribute("type"); //substr($childNode->nodeName, strpos($childNode->nodeName, ":")+1);
+//        $include= str_replace(" ", "/", $childNode->getAttribute("include") );
+//        $class=  $childNode->getAttribute("type"); //substr($childNode->nodeName, strpos($childNode->nodeName, ":")+1);
+//        
+//        require_once $include;
+//        $control=new $class();
         
-        require_once $include;
-        $control=new $class();
+        $src=MUserControl::$controlsRegistered[ $childNode->nodeName ];
+        if( is_null( $src ) )
+        {
+            throw new Exception( 'No user control "'.$childNode->nodeName.' defined.' );
+        }
+        
+        $lastBackSlashPos=strrpos($src, "/")+1;
+        if( $lastBackSlashPos === false )
+        {
+            $lastBackSlashPos=0;
+        }
+        
+        $className= str_replace( ".php", "", substr( $src, $lastBackSlashPos ) );
+        
+        require_once $src;
+        $control=new $className();
         
         // Parse the properties
         if ($childNode->hasAttributes())
@@ -151,5 +196,20 @@ abstract class MUserControl extends MControl
         }
         
         return $control;
+    }
+    
+    private function /* void */ registerNewControl()
+    {
+        $src= $childNode->getAttribute("src");
+        //$className= str_replace( ".php", "", substr( $childNode->getAttribute("src"), strrpos("/", $childNode->getAttribute("src"))) );
+        $prefix= $childNode->getAttribute("prefix");
+        $tag= $childNode->getAttribute("tag");
+        
+        if( $prefix=="php" )
+        {
+            throw new Exception( 'The "php" prefix for user control is not permitted' );
+        }
+        
+        MUserControl::$controlsRegistered[$prefix.":".$tag] = $src;
     }
 }

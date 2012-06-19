@@ -21,6 +21,8 @@
 require_once 'MToolkit/View/MUserControl.php';
 require_once 'MToolkit/Core/MLog.php';
 
+error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
+
 class MPage extends MUserControl
 {
     private $indent=true;
