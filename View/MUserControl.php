@@ -39,22 +39,39 @@ abstract class MUserControl extends MControl
         parent::__construct();
     }
     
-    protected function init()
+    protected function /* void */ init()
     {
         
     }
     
+    /**
+     * This method set the template file path and start the parsing
+     * of the file.
+     * 
+     * @param string $html template file path
+     * @throws Exception 
+     */
     public function /* void */ setTemplate( /* string */ $html )
     {
+        if( is_string($html)===false )
+        {
+            throw new WrongTypeException("\$html", "string", gettype($html) );
+        }
+        
         if( file_exists($html)===false )
         {
-            throw new Exception("Template file not found!");
+            throw new Exception("Template file " . $html . " not found!");
         }
         
         $this->html=$html;
         
         $dom=new DomDocument();
-        $dom->load( $this->html );
+        
+        if( $dom->load( $this->html )===false )
+        {
+            throw new Exception("Invalid template file: " . $html);
+        }
+        
         $this->parseHtmlControl( $this, $dom );
     }
     
@@ -75,7 +92,7 @@ abstract class MUserControl extends MControl
                     $parent->children->add( $control->id(), $control );
                     break;
                 
-                // Comments (or Javascript)
+                // Comments (or Javascript code)
                 case XML_COMMENT_NODE:
                     $control=new MLiteral( "<!--".$childNode->nodeValue."-->" );
                     $parent->children->add( $control->id(), $control );
@@ -135,12 +152,6 @@ abstract class MUserControl extends MControl
     
     private function /* MUserControl */ initUserControl( $childNode )
     {
-//        $include= str_replace(" ", "/", $childNode->getAttribute("include") );
-//        $class=  $childNode->getAttribute("type"); //substr($childNode->nodeName, strpos($childNode->nodeName, ":")+1);
-//        
-//        require_once $include;
-//        $control=new $class();
-        
         $src=MUserControl::$controlsRegistered[ $childNode->nodeName ];
         if( is_null( $src ) )
         {
