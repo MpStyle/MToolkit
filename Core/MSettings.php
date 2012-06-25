@@ -26,7 +26,11 @@ class MSettings
     public static function load()
     {
         $doc = new DOMDocument();
-        $doc->load("settings.xml");
+        
+        if( $doc->load("settings.xml")===false )
+        {
+            throw new Exception("The settings.xml file not found in root folder.");
+        }
 
         foreach ($doc->childNodes as $settings)
         {
