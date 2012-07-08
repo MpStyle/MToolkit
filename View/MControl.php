@@ -26,8 +26,8 @@ require_once 'MToolkit/Core/Exception/WrongTypeException.php';
 
 abstract class MControl extends MObject
 {
-    public $children=null;
-    public $attributes=null;
+    private $children=null;
+    private $attributes=null;
     private $id=null;
     
     public function __construct()
@@ -36,13 +36,25 @@ abstract class MControl extends MObject
         
         $this->id="obj_".sha1( microtime() );
         
-        $this->children=new MControlList();
+        $this->children=new MControlList( $this );
         $this->attributes=new MAttributeList();
     }
     
     protected abstract function init();
     
-    public function id()
+    /**
+     * Called after a child control is added to the Controls collection of the Control object.
+     * @param MControl $control 
+     */
+    public function addedControl( MControl $control, /* int */ $index )
+    {
+        if( is_int( $index )===false )
+        {
+            throw new WrongTypeException( "\$index", "int", gettype($index) );
+        }
+    }
+    
+    public function /* string */ id()
     {
         return $this->id;
     }
@@ -57,10 +69,8 @@ abstract class MControl extends MObject
         $this->id=$id;
     }
     
-    public function render( &$output )
+    public function /* void */ render( &$output )
     {
-        //echo "<br />MControl::render()";
-        
         $controlList=$this->children->toList();
         
         for( $i=0; $i< $controlList->count(); $i++ )
@@ -69,7 +79,7 @@ abstract class MControl extends MObject
         }
     }
     
-    public function controlById( $id )
+    public function /* control */ &controlById( $id )
     {
         if( is_string($id)===false )
         {
@@ -77,5 +87,15 @@ abstract class MControl extends MObject
         }
         
         return $this->children->controlById( $id );
+    }
+    
+    public function /* MControlList */ &children()
+    {
+        return $this->children;
+    }
+    
+    public function /* MAttributeList */ &attributes()
+    {
+        return $this->attributes;
     }
 }

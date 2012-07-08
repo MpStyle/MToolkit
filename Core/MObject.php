@@ -23,7 +23,7 @@ require_once 'MToolkit/Core/MMap.php';
 
 class MObject
 {
-    public $properties=null;
+    private $properties=null;
     
     public function __construct()
     {

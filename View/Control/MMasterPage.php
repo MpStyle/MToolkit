@@ -18,40 +18,34 @@
  * @author  Michele Pagnin
  */
 
-require_once 'MToolkit/View/MControl.php';
+require_once 'MToolkit/View/MUserControl.php';
 
-class MLiteral extends MControl
+class MMasterPage extends MUserControl
 {
-    public function __construct( /* string */ $text="" )
+    private $contentPlaceHolders=null;
+    
+    public function __constructor()
     {
         parent::__construct();
         
-        $this->setText( $text );
+        $this->contentPlaceHolders=new MControlList();
     }
     
-    public function setText( $text )
+    public function addedControl( MControl $control, /* int */ $index )
     {
-        if( is_string( $text )===false )
+        parent::addedControl( $control, $index );
+        
+        // Register the placeholders
+        if( $control instanceof MContentPlaceHolder )
         {
-            throw new WrongTypeException( "\$text", "string", gettype($text) );
+            $this->contentPlaceHolders->add( $control );
         }
-        
-        $this->properties()->insert( "text", $text );
     }
     
-    public function text()
+    public function contentPlaceHolders()
     {
-        return $this->properties()->value( "text", "" );
-    }
-    
-    public function render( &$output )
-    {
-        $output.=$this->text();
-    }
-
-    protected function init()
-    {
-        
+        $this->contentPlaceHolders;
     }
 }
+
 

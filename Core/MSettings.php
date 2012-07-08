@@ -27,6 +27,11 @@ class MSettings
     {
         $doc = new DOMDocument();
         
+        if( file_exists("settings.xml")===false )
+        {
+            return;
+        }
+        
         if( $doc->load("settings.xml")===false )
         {
             throw new Exception("The settings.xml file not found in root folder.");

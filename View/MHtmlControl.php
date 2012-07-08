@@ -47,7 +47,7 @@ class MHtmlControl extends MControl
     {
         $preRender=array();
         
-        $attributeList=$this->attributes->__toArray();
+        $attributeList=$this->attributes()->__toArray();
         
         foreach( $attributeList as $key => $value )
         {
@@ -60,7 +60,7 @@ class MHtmlControl extends MControl
     public function /* void */ render( &$output)
     {   
         $output.="<".$this->name;
-        if( $this->attributes->count()>0 )
+        if( $this->attributes()->count()>0 )
         {
             $output.=" ";
             $this->renderAttributes($output);

@@ -25,18 +25,25 @@ require_once 'MToolkit/Core/Exception/WrongTypeException.php';
 class MControlList
 {
     private $controls=null;
+    private $parent=null;
     
-    public function __construct()
+    public function __construct( MControl $parent=null )
     {
         $this->controls=new MMap();
+        $this->parent=$parent;
     }
     
-    public function add( $id, MControl $control )
+    public function /* void */ add( $id, MControl $control )
     {
         $this->controls->insert( $id, $control );
+        
+        if( is_null( $this->parent ) === false )
+        {
+            $this->parent->addedControl( $control, $this->count()-1 );
+        }
     }
     
-    public function toList()
+    public function /* MList */ toList()
     {
         $list=new MList();
                 
@@ -47,31 +54,20 @@ class MControlList
     
     public function /* int */ count()
     {
-        //return count( $this->controls );
         return $this->controls->count();
     }
     
-//    public function /* MControl */ controlByPos( $i )
-//    {
-//        if( $i>=$this->controlCount() )
-//        {
-//            throw new Exception("Out of bound.");
-//        }
-//
-//        $keys = array_keys($this->controls);
-//
-//        return $this->controls[ $keys[$i] ];
-//    }
-    
-    public function /* MControl */ controlById( $id )
+    public function /* MControl */ &controlById( $id )
     {
         if( is_string($id)===false )
         {
             throw new WrongTypeException( "\$id", "string", gettype($id) );
         }
         
+        // Search in this control
         $controlToReturn= $this->controls->value( $id, null );
         
+        // If not found, search into children
         if( is_null( $controlToReturn ) )
         {
             $controls = $this->controls->__toArray();

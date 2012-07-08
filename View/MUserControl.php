@@ -26,8 +26,11 @@ abstract class MUserControl extends MControl
 {
     private $html=null;
     private static $controlsRegistered=array(
-        "php:mliteral" => "MToolkit/View/Control/MLiteral.php"
-        , "php:mpage" => "MToolkit/View/Control/MPage.php"
+        "php:MLiteral"      => "MToolkit/View/Control/MLiteral.php"
+        , "php:MPage"       => "MToolkit/View/Control/MPage.php"
+        , "php:MContent"    => "MToolkit/View/Control/MContent.php"
+        , "php:MMasterPage"    => "MToolkit/View/Control/MMasterPage.php"
+        , "php:MContentPlaceHolder"    => "MToolkit/View/Control/MContentPlaceHolder.php"
     );
     
     /**
@@ -66,21 +69,21 @@ abstract class MUserControl extends MControl
         $this->html=$html;
         
         $dom=new DomDocument();
+        $dom -> recover = true;
+        $dom -> strictErrorChecking = false;
         
         if( $dom->load( $this->html )===false )
         {
             throw new Exception("Invalid template file: " . $html);
         }
         
-        $this->parseHtmlControl( $this, $dom );
+        $this->parseHtml( $this, $dom );
     }
     
-    private function parseHtmlControl( $parent, $node )
+    private function parseHtml( $parent, $node )
     {
-        //echo "a";
         foreach ($node->childNodes as $childNode)
-        {
-            //echo "s";
+        {            
             switch( $childNode->nodeType )
             {
                 // Parse document type
@@ -89,13 +92,13 @@ abstract class MUserControl extends MControl
                     $doctype="<!DOCTYPE ".$childNode->name.">";
                     
                     $control=new MLiteral( $doctype );
-                    $parent->children->add( $control->id(), $control );
+                    $parent->children()->add( $control->id(), $control );
                     break;
                 
                 // Comments (or Javascript code)
                 case XML_COMMENT_NODE:
                     $control=new MLiteral( "<!--".$childNode->nodeValue."-->" );
-                    $parent->children->add( $control->id(), $control );
+                    $parent->children()->add( $control->id(), $control );
                     
                     break;
                 
@@ -106,7 +109,7 @@ abstract class MUserControl extends MControl
                     if( $resultCount!==false && $resultCount==0 )
                     {
                         $control=new MLiteral( $childNode->nodeValue );
-                        $parent->children->add( $control->id(), $control );
+                        $parent->children()->add( $control->id(), $control );
                     }
                     break;
                 
@@ -134,12 +137,12 @@ abstract class MUserControl extends MControl
                     }
                     
                     // Add control to the parent
-                    $parent->children->add( $control->id(), $control );
+                    $parent->children()->add( $control->id(), $control );
 
                     // Parse the children
                     if ($childNode->hasChildNodes())
                     {
-                        $this->parseHtmlControl($control, $childNode);
+                        $this->parseHtml($control, $childNode);
                     }
                     
                     break;
@@ -152,12 +155,14 @@ abstract class MUserControl extends MControl
     
     private function /* MUserControl */ initUserControl( $childNode )
     {
+        // Control if user control was registered
         $src=MUserControl::$controlsRegistered[ $childNode->nodeName ];
         if( is_null( $src ) )
         {
             throw new Exception( 'No user control "'.$childNode->nodeName.' defined.' );
         }
         
+        // Import the source of the user constrol
         $lastBackSlashPos=strrpos($src, "/")+1;
         if( $lastBackSlashPos === false )
         {
@@ -179,7 +184,7 @@ abstract class MUserControl extends MControl
                     $control->setId( $attr->nodeValue );
                 }
 
-                $control->properties->insert( $attr->nodeName, $attr->nodeValue );
+                $control->properties()->insert( $attr->nodeName, $attr->nodeValue );
             }
         }
         
@@ -202,7 +207,7 @@ abstract class MUserControl extends MControl
                     $control->setId( $attr->nodeValue );
                 }
 
-                $control->attributes->add( $attr->nodeName, $attr->nodeValue );
+                $control->attributes()->add( $attr->nodeName, $attr->nodeValue );
             }
         }
         
@@ -218,7 +223,7 @@ abstract class MUserControl extends MControl
         
         if( $prefix=="php" )
         {
-            throw new Exception( 'The "php" prefix for user control is not permitted' );
+            throw new Exception( 'The "php" prefix for user control is not permitted.' );
         }
         
         MUserControl::$controlsRegistered[$prefix.":".$tag] = $src;

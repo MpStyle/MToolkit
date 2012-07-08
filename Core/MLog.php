@@ -23,14 +23,24 @@ class MLog
 {
     private static $messages=array();
     
-    public static function i( $tag, $text )
+    public static /* void */ function i( /* string */ $tag, /* string */ $text )
     {
+        if( is_string($tag)===false )
+        {
+            throw new WrongTypeException( "\$tag", "string", gettype($tag) );
+        }
+        
+        if( is_string($text)===false )
+        {
+            throw new WrongTypeException( "\$text", "string", gettype($text) );
+        }
+        
         $time = new DateTime();
         
         MLog::$messages[]=array($time->format('Y-m-d H:i:s'), $tag, $text);
     }
     
-    public static function toHtml()
+    public static /* void */ function toHtml()
     {
         $html="";
         

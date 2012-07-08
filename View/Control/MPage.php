@@ -20,41 +20,63 @@
 
 require_once 'MToolkit/View/MUserControl.php';
 require_once 'MToolkit/Core/MLog.php';
+require_once 'MToolkit/Core/MMap.php';
+require_once 'MToolkit/View/Control/MMasterPage.php';
 
 error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
 
 class MPage extends MUserControl
 {
     private $indent=true;
+    private $masterPageFile=null;
+    private $contents=null;
     
     public function __construct()
     {
         parent::__construct();
+        
+        $this->contentList=new MMap();
+        $this->contents=new MControlList();
     }
     
-    public function render( &$output )
-    {
-        parent::render( $output );
+    public function /* void */ render( /* string */ &$output )
+    {      
+        if( is_null($this->masterPageFile) )
+        {
+            parent::render( $output );
+        }
+        else
+        {
+            // Import and load the master page
+            $lastBackSlashPos=strrpos($this->masterPageFile, "/")+1;
+            if( $lastBackSlashPos === false )
+            {
+                $lastBackSlashPos=0;
+            }
+
+            $className= str_replace( ".php", "", substr( $this->masterPageFile, $lastBackSlashPos ) );
+            
+            require_once $this->masterPageFile;
+            $masterPage=new $className();
+
+            // Replace the placeholders of the master page with the page content
+            $contentList=$this->contents->toList();
+            for( $i=0; $i<$contentList->count(); $i++ )
+            {
+                $placeHolderId=$contentList->at( $i )->contentPlaceHolderID();
+                $placeHolderControlId=$masterPage->controlById( $placeHolderId )->id();
+                
+                $masterPage->children()->add( $placeHolderControlId, $contentList->at( $i ) );
+            }
+
+            // Render the page
+            $masterPage->render( $output );
+        }
         
         if( $this->indent )
         {
             $output= $this->indentHtml( $output );
         }
-    }
-    
-    public function setIndentation( /* bool */ $value )
-    {
-        if( is_bool( $value )===false )
-        {
-            throw new WrongTypeException( "\$value", "bool", gettype($value) );
-        }
-        
-        $this->indent=$value;
-    }
-    
-    public function indentation()
-    {
-        return $this->indent;
     }
     
     public static function show( MControl $istance )
@@ -70,6 +92,46 @@ class MPage extends MUserControl
         $istance->render( $output );
         
         echo $output;
+    }
+    
+    public function /* void */ setMasterPageFile( /* string */ $path )
+    {
+        if( is_string($path)===false )
+        {
+            throw new WrongTypeException( "\$path", "string", gettype($path) );
+        }
+        
+        $this->masterPageFile=$path;
+    }
+    
+    public function /* string */ masterPageFile()
+    {
+        return $this->masterPageFile;
+    }
+    
+    public function /* void */ setIndentation( /* bool */ $value )
+    {
+        if( is_bool( $value )===false )
+        {
+            throw new WrongTypeException( "\$value", "bool", gettype($value) );
+        }
+        
+        $this->indent=$value;
+    }
+    
+    public function indentation()
+    {
+        return $this->indent;
+    }
+    
+    public function addedControl( MControl $control, /* int */ $index )
+    {
+        parent::addedControl( $control, $index );
+        
+        if( $control instanceof MContent )
+        {
+            $this->contents->add( $control->id(), $control );
+        }
     }
 
     private function indentHtml($uncleanhtml)
