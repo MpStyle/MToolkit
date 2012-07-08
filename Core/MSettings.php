@@ -25,88 +25,34 @@ class MSettings
 
     public static function load()
     {
-        $doc = new DOMDocument();
-        
-        if( file_exists("settings.xml")===false )
+        if( file_exists("settings.json")===false )
         {
             return;
         }
         
-        if( $doc->load("settings.xml")===false )
+        $settingsFileContent= file_get_contents("settings.json");
+        $settings=json_decode($settingsFileContent,true);
+        
+        // Read constants
+        foreach( $settings["constants"] as $constant )
         {
-            throw new Exception("The settings.xml file not found in root folder.");
-        }
-
-        foreach ($doc->childNodes as $settings)
-        {
-            if ($settings->hasChildNodes())
+            if( $key!="" )
             {
-                foreach ($settings->childNodes as $setting)
-                {
-                    switch ($setting->nodeName)
-                    {
-                        case "constant":
-                            if ($setting->hasAttributes())
-                            {
-                                foreach ($setting->attributes as $attr)
-                                {
-                                    switch ($attr->nodeName)
-                                    {
-                                        case "name":
-                                            $name = $attr->nodeValue;
-                                            break;
-                                        case "value":
-                                            $value = $attr->nodeValue;
-                                            break;
-                                    }
-                                }
-
-                                if( $name!="" && $value!="" )
-                                {
-                                    define($name, $value);
-                                }
-                            }
-                            break;
-                        case "db_connection":
-                            if ($setting->hasAttributes())
-                            {
-                                foreach ($setting->attributes as $attr)
-                                {
-                                    switch ($attr->nodeName)
-                                    {
-                                        case "name":
-                                            $name = $attr->nodeValue;
-                                            break;
-                                        case "host":
-                                            $host = $attr->nodeValue;
-                                            break;
-                                        case "username":
-                                            $username = $attr->nodeValue;
-                                            break;
-                                        case "password":
-                                            $password = $attr->nodeValue;
-                                            break;
-                                        case "database_name":
-                                            $database_name = $attr->nodeValue;
-                                            break;
-                                    }
-                                }
-
-                                $conn = new mysqli($host, $username, $password, $database_name);
-
-                                if ($name == "")
-                                {
-                                    DbConnection::addDbConnection($conn);
-                                }
-                                else
-                                {
-                                    DbConnection::addDbConnection($conn, $name);
-                                }
-                            }
-
-                            break;
-                    }
-                }
+                define($constant["key"], $constant["value"]);
+            }
+        }
+        
+        // Read db connection
+        foreach( $settings["db_connections"] as $connection )
+        {
+            $conn = new mysqli($connection["host"], $connection["username"], $connection["password"], $connection["database"]);
+            if ($connection["name"] == "")
+            {
+                DbConnection::addDbConnection($conn);
+            }
+            else
+            {
+                DbConnection::addDbConnection($conn, $connection["name"]);
             }
         }
     }
