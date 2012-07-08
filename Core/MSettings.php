@@ -45,7 +45,18 @@ class MSettings
         // Read db connection
         foreach( $settings["db_connections"] as $connection )
         {
-            $conn = new mysqli($connection["host"], $connection["username"], $connection["password"], $connection["database"]);
+            $conn=null;
+            
+            switch( $connection["type"] )
+            {
+                case "mysql":
+                    $conn = new mysqli($connection["host"], $connection["username"], $connection["password"], $connection["database"]);
+                    break;
+                case "sqlite":
+                    $conn = new SQLiteDatabase($connection["database"]);
+                    break;
+            }
+            
             if ($connection["name"] == "")
             {
                 DbConnection::addDbConnection($conn);
