@@ -28,11 +28,22 @@ class MVector
     public function __construct()
     {}
     
+    /**
+     * Inserts value at the end of the vector.
+     * @param mixed $value 
+     */
     public function append ( /* mixed */ $value )
     {
         $this->vector[]=$value;
     }
     
+    /**
+     * Returns the item at index position <i>i</i> in the vector.
+     * <i>i</i> must be a valid index position in the vector (i.e., 0 <= <i>i</i> < size()).
+     * @param int $i
+     * @return mixed
+     * @throws WrongTypeException If <i>i</i> is not a int.
+     */
     public function at( $i )
     {
         if( is_int( $i )===false )
@@ -48,25 +59,19 @@ class MVector
         return $this->vector[ $i ];
     }
     
-    //reference back ()
-    //_reference back () 
-    //iterator begin ()
-    //_iterator begin () 
-    
-    public function capacity ()
-    {
-        return $this->count();
-    }
-    
+    /**
+     * Removes all the elements from the vector and releases the memory used by the vector. 
+     */
     public function clear ()
     {
         $this->vector=array();
     }
     
-    //_iterator Begin () 
-    // T * Data () 
-    //_iterator End () 
-    
+    /**
+     * Returns true if the vector contains an occurrence of <i>value</i>; otherwise returns false.
+     * @param mixed $value
+     * @return bool 
+     */
     public function contains ( /* mixed */ $value )
     {
         return in_array($value, $this->vector);
@@ -74,21 +79,43 @@ class MVector
     
     //int count (  T & value ) 
     
-    public function count ()
+    /**
+     * If <i>value</i> is not null: returns the number of occurrences of value in the vector.
+     * If <i>value</i> is null: same as size().
+     * 
+     * @param mixed $value
+     * @return int 
+     */
+    public function count ( $value=null )
     {
-        return count( $this->vector );
+        if( is_null( $value ) )        
+        {
+            return count( $this->vector );
+        }
+        
+        $occurrences=0;
+        foreach( $this->vector as $item )
+        {
+            if( $item==$value )
+            {
+                $occurrences++;
+            }
+        }
+        
+        return $occurrences;
     }
     
     //T * data()
     // T * data () 
     
+    /**
+     * Returns true if the vector has size 0; otherwise returns false.
+     * @return bool 
+     */
     public function isEmpty ()
     {
         return ( count( $this->vector )==0 );
     }
-    
-    //iterator end ()
-    //_iterator end () 
     
     public function /* bool */ endsWith ( /* mixed */ $value ) 
     {
@@ -269,7 +296,7 @@ class MVector
     //QList<T> toList () 
     //std::vector<T> toStdVector () 
             
-    public function value( $i, $defaultValue=null )
+    public function value( /* int */ $i, /* mixed */ $defaultValue=null )
     {
         if( is_int( $i )===false )
         {
