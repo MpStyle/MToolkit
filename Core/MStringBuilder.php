@@ -1,4 +1,6 @@
 <?php
+namespace MToolkit\Core;
+
 /*
  * This file is part of MToolkit.
  *
@@ -22,14 +24,20 @@ class MStringBuilder
 {
     private $text;
     
+    /**
+     * @param string $text
+     */
     public function __construct( $text="" )
     {
         $this->text=$text;
     }
     
-    public function append( /* mixed */ $object )
+    /**
+     * @param string $string
+     */
+    public function append( $string )
     {
-        $this->text.=(string)$object;
+        $this->text.=$string;
     }
     
     public function appendFormat()
@@ -47,12 +55,16 @@ class MStringBuilder
         $this->text.=(string)$text;
     }
     
-    public function insert( /* int */ $position, /* mixed */ $object )
+    /**
+     * @param int $position
+     * @param string $object
+     */
+    public function insert( $position, $string )
     {
         $pre=substr($this->text, 0, $position);
         $post=substr($this->text, $position, strlen($this->text)-$position);
         
-        $this->text=$pre . (string)$object . $post;
+        $this->text=$pre . $string . $post;
     }
     
     public function length()
@@ -60,7 +72,11 @@ class MStringBuilder
         return strlen($this->text);
     }
     
-    public function remove( /* int */ $startIndex, /* int */ $length )
+    /**
+     * @param int $startIndex
+     * @param int $length
+     */
+    public function remove( $startIndex, $length )
     {
         $position=$startIndex+$length;
         $pre=substr($this->text, 0, $startIndex);
@@ -69,11 +85,18 @@ class MStringBuilder
         $this->text=$pre . $post;
     }
     
-    public function replace( /* string */ $search, /* string */ $replace )
+    /**
+     * @param string $search
+     * @param string $replace
+     */
+    public function replace( $search, $replace )
     {
         $this->text=  str_replace($search, $replace, $this->text);
     }
     
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->text;

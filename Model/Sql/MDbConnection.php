@@ -1,4 +1,6 @@
 <?php
+namespace Mtoolkit\Model\Sql;
+
 /*
  * This file is part of MToolkit.
  *

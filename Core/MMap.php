@@ -1,5 +1,7 @@
 <?php
 
+namespace MToolkit\Core;
+
 /*
  * This file is part of MToolkit.
  *
@@ -19,195 +21,260 @@
  * @author  Michele Pagnin
  */
 
-require_once 'MToolkit/Core/Exception/WrongTypeException.php';
+require_once dirname( __FILE__ ) . '/Exception/MWrongTypeException.php';
+require_once dirname( __FILE__ ) . '/MList.php';
+
+use \MToolkit\Core\MList;
+use \MToolkit\Core\Exception\MWrongTypeException;
 
 class MMap
 {
-    private $map=array();
-    
-    public function __construct( array $other = array() )
+
+    /**
+     * @var array
+     */
+    private $map = array( );
+
+    public function __construct( array $other = array( ) )
     {
-        $this->map=  array_merge($this->map, $other);
+        $this->map = array_merge( $this->map, $other );
     }
-    
+
     //QMap ( const QMap<Key, T> & other )
 
     public function clear()
     {
-        $this->map=array();
+        $this->map = array( );
     }
-    
+
     public function contains( $key )
     {
-        if( is_string( $key )===false )
+        if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype($key) );
+            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
         }
-        
-        $founded =  array_key_exists($key, $this->map);
-        
-        return ( $founded!==false );
+
+        $founded = array_key_exists( $key, $this->map );
+
+        return ( $founded !== false );
     }
-    
+
     //int count ( const Key & key ) const
-    
-    public function count ()
+
+    public function count()
     {
-        return count($this->map);
+        return count( $this->map );
     }
-    
+
     public function isEmpty()
     {
-        return ( $this->count()==0 );
+        return ( $this->count() == 0 );
     }
-    
+
     public function erase( $pos )
     {
-        if( is_int( $pos )===false )
+        if( is_int( $pos ) === false )
         {
-            throw new WrongTypeException( "\$pos", "int", gettype($pos) );
+            throw new WrongTypeException( "\$pos", "int", gettype( $pos ) );
         }
-        
-        $keys= array_keys( $this->map );
-        
-        unset( $this->map[ $keys[$pos] ] );
+
+        $keys = array_keys( $this->map );
+
+        unset( $this->map[$keys[$pos]] );
     }
-    
+
     public function find( $key )
     {
-        if( is_string( $key )===false )
+        if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype($key) );
+            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
         }
-        
-        $founded =  array_key_exists($key, $this->map);
-        
-        if( $founded===false )
+
+        $founded = array_key_exists( $key, $this->map );
+
+        if( $founded === false )
         {
             return null;
         }
-        
-        return $this->map[ $key ];
+
+        return $this->map[$key];
     }
-    
-    public function insert ( $key, $value )
+
+    public function insert( $key, $value )
     {
-        if( is_string( $key )===false )
+        if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype($key) );
+            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
         }
-        
-        $this->map[$key]=$value;
+
+        $this->map[$key] = $value;
     }
-    
+
     //iterator	insertMulti ( const Key & key, const T & value )
-    
-    public function key( $value, $defaultKey=null )
+
+    public function getKey( $value, $defaultKey = null )
     {
-        if( is_string( $defaultKey )===false )
+        if( is_string( $defaultKey ) === false )
         {
-            throw new WrongTypeException( "\$defaultKey", "string", gettype($defaultKey) );
+            throw new WrongTypeException( "\$defaultKey", "string", gettype( $defaultKey ) );
         }
-        
-        $key = array_search($value, $this->map);
-        
-        if( $key===false && is_null($defaultKey)===false )
+
+        $key = array_search( $value, $this->map );
+
+        if( $key === false && is_null( $defaultKey ) === false )
         {
-            $key=$defaultKey;
+            $key = $defaultKey;
         }
-        
+
         return $key;
     }
-    
-    public function keys ()
+
+    /**
+     * Returns a list containing all the keys associated with value value in ascending order.
+     * 
+     * @return \MToolkit\Core\MList
+     */
+    public function getKeys()
     {
-        return array_keys( $this->map );
+        $list = new MList();
+        $list->appendArray( array_keys( $this->map ) );
+
+        return $list;
     }
-    
+
     //QList<Key>	keys ( const T & value ) const
     //iterator	lowerBound ( const Key & key )
     //const_iterator	lowerBound ( const Key & key ) const
-    
-    public function remove ( $key )
+
+    public function remove( $key )
     {
-        if( is_string( $key )===false )
+        if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype($key) );
+            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
         }
-        
-        unset( $this->map[ $key ] );
+
+        unset( $this->map[$key] );
         return 1;
     }
-    
-    public function size ()
+
+    public function size()
     {
         return $this->count();
     }
-    
+
     //void	swap ( QMap<Key, T> & other )
-    
-    public function take ( $key )
+
+    public function take( $key )
     {
-        if( is_string( $key )===false )
+        if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype($key) );
+            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
         }
-        
-        $key=$this->value($key);
-        $this->remove($key);
+
+        $key = $this->value( $key );
+        $this->remove( $key );
         return $key;
     }
-    
+
     //std::map<Key, T>	toStdMap () const
-    
-    public function uniqueKeys ()
+
+    public function getUniqueKeys()
     {
         return $this->keys();
     }
-            
+
     //QMap<Key, T> &	unite ( const QMap<Key, T> & other )
     //iterator	upperBound ( const Key & key )
     //const_iterator	upperBound ( const Key & key ) const
-        
-    public function value ( /* string */ $key, /* mixed */ $defaultValue=null )
+
+    public function getValue( /* string */ $key, /* mixed */ $defaultValue = null )
     {
-        if( is_string( $key )===false )
+        if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype($key) );
+            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
         }
-        
+
         //var_dump( $this->map );
         //echo "<br /><br />";
-        
-        $value=$this->map[ $key ];
-        
-        if( is_null( $value )===true )
+
+        $value = $this->map[$key];
+
+        if( is_null( $value ) === true )
         {
-            $value=$defaultValue;
+            $value = $defaultValue;
         }
-        
+
         return $value;
     }
-    
-    public function values ()
+
+    public function getValues()
     {
-        return array_values($this->map);
+        return array_values( $this->map );
     }
-    
+
     public function __toArray()
     {
         //$return = clone $this->map;
-        
+
         return $this->map;
     }
-    
+
     //public function values ( $key )
-    
     //bool	operator!= ( const QMap<Key, T> & other ) const
     //QMap<Key, T> &	operator= ( const QMap<Key, T> & other )
     //bool	operator== ( const QMap<Key, T> & other ) const
     //T &	operator[] ( const Key & key )
     //const T	operator[] ( const Key & key ) const
+
 }
 
+class MMapIterator extends \Iterator
+{
 
+    /**
+     * @var MMap
+     */
+    private $map;
+
+    /**
+     * @var integer
+     */
+    private $pos = 0;
+
+    public function __constructor( MList $map )
+    {
+        $this->map = $map;
+    }
+
+    public function current()
+    {
+        $keys = $this->map->getKeys();
+
+        return $this->map->value( $keys->at( $this->pos ), null );
+    }
+
+    public function key()
+    {
+        $keys = $this->map->getKeys();
+
+        return $keys->at( $this->pos );
+    }
+
+    public function next()
+    {
+        $this->pos++;
+    }
+
+    public function rewind()
+    {
+        $this->pos = 0;
+    }
+
+    public function valid()
+    {
+        $keys = $this->map->getKeys();
+
+        return ( $this->pos >= 0 && $this->pos < $keys->count() );
+    }
+
+}

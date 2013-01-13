@@ -1,4 +1,10 @@
 <?php
+namespace MToolkit\Core;
+
+require_once dirname(__FILE__).'/MLog.php';
+
+use \MToolkit\Core\MLog;
+
 /*
  * This file is part of MToolkit.
  *
@@ -18,23 +24,104 @@
  * @author  Michele Pagnin
  */
 
-require_once 'MToolkit/Core/MSettings.php';
-require_once 'MToolkit/Core/MMap.php';
-
 class MObject
 {
-    private $properties=null;
+    /**
+     * @var Receiver[]
+     */
+    private $signals=array();
     
-    public function __construct()
+    /**
+     * @param string $signal
+     * @param object $context
+     * @param string $slot
+     */
+    public function connect($signal, $context, $slot)
     {
-        MSettings::load();
+        $receiver=new Receiver();
+        $receiver->setContext($context)
+                ->setSlot($slot);
         
-        $this->properties=new MMap();
+        // If key not exists
+        if( array_key_exists($signal, $this->signals)===false )
+        {
+            $this->signals[$signal]=array();
+        }
+        
+        $this->signals[$signal][]=$receiver;
     }
     
-    public function properties()
+    /**
+     * @param string $signal
+     * @param object $context
+     * @param string $slot
+     */
+    public function disconnect($signal, $context, $slot)
     {
-        return $this->properties;
+        for( $i=0; $i<count($this->signals[$signal]); $i++ )
+        {
+            $receiver=$this->signals[$signal][$i];
+            
+            if( $receiver->getContext()==$context && $receiver->getSlot()==$slot )
+            {
+                unset( $this->signals[$signal][$i] );
+            }
+        }
+    }
+    
+    /**
+     * Call every slots connected with the <i>$signal</i>.
+     * 
+     * @param string $signal
+     * @param mixed $args
+     */
+    public function emit($signal, $args = null)
+    {
+        foreach( $this->signals[$signal] as $receiver )
+        {
+            $method=$receiver->getSlot();
+            $object=$receiver->getContext();
+            
+            if( $args==null )
+            {
+                $object->$method();
+            }
+            else
+            {
+                $object->$method( $args );
+            }
+        }
+    }
+}
+
+/**
+ * @ignore
+ */
+class Receiver
+{
+    private $context;
+    private $slot;
+
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    public function setContext( $context )
+    {
+        $this->context = $context;
+        return $this;
+    }
+
+    public function getSlot()
+    {
+        return $this->slot;
+    }
+
+    public function setSlot( $slot )
+    {
+        $this->slot = $slot;
+        return $this;
     }
 }
 

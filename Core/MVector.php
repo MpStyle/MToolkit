@@ -1,4 +1,5 @@
 <?php
+namespace MToolkit\Core;
 
 /*
  * This file is part of MToolkit.
@@ -19,7 +20,9 @@
  * @author  Michele Pagnin
  */
 
-require_once 'MToolkit/Core/Exception/WrongTypeException.php';
+require_once dirname( __FILE__ ) . '/Exception/MWrongTypeException.php';
+
+use \MToolkit\Core\Exception\MWrongTypeException;
 
 class MVector
 {
@@ -32,7 +35,7 @@ class MVector
      * Inserts value at the end of the vector.
      * @param mixed $value 
      */
-    public function append ( /* mixed */ $value )
+    public function append ( $value )
     {
         $this->vector[]=$value;
     }
@@ -42,13 +45,13 @@ class MVector
      * <i>i</i> must be a valid index position in the vector (i.e., 0 <= <i>i</i> < size()).
      * @param int $i
      * @return mixed
-     * @throws WrongTypeException If <i>i</i> is not a int.
+     * @throws MWrongTypeException If <i>i</i> is not a int.
      */
     public function at( $i )
     {
         if( is_int( $i )===false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new MWrongTypeException( "\$i", "int", gettype($i) );
         }
         
         if( $i>=$this->count() )
@@ -144,7 +147,7 @@ class MVector
     {
         if( is_int( $from )===false )
         {
-            throw new WrongTypeException( "\$from", "int", gettype($from) );
+            throw new MWrongTypeException( "\$from", "int", gettype($from) );
         }
         
         $to=$this->count()-1;
@@ -168,12 +171,12 @@ class MVector
     {
         if( is_int( $i )===false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new MWrongTypeException( "\$i", "int", gettype($i) );
         }
         
         if( is_int( $count )===false )
         {
-            throw new WrongTypeException( "\$count", "int", gettype($count) );
+            throw new MWrongTypeException( "\$count", "int", gettype($count) );
         }
         
         for( $j=1; j<=$count; $j++ )
@@ -244,7 +247,7 @@ class MVector
     {
         if( is_int( $i )===false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new MWrongTypeException( "\$i", "int", gettype($i) );
         }
         
         for( $j=0; $j<$count; $j++ )
@@ -262,7 +265,7 @@ class MVector
     {
         if( is_int( $i )===false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new MWrongTypeException( "\$i", "int", gettype($i) );
         }
         
         if( count( $this->vector )>=$i )
@@ -296,11 +299,11 @@ class MVector
     //QList<T> toList () 
     //std::vector<T> toStdVector () 
             
-    public function value( /* int */ $i, /* mixed */ $defaultValue=null )
+    public function getValue( /* int */ $i, /* mixed */ $defaultValue=null )
     {
         if( is_int( $i )===false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new MWrongTypeException( "\$i", "int", gettype($i) );
         }
         
         $value=$this->list[ $i ];
@@ -325,3 +328,47 @@ class MVector
     // T & operator[] ( int i ) 
 }
 
+class MVectorIterator extends \Iterator
+{
+
+    /**
+     * @var MVector
+     */
+    private $vector;
+
+    /**
+     * @var integer
+     */
+    private $pos = 0;
+
+    public function __constructor( MVector $vector )
+    {
+        $this->vector = $vector;
+    }
+
+    public function current()
+    {
+        return $this->vector->at( $this->pos );
+    }
+
+    public function key()
+    {
+        return null;
+    }
+
+    public function next()
+    {
+        $this->pos++;
+    }
+
+    public function rewind()
+    {
+        $this->pos = 0;
+    }
+
+    public function valid()
+    {
+        return ( $this->pos >= 0 && $this->pos < $this->vector->count() );
+    }
+
+}

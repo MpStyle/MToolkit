@@ -1,4 +1,5 @@
 <?php
+namespace MToolkit\Core\Enum;
 
 /*
  * This file is part of MToolkit.

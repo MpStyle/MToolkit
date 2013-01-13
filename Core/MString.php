@@ -1,4 +1,5 @@
 <?php
+namespace MToolkit\Core;
 
 /*
  * This file is part of MToolkit.
@@ -19,8 +20,8 @@
  * @author  Michele Pagnin
  */
 
-require_once 'MToolkit/Core/Enums/CaseSensitive.php';
-require_once 'MToolkit/Core/Exception/WrongTypeException.php';
+require_once dirname(__FILE__).'/Enum/CaseSensitivity.php';
+require_once dirname(__FILE__).'/Exception/MWrongTypeException.php';
 
 /**
  * The MString class provides a php string. 
@@ -33,7 +34,7 @@ class MString
     {
         if( is_string($text)===false )
         {
-            throw new WrongTypeException( "\$text", "string", gettype($text) );
+            throw new MWrongTypeException( "\$text", "string", gettype($text) );
         }
         
         $this->text=$text;
@@ -48,7 +49,7 @@ class MString
     {
         if( ($text instanceof MString)===false )
         {
-            throw new WrongTypeException( "\$text", "MString", gettype($text) );
+            throw new MWrongTypeException( "\$text", "MString", gettype($text) );
         }
         
         $this->text=(string)$text;
@@ -70,7 +71,7 @@ class MString
     {
         if( is_int($i)===false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new MWrongTypeException( "\$i", "int", gettype($i) );
         }
         
         $result=substr($this->text, $i, 1);
@@ -93,7 +94,7 @@ class MString
     {
         if( is_int($n)===false )
         {
-            throw new WrongTypeException( "\$n", "int", gettype($n) );
+            throw new MWrongTypeException( "\$n", "int", gettype($n) );
         }
     
         if( $n>=$this->size() )
@@ -143,7 +144,7 @@ class MString
                 $text=strtolower( $this->text );
                 break;
             default:
-                throw new WrongTypeException( "\$cs", "CaseSensitivity", gettype($cs) );
+                throw new MWrongTypeException( "\$cs", "CaseSensitivity", gettype($cs) );
                 break;
         }
         
@@ -172,7 +173,7 @@ class MString
                 $text=strtolower( $this->text );
                 break;
             default:
-                throw new WrongTypeException( "\$cs", "CaseSensitivity", gettype($cs) );
+                throw new MWrongTypeException( "\$cs", "CaseSensitivity", gettype($cs) );
                 break;
         }
         
@@ -190,6 +191,15 @@ class MString
     public /* int */ function size()
     {
         return strlen($this->text);
+    }
+    
+    /**
+     * @param string $string
+     * @return bool
+     */
+    public static function isNullOrEmpty( $string )
+    {
+        return ( $string==null || $string=='' );
     }
 }
 

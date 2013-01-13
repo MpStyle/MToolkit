@@ -1,5 +1,7 @@
 <?php
 
+namespace MToolkit\Core;
+
 /*
  * This file is part of MToolkit.
  *
@@ -19,415 +21,438 @@
  * @author  Michele Pagnin
  */
 
-require_once 'MToolkit/Core/Exception/WrongTypeException.php';
+require_once 'MToolkit/Core/Exception/MWrongTypeException.php';
+
+use \MToolkit\Core\Exception\MWrongTypeException;
 
 class MList
 {
-    private $list=array();
-    
-    public function __construct()
-    {}
-    
-    //QList ( const QList<T> & other )
+
+    private $list = array( );
+
+    public function __construct( MList $list = null )
+    {
+        if( $list != null )
+        {
+            $this->appendList( $list );
+        }
+    }
+
     //QList ( std::initializer_list<T> args )
-    //~QList ()
-    
+
     public function append( $value )
     {
-        $this->list[]=$value;
+        $this->list[] = $value;
     }
-    
+
     public function appendArray( array $value )
     {
-        $this->list=  array_merge( $this->list, $value );
+        $this->list = array_merge( $this->list, $value );
     }
-    
-    //public function appendList( MList $value )
-    //{}
-    
+
+    public function appendList( MList $value )
+    {
+        for( $i = 0; $i < $value->count(); $i++ )
+        {
+            $this->append( $value->at( $i ) );
+        }
+    }
+
     public function at( $i )
     {
-        if( is_int( $i )===false )
+        if( is_int( $i ) === false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new WrongTypeException( "\$i", "int", gettype( $i ) );
         }
-        
-        if( $i>=$this->count() )
+
+        if( $i >= $this->count() )
         {
             throw new OutOfBoundsException();
         }
-        
+
         return $this->list[$i];
     }
-    
-    public function back ()
+
+    /**
+     * This function is provided for STL compatibility. 
+     * It is equivalent to last(). 
+     * The list must not be empty. 
+     * If the list can be empty, call isEmpty() before calling this function.
+     * 
+     * @return mixed
+     * @throws OutOfBoundsException
+     */
+    public function back()
     {
-        if( count( $this->list )<=0 )
+        if( count( $this->list ) <= 0 )
         {
             throw new OutOfBoundsException();
         }
-        
-        return $this->list[ count( $this->list )-1 ];
+
+        return $this->list[count( $this->list ) - 1];
     }
-    
+
     //const T &	back () const
     //iterator	begin ()
     //const_iterator	begin () const
-    
-    public function clear ()
+
+    public function clear()
     {
-        $this->list=array();
+        $this->list = array( );
     }
-    
+
     //const_iterator	constBegin () const
     //const_iterator	constEnd () const
-    
+
     public function /* bool */ contains( $value )
     {
-        return in_array($value, $this->list);
+        return in_array( $value, $this->list );
     }
-    
+
     //int count ( const T & value ) const
-    
-    public function count ()
+
+    public function count()
     {
         return count( $this->list );
     }
-    
+
     public function isEmpty()
     {
-        return ( count($this->list)<=0 );
+        return ( count( $this->list ) <= 0 );
     }
-    
+
     //iterator	end ()
     //const_iterator	end () const
-    
-    public function endsWith ( $value )
+
+    public function endsWith( $value )
     {
-        if( $this->count()<=0 )
+        if( $this->count() <= 0 )
         {
             return false;
         }
-        
-        $lastValue=$this->list[ $this->count()-1 ];
-        
-        return ( $lastValue==$value );
+
+        $lastValue = $this->list[$this->count() - 1];
+
+        return ( $lastValue == $value );
     }
-    
+
     //iterator	erase ( iterator pos )
     //iterator	erase ( iterator begin, iterator end )
-    
+
     public function first()
     {
-        if( count( $this->list )<=0 )
+        if( count( $this->list ) <= 0 )
         {
             return null;
         }
-        
+
         return $this->list[0];
     }
-    
+
     //const T &	first () const
-    
+
     public function front()
     {
-        if( count( $this->list )<=0 )
+        if( count( $this->list ) <= 0 )
         {
             return null;
         }
-        
+
         return $this->list[0];
     }
-    
+
     //const T &	front () const
-    public function /* int */ indexOf ( $value, $from = 0 )
+    public function /* int */ indexOf( $value, $from = 0 )
     {
-        if( is_int( $from )===false )
+        if( is_int( $from ) === false )
         {
-            throw new WrongTypeException( "\$from", "int", gettype($from) );
+            throw new WrongTypeException( "\$from", "int", gettype( $from ) );
         }
-        
-        $to=$this->count()-1;
-        
-        if( $from==-1 )
+
+        $to = $this->count() - 1;
+
+        if( $from == -1 )
         {
-            $to=$from;
+            $to = $from;
         }
-        
-        for( $i=0; $i==$to; $i++ )
+
+        for( $i = 0; $i == $to; $i++ )
         {
-            if( $this->list[ $i ]==$value )
+            if( $this->list[$i] == $value )
             {
                 return $i;
             }
         }
     }
-            
-    public function insert ( $i, $value )
+
+    public function insert( $i, $value )
     {
-        if( is_int( $i )===false )
+        if( is_int( $i ) === false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new WrongTypeException( "\$i", "int", gettype( $i ) );
         }
-        
-        array_splice($this->list, $i, 0, $value);
+
+        array_splice( $this->list, $i, 0, $value );
     }
-    
+
     //iterator	insert ( iterator before, const T & value )
-    
-    public function last ()
+
+    public function last()
     {
         return $this->back();
     }
-            
+
     //const T &	last () const
-    
+
     public function /* int */ lastIndexOf( $value, $from = -1 )
     {
-        if( is_int( $from )===false )
+        if( is_int( $from ) === false )
         {
-            throw new WrongTypeException( "\$from", "int", gettype($from) );
+            throw new WrongTypeException( "\$from", "int", gettype( $from ) );
         }
-        
-        $position=-1;
-        $to=$this->count()-1;
-        
-        if( $from==-1 )
+
+        $position = -1;
+        $to = $this->count() - 1;
+
+        if( $from == -1 )
         {
-            $to=$from;
+            $to = $from;
         }
-        
-        for( $i=0; $i==$to; $i++ )
+
+        for( $i = 0; $i == $to; $i++ )
         {
-            if( $this->list[ $i ]==$value )
+            if( $this->list[$i] == $value )
             {
-                $position=$i;
+                $position = $i;
             }
         }
-        
+
         return $position;
     }
-    
-    public function length ()
+
+    public function length()
     {
         return $this->count();
     }
-    
+
     //QList<T>	mid ( int pos, int length = -1 ) const
-    
+
     public function /* void */ move( $from, $to )
     {
-        if( is_int( $from )===false )
+        if( is_int( $from ) === false )
         {
-            throw new WrongTypeException( "\$from", "int", gettype($from) );
+            throw new WrongTypeException( "\$from", "int", gettype( $from ) );
         }
-        
-        if( is_int( $to )===false )
+
+        if( is_int( $to ) === false )
         {
-            throw new WrongTypeException( "\$to", "int", gettype($to) );
+            throw new WrongTypeException( "\$to", "int", gettype( $to ) );
         }
-        
-        $value=$this->list[ $from ];
-        
-        unset( $this->list[ $from ] );
-        
-        array_splice($this->list, $to, 0, $value);
+
+        $value = $this->list[$from];
+
+        unset( $this->list[$from] );
+
+        array_splice( $this->list, $to, 0, $value );
     }
-    
-    public function pop_back ()
+
+    public function pop_back()
     {
-        if( $this->count()<=0 )
+        if( $this->count() <= 0 )
         {
             throw new OutOfBoundsException();
         }
-        
-        $item=$this->list[ $this->count()-1 ];
-        
+
+        $item = $this->list[$this->count() - 1];
+
         $this->removeLast();
-        
+
         return $item;
     }
-    
+
     public function pop_front()
     {
-        if( $this->count()<=0 )
+        if( $this->count() <= 0 )
         {
             throw new OutOfBoundsException();
         }
-        
-        $item=$this->list[ 0 ];
-        
+
+        $item = $this->list[0];
+
         $this->removeFirst();
-        
+
         return $item;
     }
-    
+
     public function /* void */ prepend( $value )
     {
-        array_unshift($this->list, $value );
+        array_unshift( $this->list, $value );
     }
-    
-    public function /* void */  push_back( $value )
+
+    public function /* void */ push_back( $value )
     {
-        $this->list[]=$value;
+        $this->list[] = $value;
     }
-    
-    public function /* void */  push_front( $value )
+
+    public function /* void */ push_front( $value )
     {
         $this->prepend( $value );
     }
-            
+
     //int	removeAll ( const T & value )
-    
+
     public function removeAt( $i )
     {
-        if( is_int( $i )===false )
+        if( is_int( $i ) === false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new WrongTypeException( "\$i", "int", gettype( $i ) );
         }
-        
-        if( count( $this->list )>=$i )
+
+        if( count( $this->list ) >= $i )
         {
             throw new OutOfBoundsException();
         }
-        
-        unset( $this->list[ $i ] );
+
+        unset( $this->list[$i] );
     }
-    
+
     public function removeFirst()
     {
-        if( count( $this->list )<=0 )
+        if( count( $this->list ) <= 0 )
         {
             throw new OutOfBoundsException();
         }
-        
-        unset( $this->list[ 0 ] );
+
+        unset( $this->list[0] );
     }
-    
-    public function removeLast ()
+
+    public function removeLast()
     {
-        if( count( $this->list )<=0 )
+        if( count( $this->list ) <= 0 )
         {
             throw new OutOfBoundsException();
         }
-        
-        unset( $this->list[ $this->count()-1 ] );
+
+        unset( $this->list[$this->count() - 1] );
     }
-    
-    public function /* bool */ removeOne ( $value )
+
+    public function /* bool */ removeOne( $value )
     {
-        $result=array_search($value, $this->list );
-        
-        if( $result===false )
+        $result = array_search( $value, $this->list );
+
+        if( $result === false )
         {
             throw new OutOfBoundsException();
         }
-        
-        unset( $this->list[ $result ] );
-        
+
+        unset( $this->list[$result] );
+
         return true;
     }
-    
+
     public function replace( $i, $value )
     {
-        if( is_int( $i )===false )
+        if( is_int( $i ) === false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new WrongTypeException( "\$i", "int", gettype( $i ) );
         }
-        
-        $this->list[$i]=$value;
+
+        $this->list[$i] = $value;
     }
-    
+
     //void	reserve ( int alloc )
-            
+
     public function size()
     {
         return $this->count();
     }
-            
-    public function startsWith ( $value )
+
+    public function startsWith( $value )
     {
-        if( $this->count()<=0 )
+        if( $this->count() <= 0 )
         {
             return false;
         }
-        
-        $lastValue=$this->list[ 0 ];
-        
-        return ( $lastValue==$value );
+
+        $lastValue = $this->list[0];
+
+        return ( $lastValue == $value );
     }
-            
+
     //void	swap ( QList<T> & other )
     //void	swap ( int i, int j )
-    
-    public function takeAt ( $i )
+
+    public function takeAt( $i )
     {
-        if( is_int( $i )===false )
+        if( is_int( $i ) === false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new WrongTypeException( "\$i", "int", gettype( $i ) );
         }
-        
-        $value= $this->list[ $i ];
-        
-        unset( $this->list[ $i ] );
-        
+
+        $value = $this->list[$i];
+
+        unset( $this->list[$i] );
+
         return $value;
     }
-    
+
     public function takeFirst()
     {
-        if( count( $this->list )<=0 )
+        if( count( $this->list ) <= 0 )
         {
             return null;
         }
-        
-        $value= $this->list[ 0 ];
-        
-        unset( $this->list[ 0 ] );
-        
+
+        $value = $this->list[0];
+
+        unset( $this->list[0] );
+
         return $value;
     }
-    
+
     public function takeLast()
     {
-        if( count( $this->list )<=0 )
+        if( count( $this->list ) <= 0 )
         {
             return null;
         }
-        
-        $value=$this->last();
-        
-        unset( $this->list[ $this->count()-1 ] );
-        
+
+        $value = $this->last();
+
+        unset( $this->list[$this->count() - 1] );
+
         return $value;
     }
-            
+
     //QSet<T>	toSet () const
     //std::list<T>	toStdList () const
     //QVector<T>	toVector () const
-            
-    public function value( $i, $defaultValue=null )
+
+    public function getValue( $i, $defaultValue = null )
     {
-        if( is_int( $i )===false )
+        if( is_int( $i ) === false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype($i) );
+            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
         }
-        
-        if( $i>=$this->count() )
+
+        if( $i >= $this->count() )
         {
-            throw new OutOfBoundsException();
+            $exception= new OutOfBoundsException();
+            $exception->setMessage();            
+            
+            throw $exception;
         }
-        
-        $value=$this->list[ $i ];
-        
-        if( is_null( $value )===true && is_null($defaultValue)===false )
+
+        $value = $this->list[$i];
+
+        if( is_null( $value ) === true && is_null( $defaultValue ) === false )
         {
-            $value=$defaultValue;
+            $value = $defaultValue;
         }
-        
+
         return $value;
     }
-            
+
     //bool	operator!= ( const QList<T> & other ) const
     //QList<T>	operator+ ( const QList<T> & other ) const
     //QList<T> &	operator+= ( const QList<T> & other )
@@ -438,4 +463,50 @@ class MList
     //bool	operator== ( const QList<T> & other ) const
     //T &	operator[] ( int i )
     //const T &	operator[] ( int i ) const
+
+}
+
+class MListIterator extends \Iterator
+{
+
+    /**
+     * @var MList
+     */
+    private $list;
+
+    /**
+     * @var integer
+     */
+    private $pos = 0;
+
+    public function __constructor( MList $list )
+    {
+        $this->list = $list;
+    }
+
+    public function current()
+    {
+        return $this->list->at( $this->pos );
+    }
+
+    public function key()
+    {
+        return null;
+    }
+
+    public function next()
+    {
+        $this->pos++;
+    }
+
+    public function rewind()
+    {
+        $this->pos = 0;
+    }
+
+    public function valid()
+    {
+        return ( $this->pos >= 0 && $this->pos < $this->list->count() );
+    }
+
 }

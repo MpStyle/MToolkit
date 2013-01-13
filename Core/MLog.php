@@ -1,4 +1,5 @@
 <?php
+namespace MToolkit\Core;
 
 /*
  * This file is part of MToolkit.
@@ -21,44 +22,161 @@
 
 class MLog
 {
+    const INFO="info";
+    const WARNING="warning";
+    const ERROR="error";
+    
+    /**
+     * @var MLogMessage[]
+     */
     private static $messages=array();
     
-    public static /* void */ function i( /* string */ $tag, /* string */ $text )
+    /**
+     * @param string $tag
+     * @param string $text
+     */
+    public static function i( $tag, $text )
     {
-        if( is_string($tag)===false )
-        {
-            throw new WrongTypeException( "\$tag", "string", gettype($tag) );
-        }
+        $message=new MLogMessage();
+        $message->setType(MLog::INFO)
+                ->setTag($tag)
+                ->setText($text);
         
-        if( is_string($text)===false )
-        {
-            throw new WrongTypeException( "\$text", "string", gettype($text) );
-        }
-        
-        $time = new DateTime();
-        
-        MLog::$messages[]=array($time->format('Y-m-d H:i:s'), $tag, $text);
+        MLog::$messages[]=$message;
     }
     
-    public static /* void */ function toHtml()
+    /**
+     * @param string $tag
+     * @param string $text
+     */
+    public static function w( $tag, $text )
     {
-        $html="";
+        $message=new MLogMessage();
+        $message->setType(MLog::WARNING)
+                ->setTag($tag)
+                ->setText($text);
         
-        foreach( MLog::$messages as $message )
+        MLog::$messages[]=$message;
+    }
+    
+    /**
+     * @param string $tag
+     * @param string $text
+     */
+    public static function e( $tag, $text )
+    {
+        $message=new MLogMessage();
+        $message->setType(MLog::ERROR)
+                ->setTag($tag)
+                ->setText($text);
+        
+        MLog::$messages[]=$message;
+    }
+    
+    public static function printAll()
+    {
+        $template='<tr>
+                <td style="color: %s">
+                    %s
+                </td>
+                <td style="color: %s">
+                    %s
+                </td>
+                <td style="color: %s">
+                    %s
+                </td>
+            </tr>';
+        $table="";
+        
+        foreach( MLog::$messages as /* @var $message MLogMessage */ $message )
         {
-            $html.=$message[0] . " - " . $message[1] . " - " . $message[2] . "\n";
+            $color="black";
+            
+            switch( $message->getType() )
+            {
+                case MLog::INFO:
+                    $color="#008000";
+                    break;
+                case MLog::WARNING:
+                    $color="#ffa500";
+                    break;
+                case MLog::ERROR:
+                    $color="#ff0000";
+                    break;
+            }
+            
+            $table.=sprintf( 
+                    $template
+                    , $color
+                    , $message->getTime()
+                    , $color
+                    , $message->getTag()
+                    , $color
+                    , $message->getText() );
         }
         
-        $html='
-            <div style="background: black; color: white;">
-                <strong style="color: #fff;">LOGS</strong>
-                <textarea style="width: 100%;" rows="10">'.
-                    $html.'
-                </textarea>
-            </div>';
+        $table= sprintf(
+            '<table style="background: #000;">
+                %s
+            </table>'
+            , $table);
         
-        return $html;
+        echo $table;
     }
 }
 
-?>
+/**
+ * @ignore
+ * <b>Don't use this class.</b>
+ * It is used only from <i>MLog</i> class.
+ */
+class MLogMessage
+{
+    private $type;
+    private $tag;
+    private $text;
+    private $time;
+    
+    public function __construct()
+    {
+        $this->time=new \DateTime();
+    }
+    
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType( $type )
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getTag()
+    {
+        return $this->tag;
+    }
+
+    public function setTag( $tag )
+    {
+        $this->tag = $tag;
+        return $this;
+    }
+
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    public function setText( $text )
+    {
+        $this->text = $text;
+        return $this;
+    }
+
+    public function getTime()
+    {
+        return $this->time;
+    }
+}
