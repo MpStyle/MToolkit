@@ -1,5 +1,5 @@
 <?php
-namespace Mtoolkit\Model\Sql;
+namespace MToolkit\Model\Sql;
 
 /*
  * This file is part of MToolkit.

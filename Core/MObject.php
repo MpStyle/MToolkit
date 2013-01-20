@@ -1,9 +1,7 @@
 <?php
 namespace MToolkit\Core;
 
-require_once dirname(__FILE__).'/MLog.php';
-
-use \MToolkit\Core\MLog;
+require_once dirname(__FILE__).'/MAutoLoad.php';
 
 /*
  * This file is part of MToolkit.
@@ -26,63 +24,104 @@ use \MToolkit\Core\MLog;
 
 class MObject
 {
+    const ROOT_PATH = "MToolkit_Core_MObject_RootPath";
+    const SIGNALS = "MToolkit_Core_MObject_Signals";
+
     /**
-     * @var Receiver[]
+     * Set the root path of the project.
+     * 
+     * @param string $path
      */
-    private $signals=array();
-    
-    /**
-     * @param string $signal
-     * @param object $context
-     * @param string $slot
-     */
-    public function connect($signal, $context, $slot)
+    public static function setRootPath( $path )
     {
-        $receiver=new Receiver();
-        $receiver->setContext($context)
-                ->setSlot($slot);
-        
-        // If key not exists
-        if( array_key_exists($signal, $this->signals)===false )
-        {
-            $this->signals[$signal]=array();
-        }
-        
-        $this->signals[$signal][]=$receiver;
+        $_SESSION[MObject::ROOT_PATH] = $path;
     }
-    
+
+    /**
+     * Return the root path of the project.
+     * 
+     * @return string|null
+     */
+    public static function getRootPath()
+    {
+        if ( isset( $_SESSION[MObject::ROOT_PATH] ) === false )
+        {
+            return null;
+        }
+
+        return $_SESSION[MObject::ROOT_PATH];
+    }
+
     /**
      * @param string $signal
      * @param object $context
      * @param string $slot
      */
-    public function disconnect($signal, $context, $slot)
+    public function connect( $signal, $object, $method )
     {
-        for( $i=0; $i<count($this->signals[$signal]); $i++ )
+        // Create a slot object
+        $slot = new MSlot();
+        $slot->setObject( $object )
+                ->setMethod( $method );
+
+        // Retrieve the signals
+        $signals = $this->getSignals();
+
+        // Create a new signal if not exists
+        if ( array_key_exists( $signal, $signals ) === false )
         {
-            $receiver=$this->signals[$signal][$i];
-            
-            if( $receiver->getContext()==$context && $receiver->getSlot()==$slot )
+            $signals[$signal] = array( );
+        }
+
+        // Add new slot to signal
+        $signals[$signal][] = $slot;
+
+        // Store signals
+        $this->storeSignals( $signals );
+    }
+
+    /**
+     * @param string $signal
+     * @param object $context
+     * @param string $slot
+     */
+    public function disconnect( $signal, $object, $method )
+    {
+        // Retrieve the signals
+        $signals = $this->getSignals();
+
+        // Remove signal
+        for ( $i = 0; $i < count( $signals[$signal] ); $i++ )
+        {
+            /* @var $slot MSlot */ $slot = $signals[$signal][$i];
+
+            if ( $slot->getObject() == $object && $slot->getMethod() == $method )
             {
-                unset( $this->signals[$signal][$i] );
+                unset( $signals[$signal][$i] );
             }
         }
+
+        // Store signals
+        $this->storeSignals( $signals );
     }
-    
+
     /**
      * Call every slots connected with the <i>$signal</i>.
      * 
      * @param string $signal
      * @param mixed $args
      */
-    public function emit($signal, $args = null)
+    public function emit( $signal, $args = null )
     {
-        foreach( $this->signals[$signal] as $receiver )
+        // Retrieve the signals
+        $signals = $this->getSignals();
+
+        foreach ( $signals[$signal] as /* @var $slot MSlot */ $slot )
         {
-            $method=$receiver->getSlot();
-            $object=$receiver->getContext();
-            
-            if( $args==null )
+            $method = $slot->getMethod();
+            $object = $slot->getObject();
+
+            if ( $args == null )
             {
                 $object->$method();
             }
@@ -92,36 +131,65 @@ class MObject
             }
         }
     }
+
+    /**
+     * Return the signals stored in the session.
+     * 
+     * @return array
+     */
+    private function getSignals()
+    {
+        $signals = array( );
+        if ( isset( $_SESSION[MObject::SIGNALS] ) )
+        {
+            $signals = unserialize( $_SESSION[MObject::SIGNALS] );
+        }
+
+        return $signals;
+    }
+
+    /**
+     * Store the <i>$signals</i> in the session.
+     * 
+     * @param array $signals
+     */
+    private function storeSignals( $signals )
+    {
+        $_SESSION[MObject::SIGNALS] = serialize( $signals );
+    }
+
 }
 
 /**
  * @ignore
  */
-class Receiver
+class MSlot
 {
-    private $context;
-    private $slot;
 
-    public function getContext()
+    private $object;
+    private $method;
+
+    public function getObject()
     {
-        return $this->context;
+        return $this->object;
     }
 
-    public function setContext( $context )
+    public function setObject( $object )
     {
-        $this->context = $context;
+        $this->object = $object;
         return $this;
     }
 
-    public function getSlot()
+    public function getMethod()
     {
-        return $this->slot;
+        return $this->method;
     }
 
-    public function setSlot( $slot )
+    public function setMethod( $method )
     {
-        $this->slot = $slot;
+        $this->method = $method;
         return $this;
     }
+
 }
 
