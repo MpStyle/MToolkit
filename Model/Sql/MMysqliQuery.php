@@ -114,13 +114,13 @@ class MMysqliQuery extends MAbstractSqlQuery
             }
             
             $params=array( $types );
-            foreach( $this->bindedValues as $value )
+            for( $i=0; $i<count($this->bindedValues); $i++ )
             {
-                $params[]=&$value;
+                $params[$i+1]=&$this->bindedValues[$i];
             }
             
             $bindParamsResult = call_user_func_array(array( $sqlStmt, 'bind_param' ), $params);
-                        
+                                    
             if( $bindParamsResult===false )
             {
                 parent::setError($sqlStmt->error);
