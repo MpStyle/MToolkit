@@ -25,12 +25,7 @@ require_once dirname(__FILE__) . '/MAbstractSqlQuery.php';
  */
 
 class MMysqliQuery extends MAbstractSqlQuery
-{
-    /**
-     * @var \mysqli
-     */
-    private $connection;
-    
+{    
     /**
      * @var int[]|string[]|double[]
      */
@@ -39,7 +34,7 @@ class MMysqliQuery extends MAbstractSqlQuery
     /**
      * @var MMysqliResult
      */
-    private $result;
+    private $result=null;
     
     /**
      * @param string $query
@@ -54,6 +49,14 @@ class MMysqliQuery extends MAbstractSqlQuery
         {
             $this->setConnection( MDbConnection::dbConnection() );
         }
+    }
+    
+    /**
+     * @return \mysqli
+     */
+    public function getConnection()
+    {
+        return parent::getConnection();
     }
     
     /**
@@ -80,7 +83,14 @@ class MMysqliQuery extends MAbstractSqlQuery
      */
     public function exec()
     {
-        /* @var $sqlStmt \mysqli_stmt */ $sqlStmt=$this->connection->prepare( $this->query );
+        /* @var $sqlStmt \mysqli_stmt */ $sqlStmt=$this->getConnection()->prepare( $this->getQuery() );
+        
+        if( $sqlStmt===false )
+        {
+            parent::setError($sqlStmt->error);
+            parent::setErrorCode($sqlStmt->errno);
+            throw new Exception( $sqlStmt->error, $sqlStmt->errno );
+        }
         
         if( count( $this->bindedValues )>0 )
         {
@@ -103,15 +113,37 @@ class MMysqliQuery extends MAbstractSqlQuery
                 }
             }
             
-            call_user_func(array( $sqlStmt, 'bind_param' ), array( $types, $this->bindedValues ));
+            $params=array( $types );
+            foreach( $this->bindedValues as $value )
+            {
+                $params[]=&$value;
+            }
+            
+            $bindParamsResult = call_user_func_array(array( $sqlStmt, 'bind_param' ), $params);
+                        
+            if( $bindParamsResult===false )
+            {
+                parent::setError($sqlStmt->error);
+                parent::setErrorCode($sqlStmt->errno);
+                throw new Exception( $this->getConnection()->error, $this->getConnection()->errno );
+            }
         }
-        
+                
         $result=$sqlStmt->execute();
         
-        $this->result=new MMysqliResult($sqlStmt);
+        if( $result==false )      
+        {
+            parent::setError($sqlStmt->error);
+            parent::setErrorCode($sqlStmt->errno);
+        }
+        
+        if( $result===true )
+        {
+            $this->result=new MMysqliResult($sqlStmt);
+        }
         
         $sqlStmt->close();
-        
+                
         return $result;
     }
 

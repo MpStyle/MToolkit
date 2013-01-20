@@ -42,9 +42,14 @@ class MMysqliResult extends MAbstractSqlResult
      * @param \mysqli_stmt $statement
      */
     public function __construct( \mysqli_stmt $statement )
-    {
+    {               
         $meta = $statement->result_metadata();
 
+        if( $meta==false )
+        {
+            return;
+        }
+        
         while ( $field = $meta->fetch_field() )
         {
             $params[] = &$row[$field->name];

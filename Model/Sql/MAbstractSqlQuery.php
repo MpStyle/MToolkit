@@ -34,6 +34,9 @@ abstract class MAbstractSqlQuery
      */
     private $connection;
     
+    private $error;
+    private $errorCode;
+    
     /**
      * @return bool The correct execution of the query.
      */
@@ -77,6 +80,28 @@ abstract class MAbstractSqlQuery
     protected function setConnection( $connection )
     {
         $this->connection = $connection;
+        return $this;
+    }
+
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    protected function setError( $error )
+    {
+        $this->error = $error;
+        return $this;
+    }
+
+    public function getErrorCode()
+    {
+        return $this->errorCode;
+    }
+
+    protected function setErrorCode( $errorCode )
+    {
+        $this->errorCode = $errorCode;
         return $this;
     }
 
