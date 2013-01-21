@@ -3,6 +3,8 @@ namespace MToolkit\Core;
 
 require_once dirname(__FILE__).'/MAutoLoad.php';
 
+session_start();
+
 /*
  * This file is part of MToolkit.
  *

@@ -32,12 +32,14 @@ function __autoload($name)
     $path.=".php";
     $path=  \MToolkit\Core\MObject::getRootPath()."/".$path;
     
-    if( file_exists( $path ) )
+    echo $path .'<br />';
+    
+    if( file_exists( $path )===true )
     {
         require_once $path;
     }
     else
     {
-        throw new Exception("Class not found: " . $name);
+        throw new \Exception("Class not found: " . $name);
     }
 }
