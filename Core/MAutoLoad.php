@@ -32,8 +32,6 @@ function __autoload($name)
     $path.=".php";
     $path=  \MToolkit\Core\MObject::getRootPath()."/".$path;
     
-    echo $path .'<br />';
-    
     if( file_exists( $path )===true )
     {
         require_once $path;
