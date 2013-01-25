@@ -1,6 +1,8 @@
 <?php
 namespace MToolkit\Core;
 
+session_start();
+
 /*
  * This file is part of MToolkit.
  *
@@ -50,4 +52,11 @@ class MSession
         $_SESSION[$key] = serialize($value);
     }
 
+    /**
+     * Remove all stored session values.
+     */
+    public static function delete()
+    {
+        session_destroy();
+    }
 }
