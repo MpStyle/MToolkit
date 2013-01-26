@@ -3,8 +3,6 @@ namespace MToolkit\Core;
 
 require_once dirname(__FILE__).'/MAutoLoad.php';
 
-use \MToolkit\Core\MSession;
-
 session_start();
 
 /*
@@ -38,7 +36,7 @@ class MObject
      */
     public static function setRootPath( $path )
     {
-        MSession::set(MObject::ROOT_PATH, $path);
+        $_SESSION[MObject::ROOT_PATH] = $path;
     }
 
     /**
@@ -48,7 +46,12 @@ class MObject
      */
     public static function getRootPath()
     {
-        return MSession::get(MObject::ROOT_PATH);
+        if ( isset( $_SESSION[MObject::ROOT_PATH] ) === false )
+        {
+            return null;
+        }
+
+        return $_SESSION[MObject::ROOT_PATH];
     }
 
     /**
