@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Core;
 
 /*
@@ -22,15 +23,17 @@ namespace MToolkit\Core;
 
 class MCache
 {
+
     /**
      * @var string 
      */
     private static $CACHE_FILE_PREFIX = "cache_";
-    
+    private static $DELIMITER = "$$$$";
+
     /**
      * @var string
      */
-    private $path=null;
+    private $path = null;
 
     /**
      * Return the path of the cache.
@@ -48,12 +51,12 @@ class MCache
      * @param string $path
      * @return \MToolkit\Core\MCache
      */
-    public function setPath($path)
+    public function setPath( $path )
     {
         $this->path = $path;
-        $len = strlen($this->path);
+        $len = strlen( $this->path );
 
-        if ($this->path{$len - 1} != DIRECTORY_SEPARATOR)
+        if( $this->path{$len - 1} != DIRECTORY_SEPARATOR )
         {
             $this->path.=DIRECTORY_SEPARATOR;
         }
@@ -66,9 +69,9 @@ class MCache
      * 
      * @param string $key
      */
-    public function delete($key)
+    public function delete( $key )
     {
-        unlink(MCache::generateFileName($key));
+        unlink( $this->generateFileName( $key ) );
     }
 
     /**
@@ -76,11 +79,11 @@ class MCache
      */
     public function flush()
     {
-        $files = glob($this->path . MCache::$CACHE_FILE_PREFIX . '*'); // get all file names
-        foreach ($files as $file)
+        $files = glob( $this->path . MCache::$CACHE_FILE_PREFIX . '*' ); // get all file names
+        foreach( $files as $file )
         {
-            if (is_file($file))
-                unlink($file);
+            if( is_file( $file ) )
+                unlink( $file );
         }
     }
 
@@ -90,21 +93,25 @@ class MCache
      * @param string $key
      * @return string|null
      */
-    public function get($key)
+    public function get( $key )
     {
-        if( file_exists(MCache::generateFileName($key))===true )
+        if( file_exists( MCache::generateFileName( $key ) ) === false )
         {
-            $this->delete($key);
+            return null;
         }
+
+        $fileContent = file_get_contents( $this->generateFileName( $key ) );
+        $components = explode( MCache::$DELIMITER, $fileContent );
+        $expired = (int)$components[0];
         
-        $fileContent = file_get_contents(MCache::generateFileName($key));
-        list($expired, $cache)=explode("\n", $fileContent);
+        unset( $components[0] );
+        $cache = implode( '', $components );
         
-        if( $expired<=  microtime() )
+        if( $expired > microtime(true) )
         {
             return $cache;
         }
-        
+
         return null;
     }
 
@@ -117,16 +124,20 @@ class MCache
      * @param type $expired
      * @return type
      */
-    public function set($key, $value, $expired = 0)
+    public function set( $key, $value, $expired = 0 )
     {
-        $success=file_put_contents(MCache::generateFileName($key), $expired.'\n'.$value);
-        
-        return ($success!=false);
+        if( file_exists( MCache::generateFileName( $key ) ) === true )
+        {
+            $this->delete( $key );
+        }
+
+        $success = file_put_contents( $this->generateFileName( $key ), $expired . MCache::$DELIMITER . $value );
+        return ($success != false);
     }
 
-    private static function generateFileName($key)
+    private function generateFileName( $key )
     {
-        return MCache::$CACHE_FILE_PREFIX . $key . '.txt';
+        return $this->path . MCache::$CACHE_FILE_PREFIX . $key . '.txt';
     }
 
 }
