@@ -20,7 +20,7 @@ namespace MToolkit\Core\Enum;
  * @author  Michele Pagnin
  */
 
-class CaseSensitivity
+final class CaseSensitivity
 {
     const CaseInsensitive=0;
     const CaseSensitive=1;
