@@ -1,8 +1,6 @@
 <?php
 namespace MToolkit\Core;
 
-require_once dirname(__FILE__).'/MAutoLoad.php';
-
 session_start();
 
 /*
@@ -160,6 +158,10 @@ class MObject
         $_SESSION[MObject::SIGNALS] = serialize( $signals );
     }
 
+    public function disconnectSignals()
+    {
+        unset($_SESSION[MObject::SIGNALS]);
+    }
 }
 
 /**

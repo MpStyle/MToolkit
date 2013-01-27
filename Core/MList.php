@@ -21,8 +21,6 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once 'MToolkit/Core/Exception/MWrongTypeException.php';
-
 use \MToolkit\Core\Exception\MWrongTypeException;
 
 class MList
@@ -466,47 +464,3 @@ class MList
 
 }
 
-class MListIterator extends \Iterator
-{
-
-    /**
-     * @var MList
-     */
-    private $list;
-
-    /**
-     * @var integer
-     */
-    private $pos = 0;
-
-    public function __constructor( MList $list )
-    {
-        $this->list = $list;
-    }
-
-    public function current()
-    {
-        return $this->list->at( $this->pos );
-    }
-
-    public function key()
-    {
-        return null;
-    }
-
-    public function next()
-    {
-        $this->pos++;
-    }
-
-    public function rewind()
-    {
-        $this->pos = 0;
-    }
-
-    public function valid()
-    {
-        return ( $this->pos >= 0 && $this->pos < $this->list->count() );
-    }
-
-}
