@@ -60,12 +60,12 @@ class MList
     {
         if( is_int( $i ) === false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype( $i ) );
+            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
         }
 
         if( $i >= $this->count() )
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         return $this->list[$i];
@@ -78,13 +78,13 @@ class MList
      * If the list can be empty, call isEmpty() before calling this function.
      * 
      * @return mixed
-     * @throws OutOfBoundsException
+     * @throws \OutOfBoundsException
      */
     public function back()
     {
         if( count( $this->list ) <= 0 )
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         return $this->list[count( $this->list ) - 1];
@@ -164,7 +164,7 @@ class MList
     {
         if( is_int( $from ) === false )
         {
-            throw new WrongTypeException( "\$from", "int", gettype( $from ) );
+            throw new MWrongTypeException( "\$from", "int", gettype( $from ) );
         }
 
         $to = $this->count() - 1;
@@ -187,7 +187,7 @@ class MList
     {
         if( is_int( $i ) === false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype( $i ) );
+            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
         }
 
         array_splice( $this->list, $i, 0, $value );
@@ -206,7 +206,7 @@ class MList
     {
         if( is_int( $from ) === false )
         {
-            throw new WrongTypeException( "\$from", "int", gettype( $from ) );
+            throw new MWrongTypeException( "\$from", "int", gettype( $from ) );
         }
 
         $position = -1;
@@ -239,12 +239,12 @@ class MList
     {
         if( is_int( $from ) === false )
         {
-            throw new WrongTypeException( "\$from", "int", gettype( $from ) );
+            throw new MWrongTypeException( "\$from", "int", gettype( $from ) );
         }
 
         if( is_int( $to ) === false )
         {
-            throw new WrongTypeException( "\$to", "int", gettype( $to ) );
+            throw new MWrongTypeException( "\$to", "int", gettype( $to ) );
         }
 
         $value = $this->list[$from];
@@ -258,7 +258,7 @@ class MList
     {
         if( $this->count() <= 0 )
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         $item = $this->list[$this->count() - 1];
@@ -272,7 +272,7 @@ class MList
     {
         if( $this->count() <= 0 )
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         $item = $this->list[0];
@@ -303,12 +303,12 @@ class MList
     {
         if( is_int( $i ) === false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype( $i ) );
+            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
         }
 
         if( count( $this->list ) >= $i )
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         unset( $this->list[$i] );
@@ -318,7 +318,7 @@ class MList
     {
         if( count( $this->list ) <= 0 )
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         unset( $this->list[0] );
@@ -328,7 +328,7 @@ class MList
     {
         if( count( $this->list ) <= 0 )
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         unset( $this->list[$this->count() - 1] );
@@ -340,7 +340,7 @@ class MList
 
         if( $result === false )
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         unset( $this->list[$result] );
@@ -352,7 +352,7 @@ class MList
     {
         if( is_int( $i ) === false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype( $i ) );
+            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
         }
 
         $this->list[$i] = $value;
@@ -384,7 +384,7 @@ class MList
     {
         if( is_int( $i ) === false )
         {
-            throw new WrongTypeException( "\$i", "int", gettype( $i ) );
+            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
         }
 
         $value = $this->list[$i];
@@ -435,8 +435,7 @@ class MList
 
         if( $i >= $this->count() )
         {
-            $exception= new OutOfBoundsException();
-            $exception->setMessage();            
+            $exception= new \OutOfBoundsException();           
             
             throw $exception;
         }
