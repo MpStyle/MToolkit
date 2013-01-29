@@ -27,7 +27,7 @@
  * - Call postRender method of the last MAbstractController.
  * - Clean <i>$_SESSION</i>.
  * 
- * @throws Exception when hte application try to running a non MAbstractController object.
+ * @throws \Exception when hte application try to running a non MAbstractController object.
  */
 function run()
 {
@@ -41,7 +41,7 @@ function run()
     {
         $message = sprintf( "Invalid object, it must be an instance of MAbstractController, %s is passed.", get_class( $controller ) );
 
-        throw new Exception( $message );
+        throw new \Exception( $message );
     }
 
     // It's better if the path of the template file is assigned.
