@@ -21,7 +21,7 @@ namespace MToolkit\Network\RPC\Json\Server;
  */
 
 require_once dirname(__FILE__).'/MError.php';
-require_once dirname(__FILE__).'/../../../Core/Json/MJsonObject.php';
+require_once dirname(__FILE__).'/../../../../Core/Json/MJsonObject.php';
 
 use MToolkit\Core\Json\MJsonObject;
 
