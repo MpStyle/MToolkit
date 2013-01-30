@@ -28,6 +28,17 @@ class MObject
     const SIGNALS = "MToolkit_Core_MObject_Signals";
 
     /**
+     * @var MObject 
+     */
+    private $parent=null;
+    
+    public function __construct( MObject $parent=null )
+    {
+        $this->parent=$parent;
+    }
+
+
+    /**
      * Set the root path of the project.
      * 
      * @param string $path
@@ -115,8 +126,15 @@ class MObject
     {
         // Retrieve the signals
         $signals = $this->getSignals();
+        
+        $slots=$signals[$signal];
+        
+        if( $slots==null )
+        {
+            return;
+        }
 
-        foreach ( $signals[$signal] as /* @var $slot MSlot */ $slot )
+        foreach ( $slots as /* @var $slot MSlot */ $slot )
         {
             $method = $slot->getMethod();
             $object = $slot->getObject();
@@ -162,6 +180,19 @@ class MObject
     {
         unset($_SESSION[MObject::SIGNALS]);
     }
+    
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    public function setParent(MObject $parent)
+    {
+        $this->parent = $parent;
+        return $this;
+    }
+
+
 }
 
 /**

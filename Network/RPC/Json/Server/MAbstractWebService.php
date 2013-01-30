@@ -22,8 +22,11 @@ namespace MToolkit\Network\RPC\Json\Server;
 
 require_once dirname(__FILE__).'/MResponse.php';
 require_once dirname(__FILE__).'/MRequest.php';
+require_once dirname(__FILE__).'/../../../../Core/MObject.php';
 
-class MAbstractWebService
+use MToolkit\Core\MObject;
+
+class MAbstractWebService extends MObject
 {
     /**
      * @var Response

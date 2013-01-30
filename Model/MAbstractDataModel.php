@@ -20,9 +20,36 @@ namespace MToolkit\Model;
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__).'/MAbstractDataModel.php';
+require_once dirname(__FILE__).'/../Core/MObject.php';
 
-abstract class MAbstractTableModel extends MAbstractDataModel
+use MToolkit\Core\MObject;
+
+abstract class MAbstractDataModel extends MObject
 {
+    public function __construct( MObject $parent=null )
+    {
+        parent::__construct( $parent );
+    }
     
+    /**
+     * Return the number of rows in resultset.
+     * 
+     * @return int
+     */
+    public abstract function rowCount();
+    
+    /**
+     * Return the number of columns in resultset.
+     * 
+     * @return int
+     */
+    public abstract function columnCount();
+    
+    /**
+     * Return the data at the <i>row</i> and <i>column</i>.
+     * 
+     * @param int $row
+     * @param mixed $column
+     */
+    public abstract function getData( $row, $column );
 }
