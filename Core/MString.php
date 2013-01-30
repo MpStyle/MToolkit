@@ -32,24 +32,24 @@ class MString
     
     public function __construct( $text="" )
     {
-        if( is_string($text)===false )
+        if( ($text instanceof MString)===false && is_string($text)===false )
         {
-            throw new MWrongTypeException( "\$text", "string", gettype($text) );
+            throw new MWrongTypeException( "\$text", "MString or string", gettype($text) );
         }
         
-        $this->text=$text;
+        $this->text=(string)$text;
     }
     
     /**
      * Appends the string <i>$text</i> onto the end of this string.
-     * @param MString $text
+     * @param MString|string $text
      * @throws WrongTypeException 
      */
-    public function append( MString $text )
+    public function append( $text )
     {
-        if( ($text instanceof MString)===false )
+        if( ($text instanceof MString)===false && is_string($text)===false )
         {
-            throw new MWrongTypeException( "\$text", "MString", gettype($text) );
+            throw new MWrongTypeException( "\$text", "MString or string", gettype($text) );
         }
         
         $this->text=(string)$text;
@@ -64,16 +64,11 @@ class MString
      * Returns the character at the given <i>$i</i> position in the string.
      * The position must be a valid index position in the string (i.e., 0 <= position < size()).
      * @param int $i
-     * @return string or null
+     * @return string|null
      * @throws WrongTypeException 
      */
-    public /* string */ function at( $i )
+    public function at( $i )
     {
-        if( is_int($i)===false )
-        {
-            throw new MWrongTypeException( "\$i", "int", gettype($i) );
-        }
-        
         $result=substr($this->text, $i, 1);
         
         if( $result===false )
@@ -90,13 +85,8 @@ class MString
      * @param int $n
      * @throws WrongTypeException 
      */
-    public function /* void */ chop( $n )
+    public function chop( $n )
     {
-        if( is_int($n)===false )
-        {
-            throw new MWrongTypeException( "\$n", "int", gettype($n) );
-        }
-    
         if( $n>=$this->size() )
         {
             $this->text="";
@@ -155,7 +145,7 @@ class MString
      * Returns true if this string contains an occurrence of the string <i>$str</i>; otherwise returns false.
      * 
      * @param MString $str
-     * @param type $cs
+     * @param CaseSensitivity $cs
      * @return type 
      */
     public function /* bool */ contains( MString $str, $cs = CaseSensitivity::CaseSensitive )

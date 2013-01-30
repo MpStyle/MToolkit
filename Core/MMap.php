@@ -53,7 +53,7 @@ class MMap
     {
         if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
         }
 
         $founded = array_key_exists( $key, $this->map );
@@ -77,7 +77,7 @@ class MMap
     {
         if( is_int( $pos ) === false )
         {
-            throw new WrongTypeException( "\$pos", "int", gettype( $pos ) );
+            throw new MWrongTypeException( "\$pos", "int", gettype( $pos ) );
         }
 
         $keys = array_keys( $this->map );
@@ -89,7 +89,7 @@ class MMap
     {
         if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
         }
 
         $founded = array_key_exists( $key, $this->map );
@@ -106,7 +106,7 @@ class MMap
     {
         if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
         }
 
         $this->map[$key] = $value;
@@ -118,7 +118,7 @@ class MMap
     {
         if( is_string( $defaultKey ) === false )
         {
-            throw new WrongTypeException( "\$defaultKey", "string", gettype( $defaultKey ) );
+            throw new MWrongTypeException( "\$defaultKey", "string", gettype( $defaultKey ) );
         }
 
         $key = array_search( $value, $this->map );
@@ -152,7 +152,7 @@ class MMap
     {
         if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
         }
 
         unset( $this->map[$key] );
@@ -170,7 +170,7 @@ class MMap
     {
         if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
         }
 
         $key = $this->value( $key );
@@ -193,7 +193,7 @@ class MMap
     {
         if( is_string( $key ) === false )
         {
-            throw new WrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
         }
 
         //var_dump( $this->map );
