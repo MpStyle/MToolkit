@@ -119,5 +119,14 @@ class MAbstractWebService extends MObject
         $this->response = $response;
     }
 
+    public static function run()
+    {
+        /* @var $classes string[] */ $classes = get_declared_classes();
 
+        /* @var $entryPoint string */ $entryPoint = $classes[count($classes) - 1];
+
+        /* @var $webService MAbstractWebService */ $webService=new $entryPoint();
+        
+        echo $webService->getJsonResponse();
+    }
 }

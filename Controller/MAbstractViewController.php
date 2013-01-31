@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Controller;
 
 /*
@@ -22,45 +23,87 @@ namespace MToolkit\Controller;
 
 abstract class MAbstractViewController extends MAbstractController
 {
+
     /**
      * @var boolean
      */
-    private $isVisible=true;
-    
+    private $isVisible = true;
+
     /**
      * @var MAbstractController 
      */
-    private $parent=null;
-    
-    public function __construct($template=null)
+    private $parent = null;
+
+    public function __construct($template = null)
     {
         parent::__construct($template);
     }
-    
+
     public function getIsVisible()
     {
         return $this->isVisible;
     }
 
-    public function setIsVisible( $isVisible )
+    public function setIsVisible($isVisible)
     {
         $this->isVisible = $isVisible;
         return $this;
     }
-    
+
     public function getParent()
     {
         return $this->parent;
     }
 
-    public function setParent( MAbstractController $parent )
+    public function setParent(MAbstractController $parent)
     {
         $this->parent = $parent;
         return $this;
     }
-    
+
     public function isPostBack()
     {
-        return ( count($_POST)>0 );
+        return ( count($_POST) > 0 );
     }
+
+    /**
+     * This function run the UI process of the web application.
+     * 
+     * - Call preRender method of the last MAbstractController.
+     * - Call render method of the last MAbstractController.
+     * - Call postRender method of the last MAbstractController.
+     * - Clean <i>$_SESSION</i>.
+     * 
+     * @throws \Exception when hte application try to running a non MAbstractController object.
+     */
+    public static function run()
+    {
+        /* @var $classes string[] */ $classes = get_declared_classes();
+
+        /* @var $entryPoint string */ $entryPoint = $classes[count($classes) - 1];
+
+        /* @var $controller \MToolkit\Controller\MAbstractController */ $controller = new $entryPoint();
+
+        if (( $controller instanceof \MToolkit\Controller\MAbstractController ) === false)
+        {
+            $message = sprintf("Invalid object, it must be an instance of MAbstractController, %s is passed.", get_class($controller));
+
+            throw new \Exception($message);
+        }
+
+        // It's better if the path of the template file is assigned.
+        if ($controller->getTemplate() == null)
+        {
+            trigger_error("The path of the template file is null.", E_USER_WARNING);
+        }
+
+        $controller->init();
+        $controller->preRender();
+        $controller->render();
+        $controller->postRender();
+
+        // Clean the $_SESSION from signals.
+        $controller->disconnectSignals();
+    }
+
 }
