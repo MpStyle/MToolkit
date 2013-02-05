@@ -223,6 +223,13 @@ class MFileSystemModel extends MAbstractDataModel
         $file = rtrim($file, DIRECTORY_SEPARATOR);
         $file = $this->rootPath . DIRECTORY_SEPARATOR . $file;
         
-        return filetype($file);
+        $fileType= filetype($file);
+        
+        if( $fileType!='file' )
+        {
+            return $fileType;
+        }
+        
+        return mime_content_type($file);
     }
 }
