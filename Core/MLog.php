@@ -22,73 +22,102 @@ namespace MToolkit\Core;
 
 class MLog
 {
-    const INFO="info";
-    const WARNING="warning";
-    const ERROR="error";
+    const INFO="INFO";
+    const WARNING="WARNING";
+    const ERROR="ERROR";
     
     /**
      * @var MLogMessage[]
      */
-    private static $messages=array();
+    private $messages=array();
     
     /**
      * @param string $tag
      * @param string $text
      */
-    public static function i( $tag, $text )
+    public function i( $tag, $text )
     {
         $message=new MLogMessage();
         $message->setType(MLog::INFO)
                 ->setTag($tag)
                 ->setText($text);
         
-        MLog::$messages[]=$message;
+        $this->messages[]=$message;
     }
     
     /**
      * @param string $tag
      * @param string $text
      */
-    public static function w( $tag, $text )
+    public function w( $tag, $text )
     {
         $message=new MLogMessage();
         $message->setType(MLog::WARNING)
                 ->setTag($tag)
                 ->setText($text);
         
-        MLog::$messages[]=$message;
+        $this->messages[]=$message;
     }
     
     /**
      * @param string $tag
      * @param string $text
      */
-    public static function e( $tag, $text )
+    public function e( $tag, $text )
     {
         $message=new MLogMessage();
         $message->setType(MLog::ERROR)
                 ->setTag($tag)
                 ->setText($text);
         
-        MLog::$messages[]=$message;
+        $this->messages[]=$message;
     }
     
-    public static function printAll()
+    /**
+     * Return the number of the message in log.
+     * 
+     * @return int
+     */
+    public function messageCount()
     {
-        $template='<tr>
-                <td style="color: %s">
+        return count($this->messages);
+    }
+    
+    /**
+     * Return the message at position <i>$i</i>.
+     * 
+     * @param int $i
+     * @return boolean
+     */
+    public function getMessage( $i )
+    {
+        if( isset($this->messages[$i])===false )
+        {
+            return false;
+        }
+        
+        return $this->messages[$i];
+    }
+    
+    /**
+     * Print all messages in a HTML table ready to print on screen.
+     */
+    public function getPrintableMessages()
+    {
+        $rowTemplate='<tr style="color: %s">
+                <td>
                     %s
                 </td>
-                <td style="color: %s">
+                <td>
                     %s
                 </td>
-                <td style="color: %s">
+                <td>
                     %s
                 </td>
             </tr>';
         $table="";
         
-        foreach( MLog::$messages as /* @var $message MLogMessage */ $message )
+        foreach( $this->messages as /* @var $message MLogMessage */ $message )
         {
             $color="black";
             
@@ -106,12 +135,10 @@ class MLog
             }
             
             $table.=sprintf( 
-                    $template
+                    $rowTemplate
                     , $color
                     , $message->getTime()
-                    , $color
                     , $message->getTag()
-                    , $color
                     , $message->getText() );
         }
         
@@ -121,16 +148,15 @@ class MLog
             </table>'
             , $table);
         
-        echo $table;
+        return $table;
     }
 }
 
 /**
- * @ignore
- * <b>Don't use this class.</b>
- * It is used only from <i>MLog</i> class.
+ * <b>Don't istantiate an object of type MLogMessage.</b>
+ * It is used only from <i>MLog</i> class to return a MLogMessage
  */
-class MLogMessage
+final class MLogMessage
 {
     private $type;
     private $tag;
