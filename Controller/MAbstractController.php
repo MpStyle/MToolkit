@@ -20,7 +20,9 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once dirname( __FILE__ ) . '/RunController.php';
+require_once dirname(__FILE__).'/../Core/MObject.php';
+require_once dirname(__FILE__).'/../Core/MList.php';
+require_once dirname(__FILE__).'/../Core/MListIterator.php';
 
 use \MToolkit\Core\MObject;
 use \MToolkit\Core\MList;
@@ -41,9 +43,12 @@ abstract class MAbstractController extends MObject
 
     /**
      * @param string $template
+     * @param MObject $parent
      */
-    public function __construct( $template = null )
+    public function __construct( $template = null, MObject $parent=null )
     {
+        parent::__construct( $parent );
+        
         $this->template = $template;
     }
     

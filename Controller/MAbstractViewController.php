@@ -30,13 +30,12 @@ abstract class MAbstractViewController extends MAbstractController
     private $isVisible = true;
 
     /**
-     * @var MAbstractController 
+     * @param string $template
+     * @param MAbstractViewController $parent
      */
-    private $parent = null;
-
-    public function __construct($template = null)
+    public function __construct( $template = null, MAbstractViewController $parent=null )
     {
-        parent::__construct($template);
+        parent::__construct( $template, $parent );
     }
 
     public function getIsVisible()
@@ -47,17 +46,6 @@ abstract class MAbstractViewController extends MAbstractController
     public function setIsVisible($isVisible)
     {
         $this->isVisible = $isVisible;
-        return $this;
-    }
-
-    public function getParent()
-    {
-        return $this->parent;
-    }
-
-    public function setParent(MAbstractController $parent)
-    {
-        $this->parent = $parent;
         return $this;
     }
 
@@ -94,7 +82,7 @@ abstract class MAbstractViewController extends MAbstractController
         // It's better if the path of the template file is assigned.
         if ($controller->getTemplate() == null)
         {
-            trigger_error("The path of the template file is null.", E_USER_WARNING);
+            trigger_error("The path of the template file is null in ".  get_class($controller).".", E_USER_WARNING);
         }
 
         $controller->init();

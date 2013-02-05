@@ -1,4 +1,6 @@
 <?php
+namespace MToolkit\Core\Exception;
+
 /*
  * This file is part of MToolkit.
  *
@@ -18,6 +20,11 @@
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__) . '/MGlobal.php';
-require_once dirname(__FILE__) . '/MObject.php';
-require_once dirname(__FILE__) . '/MAutoLoad.php';
+class MThreadException extends \Exception
+{
+    public function __construct($message = null, $code = 0, \Exception $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
+}
+

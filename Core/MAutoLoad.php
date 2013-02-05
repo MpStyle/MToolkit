@@ -31,7 +31,7 @@ function __autoload($name)
     $path= str_replace("\\", "/", $path);
     $path.=".php";
     $path=  \MToolkit\Core\MObject::getRootPath()."/".$path;
-    
+        
     if( file_exists( $path )===true )
     {
         require_once $path;
