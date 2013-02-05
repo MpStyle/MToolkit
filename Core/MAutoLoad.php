@@ -20,10 +20,10 @@
 
 /**
  * Autoload re-implementation following PSR-0 Standard.
- * No namespaces are defined here, because otherwise this method is not
+ * No namespaces are defined here, otherwise this method is not
  * called from PHP engine.
  * 
- * @param string $name
+ * @param string $name The class name, namespace included.
  */
 function __autoload($name)
 {
