@@ -101,13 +101,12 @@ class MCache
         }
 
         $fileContent = file_get_contents( $this->generateFileName( $key ) );
-        $components = explode( MCache::$DELIMITER, $fileContent );
-        $expired = (int)$components[0];
-        
-        unset( $components[0] );
-        $cache = implode( '', $components );
-        
-        if( $expired > microtime(true) )
+
+        $separatorPosition = strrpos( $fileContent, MCache::$DELIMITER );
+        $expired = substr( $fileContent, 0, $separatorPosition );
+        $cache = substr( $fileContent, $separatorPosition + strlen( MCache::$DELIMITER ) );
+
+        if( $expired > microtime( true ) )
         {
             return $cache;
         }
