@@ -8,6 +8,12 @@ abstract class MJsonObject
      * @return string 
      */
     public abstract function toJson();
+    
+    /**
+     * Initialize the property of class with the content of the json
+     * @param string $jsonString
+     */
+    public abstract function fromJson( $jsonString );
 }
 
 
