@@ -19,6 +19,31 @@
  */
 
 /**
+ * Autoload re-implementation following PSR-0 Standard.
+ * No namespaces are defined here, otherwise this method is not
+ * called from PHP engine.
+ * 
+ * @param string $name The class name, namespace included.
+ */
+function __autoload($name)
+{
+    $path=$name;
+    $path= str_replace("\\", "/", $path);
+    $path.=".php";
+    $path=  \MToolkit\Core\MObject::getRootPath()."/".$path;
+        
+    if( file_exists( $path )===true )
+    {
+        require_once $path;
+    }
+    else
+    {
+//        throw new \Exception("Class not found: " . $name);
+        trigger_error("Class not found: " . $name, E_USER_ERROR);
+    }
+}
+
+/**
  * Prints a warning message containing the source code file name and line number if <i>$test</i> is false.
  * M_ASSERT() is useful for testing pre- and post-conditions during development. 
  * 

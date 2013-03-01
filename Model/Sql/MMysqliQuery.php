@@ -87,11 +87,12 @@ class MMysqliQuery extends MAbstractSqlQuery
         
         if( $sqlStmt===false )
         {
-            parent::setError($sqlStmt->error);
-            parent::setErrorCode($sqlStmt->errno);
-            throw new Exception( $sqlStmt->error, $sqlStmt->errno );
+            parent::setError($this->getConnection()->error);
+            parent::setErrorCode($this->getConnection()->errno);
+            return false;
         }
         
+        // Bind input
         if( count( $this->bindedValues )>0 )
         {
             $types='';
@@ -125,7 +126,8 @@ class MMysqliQuery extends MAbstractSqlQuery
             {
                 parent::setError($sqlStmt->error);
                 parent::setErrorCode($sqlStmt->errno);
-                throw new Exception( $this->getConnection()->error, $this->getConnection()->errno );
+                
+                return false;
             }
         }
                 
@@ -135,16 +137,17 @@ class MMysqliQuery extends MAbstractSqlQuery
         {
             parent::setError($sqlStmt->error);
             parent::setErrorCode($sqlStmt->errno);
+            
+            $sqlStmt->close();
+            
+            return false;
         }
         
-        if( $result===true )
-        {
-            $this->result=new MMysqliResult($sqlStmt);
-        }
+        $this->result=new MMysqliResult($sqlStmt);
         
         $sqlStmt->close();
                 
-        return $result;
+        return true;
     }
 
     /**

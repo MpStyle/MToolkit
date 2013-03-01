@@ -29,8 +29,8 @@ use \MToolkit\Core\MObject;
 
 abstract class MThread extends MObject
 {
-    const FINISHED="MToolkit\Core\MThread::FINISHED";
-    const STARTED="MToolkit\Core\MThread::STARTED";
+    const FINISHED="MToolkit\Core\MThread\FINISHED";
+    const STARTED="MToolkit\Core\MThread\STARTED";
 
     private $pid = -1;
     private $isRunning = false;
@@ -40,10 +40,7 @@ abstract class MThread extends MObject
     {
         parent::__construct( $parent );
         
-        if( function_exists("pcntl_fork") == false )
-        {
-            throw new MThreadException( "In your PHP installation is not enabled Process Control." );
-        }
+        
     }
 
     /**
@@ -94,7 +91,7 @@ abstract class MThread extends MObject
         
         if( $this->pid )
         {
-            \pcntl_wait( $status );
+            //\pcntl_wait( $status );
         }
         else
         {
@@ -108,12 +105,14 @@ abstract class MThread extends MObject
             $this->isFinished=true;
             
             $this->emit(MThread::FINISHED);
+            exit();
         }
     }
 
     public function wait()
     {
-        \pcntl_waitpid( $this->pid );
+        //\pcntl_waitpid( $this->pid );
+        \pcntl_wait( $status );
     }
     
     /**

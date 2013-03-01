@@ -86,8 +86,8 @@ class MTranslator
      * @return null|string
      */
     public function translate($message, $locale)
-    {
-        if( isset( $this->translations[$locale][$message] ) )
+    {        
+        if( !isset( $this->translations[$locale][$message] ) )
         {
             return null;
         }

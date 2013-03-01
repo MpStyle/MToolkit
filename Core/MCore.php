@@ -20,4 +20,3 @@
 
 require_once dirname(__FILE__) . '/MGlobal.php';
 require_once dirname(__FILE__) . '/MObject.php';
-require_once dirname(__FILE__) . '/MAutoLoad.php';

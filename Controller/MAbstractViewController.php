@@ -28,6 +28,11 @@ abstract class MAbstractViewController extends MAbstractController
      * @var boolean
      */
     private $isVisible = true;
+    
+    /**
+     * @var string 
+     */
+    private $template = null;
 
     /**
      * @param string $template
@@ -35,9 +40,29 @@ abstract class MAbstractViewController extends MAbstractController
      */
     public function __construct( $template = null, MAbstractViewController $parent=null )
     {
-        parent::__construct( $template, $parent );
+        parent::__construct( $parent );
+        
+        $this->template=$template;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getTemplate()
+    {
+        return $this->template;
+    }
+
+    /**
+     * @param string $template
+     * @return \MToolkit\Controller\AbstractController
+     */
+    protected function setTemplate( $template )
+    {
+        $this->template = $template;
+        return $this;
+    }
+    
     public function getIsVisible()
     {
         return $this->isVisible;
@@ -49,11 +74,19 @@ abstract class MAbstractViewController extends MAbstractController
         return $this;
     }
 
-    public function isPostBack()
+    public static function isPostBack()
     {
         return ( count($_POST) > 0 );
     }
 
+    public function render()
+    {
+        if( $this->template!=null )
+        {
+            include $this->template;
+        }
+    }
+    
     /**
      * This function run the UI process of the web application.
      * 
@@ -82,7 +115,7 @@ abstract class MAbstractViewController extends MAbstractController
         // It's better if the path of the template file is assigned.
         if ($controller->getTemplate() == null)
         {
-            trigger_error("The path of the template file is null in ".  get_class($controller).".", E_USER_WARNING);
+            trigger_error("The path of the template file is null in ".  get_class($controller), E_USER_ERROR);
         }
 
         $controller->init();

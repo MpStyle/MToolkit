@@ -26,6 +26,7 @@ class MObject
 {
     const ROOT_PATH = "MToolkit_Core_MObject_RootPath";
     const SIGNALS = "MToolkit_Core_MObject_Signals";
+    const DEBUG = "MToolkit_Core_MObject_Debug";
 
     /**
      * @var MObject 
@@ -57,10 +58,35 @@ class MObject
     {
         if ( isset( $_SESSION[MObject::ROOT_PATH] ) === false )
         {
-            return null;
+            return '.';
         }
 
         return $_SESSION[MObject::ROOT_PATH];
+    }
+    
+    /**
+     * Set the debug mode.
+     * 
+     * @param string $path
+     */
+    public static function setDebug( $bool )
+    {
+        $_SESSION[MObject::DEBUG] = $bool;
+    }
+
+    /**
+     * Return if the debug mode is actived.
+     * 
+     * @return string|null
+     */
+    public static function getDebug()
+    {
+        if ( isset( $_SESSION[MObject::DEBUG] ) === false )
+        {
+            return false;
+        }
+
+        return $_SESSION[MObject::DEBUG];
     }
 
     /**
@@ -127,12 +153,12 @@ class MObject
         // Retrieve the signals
         $signals = $this->getSignals();
         
-        $slots=$signals[$signal];
-        
-        if( $slots==null )
+        if( isset( $signals[$signal] )===false )
         {
             return;
         }
+        
+        $slots=$signals[$signal];
 
         foreach ( $slots as /* @var $slot MSlot */ $slot )
         {

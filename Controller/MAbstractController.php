@@ -30,50 +30,23 @@ use \MToolkit\Core\MListIterator;
 
 abstract class MAbstractController extends MObject
 {
-
-    /**
-     * @var string 
-     */
-    private $template = null;
-
     /**
      * @var MList<MAbstractController>
      */
     private $controllers = null;
 
     /**
-     * @param string $template
      * @param MObject $parent
      */
-    public function __construct( $template = null, MObject $parent=null )
+    public function __construct( MObject $parent=null )
     {
         parent::__construct( $parent );
-        
-        $this->template = $template;
     }
     
     public function init()
     {
         $this->controllers = new MList();
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getTemplate()
-    {
-        return $this->template;
-    }
-
-    /**
-     * @param string $template
-     * @return \MToolkit\Controller\AbstractController
-     */
-    protected function setTemplate( $template )
-    {
-        $this->template = $template;
-        return $this;
-    }
+    }   
 
     public function addController( MAbstractController $controller )
     {
@@ -103,7 +76,7 @@ abstract class MAbstractController extends MObject
 
     public function render()
     {
-        include $this->template;
+        
     }
 
     public function postRender()
@@ -115,5 +88,7 @@ abstract class MAbstractController extends MObject
             $controller->postRender();
         }
     }
+    
+    public abstract static function run();
 
 }
