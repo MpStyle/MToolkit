@@ -27,19 +27,21 @@
  */
 function __autoload($name)
 {
-    $path=$name;
-    $path= str_replace("\\", "/", $path);
-    $path.=".php";
-    $path=  \MToolkit\Core\MObject::getRootPath()."/".$path;
-        
-    if( file_exists( $path )===true )
+    $rootPaths=array();
+    $rootPaths=array_merge($rootPaths, (array)\MToolkit\Core\MObject::getRootPath() );
+    
+    $classPath=$name;
+    $classPath= str_replace("\\", "/", $classPath);
+    $classPath.=".php";
+    
+    foreach($rootPaths as $rootPath)
     {
-        require_once $path;
-    }
-    else
-    {
-//        throw new \Exception("Class not found: " . $name);
-        trigger_error("Class not found: " . $name, E_USER_ERROR);
+        $path= $rootPath."/".$classPath;
+
+        if( file_exists( $path )===true )
+        {
+            require_once $path;
+        }
     }
 }
 

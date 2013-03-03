@@ -53,9 +53,24 @@ class MSession
     }
 
     /**
+     * Delete the value in <i>$_SESSION</i> with <i>$key</i>.
+     * 
+     * @param string $key
+     */
+    public static function delete( $key )
+    {
+        if (isset($_SESSION[$key]) === false)
+        {
+            return;
+        }
+        
+        unset($_SESSION[$key]);
+    }
+    
+    /**
      * Remove all stored session values.
      */
-    public static function delete()
+    public static function deleteAll()
     {
         session_destroy();
     }

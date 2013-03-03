@@ -1,5 +1,8 @@
 <?php
+
 namespace MToolkit\Core;
+
+require_once dirname( __FILE__ ) . '/MSession.php';
 
 session_start();
 
@@ -24,20 +27,20 @@ session_start();
 
 class MObject
 {
-    const ROOT_PATH = "MToolkit_Core_MObject_RootPath";
-    const SIGNALS = "MToolkit_Core_MObject_Signals";
-    const DEBUG = "MToolkit_Core_MObject_Debug";
+
+    const ROOT_PATH = "MToolkit\Core\MObject\RootPath";
+    const SIGNALS = "MToolkit\Core\MObject\Signals";
+    const DEBUG = "MToolkit\Core\MObject\Debug";
 
     /**
      * @var MObject 
      */
-    private $parent=null;
-    
-    public function __construct( MObject $parent=null )
-    {
-        $this->parent=$parent;
-    }
+    private $parent = null;
 
+    public function __construct( MObject $parent = null )
+    {
+        $this->parent = $parent;
+    }
 
     /**
      * Set the root path of the project.
@@ -46,7 +49,7 @@ class MObject
      */
     public static function setRootPath( $path )
     {
-        $_SESSION[MObject::ROOT_PATH] = $path;
+        MSession::set( MObject::ROOT_PATH, $path );
     }
 
     /**
@@ -56,14 +59,16 @@ class MObject
      */
     public static function getRootPath()
     {
-        if ( isset( $_SESSION[MObject::ROOT_PATH] ) === false )
+        $rootPath = MSession::get( MObject::ROOT_PATH );
+
+        if( $rootPath == null )
         {
             return '.';
         }
 
-        return $_SESSION[MObject::ROOT_PATH];
+        return $rootPath;
     }
-    
+
     /**
      * Set the debug mode.
      * 
@@ -71,7 +76,7 @@ class MObject
      */
     public static function setDebug( $bool )
     {
-        $_SESSION[MObject::DEBUG] = $bool;
+        MSession::set( MObject::DEBUG, bool );
     }
 
     /**
@@ -81,12 +86,14 @@ class MObject
      */
     public static function getDebug()
     {
-        if ( isset( $_SESSION[MObject::DEBUG] ) === false )
+        $debug = MSession::get( MObject::DEBUG );
+
+        if( $debug === null )
         {
             return false;
         }
 
-        return $_SESSION[MObject::DEBUG];
+        return $debug;
     }
 
     /**
@@ -105,7 +112,7 @@ class MObject
         $signals = $this->getSignals();
 
         // Create a new signal if not exists
-        if ( array_key_exists( $signal, $signals ) === false )
+        if( array_key_exists( $signal, $signals ) === false )
         {
             $signals[$signal] = array( );
         }
@@ -128,11 +135,11 @@ class MObject
         $signals = $this->getSignals();
 
         // Remove signal
-        for ( $i = 0; $i < count( $signals[$signal] ); $i++ )
+        for( $i = 0; $i < count( $signals[$signal] ); $i++ )
         {
             /* @var $slot MSlot */ $slot = $signals[$signal][$i];
 
-            if ( $slot->getObject() == $object && $slot->getMethod() == $method )
+            if( $slot->getObject() == $object && $slot->getMethod() == $method )
             {
                 unset( $signals[$signal][$i] );
             }
@@ -152,20 +159,20 @@ class MObject
     {
         // Retrieve the signals
         $signals = $this->getSignals();
-        
-        if( isset( $signals[$signal] )===false )
+
+        if( isset( $signals[$signal] ) === false )
         {
             return;
         }
-        
-        $slots=$signals[$signal];
 
-        foreach ( $slots as /* @var $slot MSlot */ $slot )
+        $slots = $signals[$signal];
+
+        foreach( $slots as /* @var $slot MSlot */ $slot )
         {
             $method = $slot->getMethod();
             $object = $slot->getObject();
 
-            if ( $args == null )
+            if( $args == null )
             {
                 $object->$method();
             }
@@ -183,13 +190,7 @@ class MObject
      */
     private function getSignals()
     {
-        $signals = array( );
-        if ( isset( $_SESSION[MObject::SIGNALS] ) )
-        {
-            $signals = unserialize( $_SESSION[MObject::SIGNALS] );
-        }
-
-        return $signals;
+        return MSession::get( MObject::SIGNALS );
     }
 
     /**
@@ -199,25 +200,24 @@ class MObject
      */
     private function storeSignals( $signals )
     {
-        $_SESSION[MObject::SIGNALS] = serialize( $signals );
+        MSession::set(MObject::SIGNALS, $signals);
     }
 
     public function disconnectSignals()
     {
-        unset($_SESSION[MObject::SIGNALS]);
+        MSession::delete( MObject::SIGNALS );
     }
-    
+
     public function getParent()
     {
         return $this->parent;
     }
 
-    public function setParent(MObject $parent)
+    public function setParent( MObject $parent )
     {
         $this->parent = $parent;
         return $this;
     }
-
 
 }
 
