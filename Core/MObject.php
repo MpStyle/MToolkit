@@ -219,6 +219,25 @@ class MObject
         return $this;
     }
 
+    public function post( $key )
+    {
+        if (isset( $_POST[$key] ) === false)
+        {
+            return null;
+        }
+
+        return $_POST[$key];
+    }
+
+    public function get( $key )
+    {
+        if (isset( $_GET[$key] ) === false)
+        {
+            return null;
+        }
+
+        return $_GET[$key];
+    }
 }
 
 /**
