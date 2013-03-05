@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Core;
 
 /*
@@ -22,57 +23,57 @@ namespace MToolkit\Core;
 
 class MLog
 {
-    const INFO="INFO";
-    const WARNING="WARNING";
-    const ERROR="ERROR";
-    
+    const INFO = "INFO";
+    const WARNING = "WARNING";
+    const ERROR = "ERROR";
+
     /**
      * @var MLogMessage[]
      */
-    private $messages=array();
-    
+    private $messages = array();
+
     /**
      * @param string $tag
      * @param string $text
      */
     public function i( $tag, $text )
     {
-        $message=new MLogMessage();
-        $message->setType(MLog::INFO)
-                ->setTag($tag)
-                ->setText($text);
-        
-        $this->messages[]=$message;
+        $message = new MLogMessage();
+        $message->setType( MLog::INFO )
+                ->setTag( $tag )
+                ->setText( $text );
+
+        $this->messages[] = $message;
     }
-    
+
     /**
      * @param string $tag
      * @param string $text
      */
     public function w( $tag, $text )
     {
-        $message=new MLogMessage();
-        $message->setType(MLog::WARNING)
-                ->setTag($tag)
-                ->setText($text);
-        
-        $this->messages[]=$message;
+        $message = new MLogMessage();
+        $message->setType( MLog::WARNING )
+                ->setTag( $tag )
+                ->setText( $text );
+
+        $this->messages[] = $message;
     }
-    
+
     /**
      * @param string $tag
      * @param string $text
      */
     public function e( $tag, $text )
     {
-        $message=new MLogMessage();
-        $message->setType(MLog::ERROR)
-                ->setTag($tag)
-                ->setText($text);
-        
-        $this->messages[]=$message;
+        $message = new MLogMessage();
+        $message->setType( MLog::ERROR )
+                ->setTag( $tag )
+                ->setText( $text );
+
+        $this->messages[] = $message;
     }
-    
+
     /**
      * Return the number of the message in log.
      * 
@@ -80,9 +81,9 @@ class MLog
      */
     public function messageCount()
     {
-        return count($this->messages);
+        return count( $this->messages );
     }
-    
+
     /**
      * Return the message at position <i>$i</i>.
      * 
@@ -91,65 +92,66 @@ class MLog
      */
     public function getMessage( $i )
     {
-        if( isset($this->messages[$i])===false )
+        if (isset( $this->messages[$i] ) === false)
         {
             return false;
         }
-        
+
         return $this->messages[$i];
     }
-    
+
     /**
      * Print all messages in a HTML table ready to print on screen.
      */
-    public function getPrintableMessages()
+    public function __toString()
     {
-        $rowTemplate='<tr style="color: %s">
-                <td>
+        $rowTemplate = '<tr style="background-color: %s" class="log">
+                <td class="log_timestamp">
                     %s
                 </td>
-                <td>
+                <td class="log_tag">
                     %s
                 </td>
-                <td>
+                <td class="log_message">
                     %s
                 </td>
             </tr>';
-        $table="";
-        
-        foreach( $this->messages as /* @var $message MLogMessage */ $message )
+        $rows = "";
+
+        foreach ( $this->messages as /* @var $message MLogMessage */ $message )
         {
-            $color="black";
-            
-            switch( $message->getType() )
+            $color = "black";
+
+            switch ($message->getType())
             {
                 case MLog::INFO:
-                    $color="#008000";
+                    $color = "#00c500";
                     break;
                 case MLog::WARNING:
-                    $color="#ffa500";
+                    $color = "#ffa500";
                     break;
                 case MLog::ERROR:
-                    $color="#ff0000";
+                    $color = "#ff0000";
                     break;
             }
-            
-            $table.=sprintf( 
+
+            $rows.=sprintf(
                     $rowTemplate
                     , $color
-                    , $message->getTime()
+                    , $message->getTime()->format( 'Y-m-d H:i:s.u' )
                     , $message->getTag()
                     , $message->getText() );
         }
-        
-        $table= sprintf(
-            '<table style="background: #000;">
+
+        $table = sprintf(
+                '<table style="background: #000;" class="logs_table">
                 %s
             </table>'
-            , $table);
-        
+                , $rows );
+
         return $table;
     }
+
 }
 
 /**
@@ -162,12 +164,12 @@ final class MLogMessage
     private $tag;
     private $text;
     private $time;
-    
+
     public function __construct()
     {
-        $this->time=new \DateTime();
+        $this->time = new \DateTime();
     }
-    
+
     public function getType()
     {
         return $this->type;
@@ -205,4 +207,5 @@ final class MLogMessage
     {
         return $this->time;
     }
+
 }
