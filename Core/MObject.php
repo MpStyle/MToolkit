@@ -4,7 +4,10 @@ namespace MToolkit\Core;
 
 require_once dirname( __FILE__ ) . '/MSession.php';
 
-session_start();
+if (session_id() == '')
+{
+    session_start();
+}
 
 /*
  * This file is part of MToolkit.
@@ -27,7 +30,6 @@ session_start();
 
 class MObject
 {
-
     const ROOT_PATH = "MToolkit\Core\MObject\RootPath";
     const SIGNALS = "MToolkit\Core\MObject\Signals";
     const DEBUG = "MToolkit\Core\MObject\Debug";
@@ -61,7 +63,7 @@ class MObject
     {
         $rootPath = MSession::get( MObject::ROOT_PATH );
 
-        if( $rootPath == null )
+        if ($rootPath == null)
         {
             return '.';
         }
@@ -88,7 +90,7 @@ class MObject
     {
         $debug = MSession::get( MObject::DEBUG );
 
-        if( $debug === null )
+        if ($debug === null)
         {
             return false;
         }
@@ -112,9 +114,9 @@ class MObject
         $signals = $this->getSignals();
 
         // Create a new signal if not exists
-        if( array_key_exists( $signal, $signals ) === false )
+        if (array_key_exists( $signal, $signals ) === false)
         {
-            $signals[$signal] = array( );
+            $signals[$signal] = array();
         }
 
         // Add new slot to signal
@@ -135,11 +137,11 @@ class MObject
         $signals = $this->getSignals();
 
         // Remove signal
-        for( $i = 0; $i < count( $signals[$signal] ); $i++ )
+        for ( $i = 0; $i < count( $signals[$signal] ); $i++ )
         {
             /* @var $slot MSlot */ $slot = $signals[$signal][$i];
 
-            if( $slot->getObject() == $object && $slot->getMethod() == $method )
+            if ($slot->getObject() == $object && $slot->getMethod() == $method)
             {
                 unset( $signals[$signal][$i] );
             }
@@ -160,19 +162,19 @@ class MObject
         // Retrieve the signals
         $signals = $this->getSignals();
 
-        if( isset( $signals[$signal] ) === false )
+        if (isset( $signals[$signal] ) === false)
         {
             return;
         }
 
         $slots = $signals[$signal];
 
-        foreach( $slots as /* @var $slot MSlot */ $slot )
+        foreach ( $slots as /* @var $slot MSlot */ $slot )
         {
             $method = $slot->getMethod();
             $object = $slot->getObject();
 
-            if( $args == null )
+            if ($args == null)
             {
                 $object->$method();
             }
@@ -200,7 +202,7 @@ class MObject
      */
     private function storeSignals( $signals )
     {
-        MSession::set(MObject::SIGNALS, $signals);
+        MSession::set( MObject::SIGNALS, $signals );
     }
 
     public function disconnectSignals()
@@ -238,6 +240,7 @@ class MObject
 
         return $_GET[$key];
     }
+
 }
 
 /**
@@ -245,7 +248,6 @@ class MObject
  */
 class MSlot
 {
-
     private $object;
     private $method;
 

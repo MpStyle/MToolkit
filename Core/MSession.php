@@ -1,7 +1,11 @@
 <?php
+
 namespace MToolkit\Core;
 
-session_start();
+if (session_id() == '')
+{
+    session_start();
+}
 
 /*
  * This file is part of MToolkit.
@@ -31,14 +35,14 @@ class MSession
      * @param string $key
      * @return mixed
      */
-    public static function get($key)
+    public static function get( $key )
     {
-        if (isset($_SESSION[$key]) === false)
+        if (isset( $_SESSION[$key] ) === false)
         {
             return null;
         }
 
-        return unserialize($_SESSION[$key]);
+        return unserialize( $_SESSION[$key] );
     }
 
     /**
@@ -47,9 +51,9 @@ class MSession
      * @param string $key
      * @param mixed $value
      */
-    public static function set($key, $value)
+    public static function set( $key, $value )
     {
-        $_SESSION[$key] = serialize($value);
+        $_SESSION[$key] = serialize( $value );
     }
 
     /**
@@ -59,14 +63,14 @@ class MSession
      */
     public static function delete( $key )
     {
-        if (isset($_SESSION[$key]) === false)
+        if (isset( $_SESSION[$key] ) === false)
         {
             return;
         }
-        
-        unset($_SESSION[$key]);
+
+        unset( $_SESSION[$key] );
     }
-    
+
     /**
      * Remove all stored session values.
      */
@@ -74,4 +78,5 @@ class MSession
     {
         session_destroy();
     }
+
 }
