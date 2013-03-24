@@ -23,9 +23,10 @@ namespace MToolkit\Core;
 
 class MTranslator
 {
-    private $locales=array();
-    private $translations=array();
-    
+
+    private $locales = array();
+    private $translations = array();
+
     /**
      * Add a static file containing a PHP array.
      * This file contains the translation for the web site.
@@ -46,20 +47,20 @@ class MTranslator
      * @param string $locale 
      */
     public function addTranslationFile($filePath, $locale)
-    {   
-        $this->locales[$locale]=$filePath;
-        $this->translations[$locale]=include $filePath;
+    {
+        $this->locales[$locale] = $filePath;
+        $this->translations[$locale] = include $filePath;
     }
-    
+
     /**
      * Remove the file of translations associated with <i>$locale</i>.
      * 
      * @param string $locale
      */
-    public function removeTranslationFile( $locale )
+    public function removeTranslationFile($locale)
     {
-        unset( $this->locales[$locale] );
-        unset( $this->translations[$locale] );
+        unset($this->locales[$locale]);
+        unset($this->translations[$locale]);
     }
 
     /**
@@ -68,33 +69,36 @@ class MTranslator
      * @param string $locale
      * @return string|null
      */
-    public function getTranslationFile( $locale )
+    public function getTranslationFile($locale)
     {
-        if( isset( $this->locales[$locale] )===false )
+        if (isset($this->locales[$locale]) === false)
         {
             return null;
         }
-        
+
         return $this->locales[$locale];
     }
-    
+
     /**
      * Return the translation for the <i>$message</i> and the <i>$locate</i>.
+     * Each "<i>%s</i>" in the <i>$message</i> will be replaced with the value 
+     * of the array of strings <i>$args</i>.
      * 
-     * @param string $message
      * @param string $locale
+     * @param string $message
+     * @param string[] $args
      * @return null|string
      */
-    public function translate($message, $locale)
-    {        
-        if( !isset( $this->translations[$locale][$message] ) )
-        {
-            return null;
-        }
+    public function translate($locale, $message, $args=array())
+    {
+        $translation= $this->translations[$locale][$message];
         
-        return $this->translations[$locale][$message];
+        $sprintfParams = $args;
+        array_unshift($sprintfParams, $translation);
+
+        return call_user_func_array("sprintf", $sprintfParams);
     }
-    
+
     /**
      * Return all locales added.
      * 
@@ -104,5 +108,6 @@ class MTranslator
     {
         return array_keys($this->locales);
     }
+
 }
 
