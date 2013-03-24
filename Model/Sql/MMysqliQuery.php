@@ -131,6 +131,7 @@ class MMysqliQuery extends MAbstractSqlQuery
             }
         }
                 
+        // Exec query
         $result=$sqlStmt->execute();
         
         if( $result==false )      
@@ -143,8 +144,12 @@ class MMysqliQuery extends MAbstractSqlQuery
             return false;
         }
         
+        // Get result
+        $sqlStmt->store_result();
+        
         $this->result=new MMysqliResult($sqlStmt);
         
+        $sqlStmt->free_result();
         $sqlStmt->close();
                 
         return true;
