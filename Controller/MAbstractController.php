@@ -64,6 +64,9 @@ abstract class MAbstractController extends MObject
         return $iterator;
     }
 
+    /**
+     * This method pre-renderize its children controllers.
+     */
     public function preRender()
     {
         $controllersIt = new MListIterator( $this->controllers );
@@ -79,6 +82,9 @@ abstract class MAbstractController extends MObject
         
     }
 
+    /**
+     * This method post-renderize its children controllers.
+     */
     public function postRender()
     {
         $controllersIt = new MListIterator( $this->controllers );

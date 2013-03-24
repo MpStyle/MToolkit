@@ -21,14 +21,20 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
+require_once dirname(__FILE__) . '/../Core/MSession.php';
+
+use MToolkit\Core\MSession;
+
 abstract class MAbstractViewController extends MAbstractController
 {
+
+    const POST_SIGNALS = 'MToolkit\Controller\MAbstractViewController\PostSignals';
 
     /**
      * @var boolean
      */
     private $isVisible = true;
-    
+
     /**
      * @var string 
      */
@@ -38,11 +44,16 @@ abstract class MAbstractViewController extends MAbstractController
      * @param string $template
      * @param MAbstractViewController $parent
      */
-    public function __construct( $template = null, MAbstractViewController $parent=null )
+    public function __construct($template = null, MAbstractViewController $parent = null)
     {
-        parent::__construct( $parent );
-        
-        $this->template=$template;
+        parent::__construct($parent);
+
+        $this->template = $template;
+    }
+    
+    public function init()
+    {
+        $this->emitPostSignals();
     }
 
     /**
@@ -57,12 +68,12 @@ abstract class MAbstractViewController extends MAbstractController
      * @param string $template
      * @return \MToolkit\Controller\AbstractController
      */
-    protected function setTemplate( $template )
+    protected function setTemplate($template)
     {
         $this->template = $template;
         return $this;
     }
-    
+
     public function getIsVisible()
     {
         return $this->isVisible;
@@ -79,14 +90,17 @@ abstract class MAbstractViewController extends MAbstractController
         return ( count($_POST) > 0 );
     }
 
+    /**
+     * If set, load the template.
+     */
     public function render()
     {
-        if( $this->template!=null )
+        if ($this->template != null)
         {
             include $this->template;
         }
     }
-    
+
     /**
      * This function run the UI process of the web application.
      * 
@@ -115,7 +129,7 @@ abstract class MAbstractViewController extends MAbstractController
         // It's better if the path of the template file is assigned.
         if ($controller->getTemplate() == null)
         {
-            trigger_error("The path of the template file is null in ".  get_class($controller), E_USER_ERROR);
+            trigger_error("The path of the template file is null in " . get_class($controller), E_USER_ERROR);
         }
 
         $controller->init();
@@ -127,4 +141,76 @@ abstract class MAbstractViewController extends MAbstractController
         $controller->disconnectSignals();
     }
 
+    /**
+     * Return a key to use in signal-slot pattern.
+     * Create a signal emitted in init method.
+     * 
+     * @param string $name
+     * @param string $value
+     * @return string
+     */
+    public static function postSignal($name, $value)
+    {
+        $key = MAbstractViewController::getPostSignalKey($name, $value);
+
+        /* @var $postSignals MMap */ $postSignals = MAbstractViewController::getPostSignals();
+
+        if ($postSignals == null)
+        {
+            $postSignals = array();
+        }
+
+        $postSignals[] = array(
+            'name' => $name
+            , 'value' => $value
+        );
+
+        MAbstractViewController::setPostSignals($postSignals);
+
+        return $key;
+    }
+
+    private static function getPostSignalKey($name, $value)
+    {
+        return implode('\\', array(__CLASS__, 'PostSignal', $name, $value));
+    }
+
+    /**
+     * Emit the signals initialized by the view.
+     */
+    private function emitPostSignals()
+    {
+        /* @var $postSignals MMap */ $postSignals = MAbstractViewController::getPostSignals();
+
+        if ($postSignals == null)
+        {
+            return;
+        }
+
+        foreach ($postSignals as $postSignal)
+        {
+            $key = MAbstractViewController::getPostSignalKey($postSignal['name'], $postSignal['value']);
+
+            $this->emit($key);
+        }
+    }
+
+    /**
+     * Return post signals stored in session.
+     * @return array
+     */
+    private static function getPostSignals()
+    {
+        return MSession::get(MAbstractViewController::POST_SIGNALS);
+    }
+    
+    /**
+     * Store <i>$postSignals</i> in session.
+     * 
+     * @param array $postSignals
+     */
+    private static function setPostSignals( $postSignals )
+    {
+        MSession::set(MAbstractViewController::POST_SIGNALS, $postSignals);
+    }
 }
