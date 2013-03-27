@@ -23,8 +23,6 @@ namespace MToolkit\Controller;
 
 require_once dirname( __FILE__ ) . '/../Core/MSession.php';
 
-use MToolkit\Core\MSession;
-
 abstract class MAbstractViewController extends MAbstractController
 {
     const POST_SIGNALS = 'MToolkit\Controller\MAbstractViewController\PostSignals';
@@ -35,6 +33,7 @@ abstract class MAbstractViewController extends MAbstractController
     private $isVisible = true;
 
     /**
+     * The path of the file containing the html of the controller.
      * @var string 
      */
     private $template = null;
@@ -48,7 +47,7 @@ abstract class MAbstractViewController extends MAbstractController
     private $output = null;
 
     /**
-     * @param string $template
+     * @param string $template The path of the file containing the html of the controller.
      * @param MAbstractViewController $parent
      */
     public function __construct( $template = null, MAbstractViewController $parent = null )
@@ -110,17 +109,31 @@ abstract class MAbstractViewController extends MAbstractController
         return $this;
     }
 
+    /**
+     * The method sets the visibility of the controller.
+     * 
+     * @return bool
+     */
     public function getIsVisible()
     {
         return $this->isVisible;
     }
 
+    /**
+     * The method returns the visibility of the controller.
+     * 
+     * @param bool $isVisible
+     * @return \MToolkit\Controller\MAbstractViewController
+     */
     public function setIsVisible( $isVisible )
     {
         $this->isVisible = $isVisible;
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public static function isPostBack()
     {
         return ( count( $_POST ) > 0 );
@@ -129,6 +142,8 @@ abstract class MAbstractViewController extends MAbstractController
     /**
      * If template is setted (the path of the html of controller) and if controller is visible,
      * it renders the template.
+     * 
+     * @return MAbstractViewController
      */
     public function render()
     {
@@ -145,11 +160,20 @@ abstract class MAbstractViewController extends MAbstractController
                 $this->output = ob_get_clean();
             }
         }
+        
+        return $this;
     }
 
+    /**
+     * Print to screen the html of the controller rendered.
+     * 
+     * @return MAbstractViewController
+     */
     public function show()
     {
         echo $this->output;
+        
+        return $this;
     }
 
     /**

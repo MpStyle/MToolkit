@@ -22,7 +22,7 @@ namespace MToolkit\Controller;
 
 require_once dirname(__FILE__).'/../Core/MString.php';
 
-use \MToolkit\Core\Mstring;
+use MToolkit\Core\MString;
 
 abstract class MAbstractPageController extends MAbstractViewController
 {

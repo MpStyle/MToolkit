@@ -31,7 +31,7 @@ use \MToolkit\Core\MListIterator;
 abstract class MAbstractController extends MObject
 {
     /**
-     * @var MList<MAbstractController>
+     * @var MList List of <i>MAbstractController</i>
      */
     private $controllers = null;
 
@@ -48,16 +48,34 @@ abstract class MAbstractController extends MObject
         $this->controllers = new MList();
     }   
 
+    /**
+     * Add child <i>$controller</i> to this controller.
+     * The parent of <i>$controller</i> is <i>$this</i>.
+     * 
+     * @param \MToolkit\Controller\MAbstractController $controller
+     */
     public function addController( MAbstractController $controller )
     {
+        $controller->setParent($this);
         $this->controllers->append( $controller );
     }
 
+    /**
+     * Remove the child controller at position </i>$pos</i> if this controller.
+     * The parent of <i>$controller</i> is <i>null</i>.
+     * 
+     * @param type $pos
+     */
     public function removeController( $pos )
     {
+        $this->controllers->at($pos)->setParent( null );
         $this->controllers->removeAt( $pos );
     }
 
+    /**
+     * Return the iterator of the children controllers.
+     * @return \MToolkit\Core\MListIterator
+     */
     public function getControllerIterator()
     {
         $iterator = new MListIterator( $this->controllers );
@@ -66,6 +84,8 @@ abstract class MAbstractController extends MObject
 
     /**
      * This method pre-renderize its children controllers.
+     * 
+     * @return MAbstractController
      */
     public function preRender()
     {
@@ -75,8 +95,14 @@ abstract class MAbstractController extends MObject
         {
             $controller->preRender();
         }
+        
+        return $this;
     }
 
+    /**
+     * Render this controller.
+     * The body of this method is empty in MAbstractController class.
+     */
     public function render()
     {
         
@@ -84,6 +110,8 @@ abstract class MAbstractController extends MObject
 
     /**
      * This method post-renderize its children controllers.
+     * 
+     * @return MAbstractController
      */
     public function postRender()
     {
@@ -93,6 +121,8 @@ abstract class MAbstractController extends MObject
         {
             $controller->postRender();
         }
+        
+        return $this;
     }
     
     /**
