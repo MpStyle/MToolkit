@@ -95,6 +95,11 @@ abstract class MAbstractController extends MObject
         }
     }
     
+    /**
+     * Print to screen the controller rendered in method <i>render()</i>
+     */
+    public abstract function show();
+    
     public abstract static function run();
 
 }
