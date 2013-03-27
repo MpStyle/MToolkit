@@ -3,6 +3,8 @@
 namespace MToolkit\Core;
 
 require_once dirname( __FILE__ ) . '/MSession.php';
+require_once dirname( __FILE__ ) . '/MGet.php';
+require_once dirname( __FILE__ ) . '/MPost.php';
 
 if (session_id() == '')
 {
@@ -35,6 +37,16 @@ class MObject
     const DEBUG = "MToolkit\Core\MObject\Debug";
 
     /**
+     * @var MPost
+     */
+    private $post;
+    
+    /**
+     * @var MGet
+     */
+    private $get;
+    
+    /**
      * @var MObject 
      */
     private $parent = null;
@@ -42,6 +54,9 @@ class MObject
     public function __construct( MObject $parent = null )
     {
         $this->parent = $parent;
+        
+        $this->post=new MPost();
+        $this->get=new MGet();
     }
 
     /**
@@ -221,6 +236,11 @@ class MObject
         return $this;
     }
 
+    /**
+     * @deprecated 
+     * @param string $key
+     * @return string|null
+     */
     public function post( $key )
     {
         if (isset( $_POST[$key] ) === false)
@@ -231,6 +251,11 @@ class MObject
         return $_POST[$key];
     }
 
+    /**
+     * @deprecated 
+     * @param string $key
+     * @return string|null
+     */
     public function get( $key )
     {
         if (isset( $_GET[$key] ) === false)
@@ -239,6 +264,26 @@ class MObject
         }
 
         return $_GET[$key];
+    }
+
+    /**
+     * Return a MMap with the data in <i>$_POST</i>
+     * 
+     * @return MPost
+     */
+    public function getPost()
+    {
+        return $this->post;
+    }
+
+    /**
+     * Return a MMap with the data in <i>$_GET</i>
+     * 
+     * @return MGet
+     */
+    public function getGet()
+    {
+        return $this->get;
     }
 
 }
