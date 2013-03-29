@@ -59,7 +59,7 @@ abstract class MAbstractViewController extends MAbstractController
 
     public function init()
     {
-        $this->emitPostSignals();
+        
     }
 
     /**
@@ -130,7 +130,7 @@ abstract class MAbstractViewController extends MAbstractController
         $this->isVisible = $isVisible;
         return $this;
     }
-
+    
     /**
      * @return bool
      */
@@ -145,35 +145,50 @@ abstract class MAbstractViewController extends MAbstractController
      * 
      * @return MAbstractViewController
      */
-    public function render()
+    protected function render()
     {
         if ($this->template != null)
         {
             $this->output = "";
             
-            if ($this->isVisible == false)
-            {
+            if ($this->isVisible !== false)
+            {   
+                
                 ob_start();
-
+                
+//                echo "b ".$this->template."<br />";
+                
                 include $this->template;
 
+//                echo "c ".$this->template."<br />";
+                
                 $this->output = ob_get_clean();
+//                ob_clean();
+                
             }
         }
-        
-        return $this;
     }
 
     /**
-     * Print to screen the html of the controller rendered.
+     * The method calls the render methods (<i>preRender</i>,
+     * <i>render</i> and <i>postRender</i>) and it prints to screen 
+     * the html of the controller rendered if it is visible.
      * 
      * @return MAbstractViewController
      */
     public function show()
     {
-        echo $this->output;
+        if( $this->isVisible===false )
+        {
+            return;
+        }
         
-        return $this;
+        
+        $this->preRender();
+        $this->render();
+        $this->postRender();
+        
+        echo $this->output;
     }
 
     /**
@@ -208,9 +223,6 @@ abstract class MAbstractViewController extends MAbstractController
         }
 
         $controller->init();
-        $controller->preRender();
-        $controller->render();
-        $controller->postRender();
         $controller->show();
 
         // Clean the $_SESSION from signals.

@@ -6,11 +6,6 @@ require_once dirname( __FILE__ ) . '/MSession.php';
 require_once dirname( __FILE__ ) . '/MGet.php';
 require_once dirname( __FILE__ ) . '/MPost.php';
 
-if (session_id() == '')
-{
-    session_start();
-}
-
 /*
  * This file is part of MToolkit.
  *

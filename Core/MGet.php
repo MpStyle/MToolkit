@@ -1,6 +1,4 @@
 <?php
-require_once dirname(__FILE__).'/MMap.php';
-
 namespace MToolkit\Core;
 
 /*
@@ -21,6 +19,8 @@ namespace MToolkit\Core;
  * 
  * @author  Michele Pagnin
  */
+
+require_once dirname(__FILE__).'/MMap.php';
 
 use MToolkit\Core\MMap;
 

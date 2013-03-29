@@ -27,8 +27,6 @@ require_once dirname( __FILE__ ) . '/MList.php';
 use \MToolkit\Core\MList;
 use \MToolkit\Core\Exception\MWrongTypeException;
 
-use MToolkit\Core\MList;
-
 class MMap
 {
 

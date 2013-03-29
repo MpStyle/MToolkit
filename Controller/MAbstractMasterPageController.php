@@ -21,9 +21,11 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__).'/MAbstractPageController.php';
+require_once dirname(__FILE__).'/MAbstractViewController.php';
+require_once dirname(__FILE__).'/MAbstractController.php';
 
-use \MToolkit\Controller\MAbstractPageController;
+use MToolkit\Controller\MAbstractViewController;
+use MToolkit\Controller\MAbstractController;
 
 abstract class MAbstractMasterPageController extends MAbstractPageController
 {
@@ -31,7 +33,7 @@ abstract class MAbstractMasterPageController extends MAbstractPageController
      * @param string $template
      * @param MAbstractViewController $parent
      */
-    public function __construct( $template = null, MAbstractPageController $parent=null )
+    public function __construct( $template = null, MAbstractController $parent=null )
     {
         parent::__construct( $template, $parent );
         
@@ -39,16 +41,5 @@ abstract class MAbstractMasterPageController extends MAbstractPageController
         {
             trigger_error('The parent of MasterPage is not set. You must set it for a correct execution of the render process.', E_USER_WARNING);
         }
-    }
-    
-    public function pageRender()
-    {
-        $masterPage=parent::getParent()->getMasterPage();
-        
-        parent::getParent()->setMasterPage(null);
-        
-        parent::getParent()->render();
-        
-        parent::getParent()->setMasterPage($masterPage);
     }
 }
