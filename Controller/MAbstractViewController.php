@@ -44,7 +44,7 @@ abstract class MAbstractViewController extends MAbstractController
      * 
      * @var string|null 
      */
-    private $output = null;
+    private $output = "";
 
     /**
      * @param string $template The path of the file containing the html of the controller.
@@ -147,24 +147,21 @@ abstract class MAbstractViewController extends MAbstractController
      */
     protected function render()
     {
-        if ($this->template != null)
+        // It's better if the path of the template file is assigned.
+        if ($this->template == null)
         {
-            $this->output = "";
-            
+            trigger_error( "The path of the template file is null in " . get_class( $this ) . ' class.' . PHP_EOL, E_NOTICE );
+        }
+        
+        if ($this->template != null)
+        {   
             if ($this->isVisible !== false)
             {   
-                
                 ob_start();
-                
-//                echo "b ".$this->template."<br />";
                 
                 include $this->template;
 
-//                echo "c ".$this->template."<br />";
-                
-                $this->output = ob_get_clean();
-//                ob_clean();
-                
+                $this->output .= ob_get_clean();
             }
         }
     }
@@ -183,12 +180,15 @@ abstract class MAbstractViewController extends MAbstractController
             return;
         }
         
+//        echo get_class( $this ) . "<br />";
         
         $this->preRender();
         $this->render();
         $this->postRender();
         
         echo $this->output;
+        
+        $this->output="";
     }
 
     /**
@@ -214,12 +214,6 @@ abstract class MAbstractViewController extends MAbstractController
             $message = sprintf( "Invalid object, it must be an instance of MAbstractController, %s is passed.", get_class( $controller ) );
 
             throw new \Exception( $message );
-        }
-
-        // It's better if the path of the template file is assigned.
-        if ($controller->getTemplate() == null)
-        {
-            trigger_error( "The path of the template file is null in " . get_class( $controller ), E_USER_ERROR );
         }
 
         $controller->init();
