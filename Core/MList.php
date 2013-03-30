@@ -450,6 +450,17 @@ class MList
         return $value;
     }
 
+    /**
+     * @param array $array
+     */
+    public function fromArray( $array )
+    {
+        for( $i=0; $i<count( $array ); $i++ )
+        {
+            $this->append( $array[$i] );
+        }
+    }
+    
     //bool	operator!= ( const QList<T> & other ) const
     //QList<T>	operator+ ( const QList<T> & other ) const
     //QList<T> &	operator+= ( const QList<T> & other )
