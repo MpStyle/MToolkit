@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Controller;
 
 /*
@@ -20,9 +21,11 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__).'/MAbstractController.php';
+require_once dirname(__FILE__) . '/MAbstractController.php';
+require_once dirname(__FILE__) . '/../Model/MAbstractDataModel.php';
 
 use \MToolkit\Controller\MAbstractViewController;
+use MToolkit\Model\MAbstractDataModel;
 
 /**
  * The class <i>MRepeaterViewController</i> make possible to
@@ -96,90 +99,122 @@ use \MToolkit\Controller\MAbstractViewController;
  */
 class MRepeaterViewController extends MAbstractViewController
 {
-    /**
-     * The array where are stored the elements.
-     * @var objects[]
-     */
-    private $objects=array();
-    
-    /**
-     * Stored the current position during the iteration.
-     * 
-     * @var int
-     */
     private $currentPosition=-1;
-    
+    private $headerTemplate = null;
+    private $itemTemplate = null;
+    private $footerTemplate = null;
+
     /**
-     * Stored the current element during the iteration.
-     * 
-     * @var object
+     * @var MAbstractDataModel
      */
-    private $currentObject=null;
-    
+    private $model=null;
+
     /**
-     * @param string $view The path of the file containing the HTML.
-     * @param object[] $object Elements to render in the repeater.
-     * @param MAbstractViewController $parent
+     * @param \MToolkit\Model\MAbstractDataModel|null $model
+     * @param \MToolkit\Controller\MAbstractViewController $parent
      */
-    public function __construct( $view, $objects, MAbstractViewController $parent=null )
+    public function __construct($model, MAbstractViewController $parent = null)
     {
-        parent::__construct( $view, $parent );
-        
-        $this->objects=$objects;
+        parent::__construct($parent);
+        $this->model = $model;
     }
-    
-    /**
-     * Render the view.
-     */
+
     public function render()
     {
-        foreach( $this->objects as $pos => $object )
+        $this->renderHeaderTemplate();
+        
+        for ($i = 0; $i < $this->model->rowCount(); $i++)
         {
-            $this->currentPosition=$pos;
-            $this->currentObject=$object;
-            
-            $this->renderView();
+            $this->currentPosition=$i;
+            $this->renderItemTemplate();
         }
+
+        $this->renderFooterTemplate();
     }
-    
-    public function renderView()
+
+    public function renderHeaderTemplate()
     {
+        if ($this->headerTemplate == null)
+        {
+            return;
+        }
+
+        $this->setTemplate($this->headerTemplate);
         parent::render();
     }
-    
-    public function getItem( $pos )
+
+    public function renderItemTemplate()
     {
-        return $this->objects[$pos];
+        if ($this->itemTemplate == null)
+        {
+            return;
+        }
+
+        $this->setTemplate($this->itemTemplate);
+        parent::render();
+    }
+
+    public function renderFooterTemplate()
+    {
+        if ($this->footerTemplate == null)
+        {
+            return;
+        }
+
+        $this->setTemplate($this->footerTemplate);
+        parent::render();
+    }
+
+    public function getHeaderTemplate()
+    {
+        return $this->headerTemplate;
+    }
+
+    public function setHeaderTemplate($headerTemplate)
+    {
+        $this->headerTemplate = $headerTemplate;
+        return $this;
+    }
+
+    public function getItemTemplate()
+    {
+        return $this->itemTemplate;
+    }
+
+    public function setItemTemplate($itemTemplate)
+    {
+        $this->itemTemplate = $itemTemplate;
+        return $this;
+    }
+
+    public function getFooterTemplate()
+    {
+        return $this->footerTemplate;
+    }
+
+    public function setFooterTemplate($footerTemplate)
+    {
+        $this->footerTemplate = $footerTemplate;
+        return $this;
+    }
+
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    public function setModel(MAbstractDataModel $model)
+    {
+        $this->model = $model;
+        return $this;
     }
     
-    public function getView()
-    {
-        return parent::getTemplate();
-    }
-    
-    public function setView( $view )
-    {
-        parent::setTemplate($view);
-    }
-    
-    /**
-     * Return current position.
-     * 
-     * @return int
-     */
     public function getCurrentPosition()
     {
         return $this->currentPosition;
     }
 
-    /**
-     * Return current element.
-     * 
-     * @return object
-     */
-    public function getCurrentObject()
-    {
-        return $this->currentObject;
-    }
+
+
 }
 
