@@ -25,6 +25,9 @@ require_once dirname( __FILE__ ) . '/MPost.php';
  * @author  Michele Pagnin
  */
 
+use MToolkit\Core\MGet;
+use MToolkit\Core\MPost;
+
 class MObject
 {
     const ROOT_PATH = "MToolkit\Core\MObject\RootPath";
