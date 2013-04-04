@@ -140,7 +140,7 @@ class MString
                 $text = strtolower($this->text);
                 break;
             default:
-                throw new MWrongTypeException("\$cs", "CaseSensitivity", gettype($cs));
+                throw new MWrongTypeException("\$cs", "CaseSensitivity", $cs);
                 break;
         }
 
@@ -169,7 +169,7 @@ class MString
                 $text = strtolower($this->text);
                 break;
             default:
-                throw new MWrongTypeException("\$cs", "CaseSensitivity", gettype($cs));
+                throw new MWrongTypeException("\$cs", "CaseSensitivity", $cs);
                 break;
         }
 

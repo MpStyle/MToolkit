@@ -21,37 +21,40 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once dirname( __FILE__ ) . '/Exception/MWrongTypeException.php';
+require_once dirname( __FILE__ ) . '/MAbstractTemplate.php';
 require_once dirname( __FILE__ ) . '/MList.php';
 
 use \MToolkit\Core\MList;
 use \MToolkit\Core\Exception\MWrongTypeException;
+use \MToolkit\Core\MAbstractTemplate;
 
-class MMap
+class MMap extends MAbstractTemplate implements \ArrayAccess
 {
-
     /**
      * @var array
      */
-    private $map = array( );
+    private $map = array();
 
-    public function __construct( array $other = array( ) )
+    public function __construct( array $other = array() )
     {
-        $this->map = array_merge( $this->map, $other );
+        if( count($other)>0 )
+        {
+            $this->map = array_merge( $this->map, $other );
+        }
     }
 
     //QMap ( const QMap<Key, T> & other )
 
     public function clear()
     {
-        $this->map = array( );
+        $this->map = array();
     }
 
     public function contains( $key )
     {
-        if( is_string( $key ) === false )
+        if (is_string( $key ) === false)
         {
-            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$key", "string", $key );
         }
 
         $founded = array_key_exists( $key, $this->map );
@@ -73,9 +76,9 @@ class MMap
 
     public function erase( $pos )
     {
-        if( is_int( $pos ) === false )
+        if (is_int( $pos ) === false)
         {
-            throw new MWrongTypeException( "\$pos", "int", gettype( $pos ) );
+            throw new MWrongTypeException( "\$pos", "int", $pos );
         }
 
         $keys = array_keys( $this->map );
@@ -85,14 +88,14 @@ class MMap
 
     public function find( $key )
     {
-        if( is_string( $key ) === false )
+        if (is_string( $key ) === false)
         {
-            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$key", "string", $key );
         }
 
         $founded = array_key_exists( $key, $this->map );
 
-        if( $founded === false )
+        if ($founded === false)
         {
             return null;
         }
@@ -102,9 +105,14 @@ class MMap
 
     public function insert( $key, $value )
     {
-        if( is_string( $key ) === false )
+        if ($this->isValidType( $value ) === false)
         {
-            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
+        }
+
+        if (is_string( $key ) === false)
+        {
+            throw new MWrongTypeException( "\$key", "string", $key );
         }
 
         $this->map[$key] = $value;
@@ -114,14 +122,19 @@ class MMap
 
     public function getKey( $value, $defaultKey = null )
     {
-        if( is_string( $defaultKey ) === false )
+        if ($this->isValidType( $value ) === false)
         {
-            throw new MWrongTypeException( "\$defaultKey", "string", gettype( $defaultKey ) );
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
+        }
+
+        if (is_string( $defaultKey ) === false)
+        {
+            throw new MWrongTypeException( "\$defaultKey", "string", $defaultKey );
         }
 
         $key = array_search( $value, $this->map );
 
-        if( $key === false && is_null( $defaultKey ) === false )
+        if ($key === false && is_null( $defaultKey ) === false)
         {
             $key = $defaultKey;
         }
@@ -148,9 +161,9 @@ class MMap
 
     public function remove( $key )
     {
-        if( is_string( $key ) === false )
+        if (is_string( $key ) === false)
         {
-            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$key", "string", $key );
         }
 
         unset( $this->map[$key] );
@@ -166,9 +179,9 @@ class MMap
 
     public function take( $key )
     {
-        if( is_string( $key ) === false )
+        if (is_string( $key ) === false)
         {
-            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$key", "string", $key );
         }
 
         $key = $this->value( $key );
@@ -189,9 +202,14 @@ class MMap
 
     public function getValue( /* string */ $key, /* mixed */ $defaultValue = null )
     {
-        if( is_string( $key ) === false )
+        if ($this->isValidType( $defaultValue ) === false)
         {
-            throw new MWrongTypeException( "\$key", "string", gettype( $key ) );
+            throw new MWrongTypeException( "\$value", $this->getType(), $defaultValue );
+        }
+
+        if (is_string( $key ) === false)
+        {
+            throw new MWrongTypeException( "\$key", "string", $key );
         }
 
         //var_dump( $this->map );
@@ -199,7 +217,7 @@ class MMap
 
         $value = $this->map[$key];
 
-        if( is_null( $value ) === true )
+        if (is_null( $value ) === true)
         {
             $value = $defaultValue;
         }
@@ -219,12 +237,61 @@ class MMap
         return $this->map;
     }
 
+    /**
+     * Return if a key exists.
+     * 
+     * @param int|string $offset
+     * @return bool
+     */
+    public function offsetExists( $offset )
+    {
+        return (array_key_exists( $offset, $this->map ) === true);
+    }
+
+    /**
+     * @param int|string $offset
+     * @return mixed
+     */
+    public function offsetGet( $offset )
+    {
+        if ($this->offsetExists( $offset ))
+        {
+            return $this->map[$offset];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param int|string|null $offset
+     * @param mixed $value
+     */
+    public function offsetSet( $offset, $value )
+    {
+        if ($offset == null)
+        {
+            $this->map[] = $value;
+        }
+        else
+        {
+            $this->map[$offset] = $value;
+        }
+    }
+
+    /**
+     * @param int|string $offset
+     */
+    public function offsetUnset( $offset )
+    {
+        if ($this->offsetExists( $offset ))
+        {
+            unset( $this->map[$offset] );
+        }
+    }
+
     //public function values ( $key )
     //bool	operator!= ( const QMap<Key, T> & other ) const
     //QMap<Key, T> &	operator= ( const QMap<Key, T> & other )
     //bool	operator== ( const QMap<Key, T> & other ) const
-    //T &	operator[] ( const Key & key )
-    //const T	operator[] ( const Key & key ) const
-
 }
 

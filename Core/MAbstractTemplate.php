@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Core;
 
 /*
@@ -20,53 +21,46 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-class MMapIterator implements \Iterator
+abstract class MAbstractTemplate 
 {
+    /**
+     * @var string
+     */
+    private $type = null;
 
     /**
-     * @var MMap
+     * @param string $type
+     * @param \MToolkit\Core\MObject $parent
      */
-    private $map;
-
-    /**
-     * @var integer
-     */
-    private $pos = 0;
-
-    public function __construct( MMap $map )
+    public function __construct( $type=null, MObject $parent = null )
     {
-        $this->map = $map;
+        parent::__construct( $parent );
+        $this->type=$type;
     }
 
-    public function current()
+    public function isValidType( $object )
     {
-        $keys = $this->map->getKeys();
+        if ( $this->type==null || $object==null )
+        {
+            return true;
+        }
 
-        return $this->map->value( $keys->at( $this->pos ), null );
+        if ( is_object($object) && get_class( $object ) == $this->type )
+        {
+            return true;
+        }
+        
+        return false;
     }
 
-    public function key()
+    public function getType()
     {
-        $keys = $this->map->getKeys();
-
-        return $keys->at( $this->pos );
+        return $this->type;
     }
 
-    public function next()
+    public function setType( $type )
     {
-        $this->pos++;
+        $this->type = $type;
+        return $this;
     }
-
-    public function rewind()
-    {
-        $this->pos = 0;
-    }
-
-    public function valid()
-    {
-        $keys = $this->map->getKeys();
-
-        return ( $this->pos >= 0 && $this->pos < $keys->count() );
-    }
-
 }

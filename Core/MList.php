@@ -21,11 +21,17 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
+require_once dirname(__FILE__).'/MAbstractTemplate.php';
+require_once dirname(__FILE__).'/Exception/MWrongTypeException.php';
+
 use \MToolkit\Core\Exception\MWrongTypeException;
+use \MToolkit\Core\MAbstractTemplate;
 
-class MList
+class MList extends MAbstractTemplate implements \ArrayAccess
 {
-
+    /**
+     * @var array
+     */
     private $list = array( );
 
     public function __construct( MList $list = null )
@@ -40,6 +46,11 @@ class MList
 
     public function append( $value )
     {
+        if( $this->isValidType( $value)===false )
+        {
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
+        }
+            
         $this->list[] = $value;
     }
 
@@ -60,7 +71,7 @@ class MList
     {
         if( is_int( $i ) === false )
         {
-            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
+            throw new MWrongTypeException( "\$i", "int", $i );
         }
 
         if( $i >= $this->count() )
@@ -162,9 +173,14 @@ class MList
     //const T &	front () const
     public function /* int */ indexOf( $value, $from = 0 )
     {
+        if( $this->isValidType( $value)===false )
+        {
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
+        }
+        
         if( is_int( $from ) === false )
         {
-            throw new MWrongTypeException( "\$from", "int", gettype( $from ) );
+            throw new MWrongTypeException( "\$from", "int", $from );
         }
 
         $to = $this->count() - 1;
@@ -185,9 +201,14 @@ class MList
 
     public function insert( $i, $value )
     {
+        if( $this->isValidType( $value)===false )
+        {
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
+        }
+        
         if( is_int( $i ) === false )
         {
-            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
+            throw new MWrongTypeException( "\$i", "int", $i );
         }
 
         array_splice( $this->list, $i, 0, $value );
@@ -204,9 +225,14 @@ class MList
 
     public function /* int */ lastIndexOf( $value, $from = -1 )
     {
+        if( $this->isValidType( $value)===false )
+        {
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
+        }
+        
         if( is_int( $from ) === false )
         {
-            throw new MWrongTypeException( "\$from", "int", gettype( $from ) );
+            throw new MWrongTypeException( "\$from", "int", $from );
         }
 
         $position = -1;
@@ -239,12 +265,12 @@ class MList
     {
         if( is_int( $from ) === false )
         {
-            throw new MWrongTypeException( "\$from", "int", gettype( $from ) );
+            throw new MWrongTypeException( "\$from", "int", $from );
         }
 
         if( is_int( $to ) === false )
         {
-            throw new MWrongTypeException( "\$to", "int", gettype( $to ) );
+            throw new MWrongTypeException( "\$to", "int", $to );
         }
 
         $value = $this->list[$from];
@@ -284,16 +310,31 @@ class MList
 
     public function /* void */ prepend( $value )
     {
+        if( $this->isValidType( $value)===false )
+        {
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
+        }
+        
         array_unshift( $this->list, $value );
     }
 
     public function /* void */ push_back( $value )
     {
+        if( $this->isValidType( $value)===false )
+        {
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
+        }
+        
         $this->list[] = $value;
     }
 
     public function /* void */ push_front( $value )
     {
+        if( $this->isValidType( $value)===false )
+        {
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
+        }
+        
         $this->prepend( $value );
     }
 
@@ -303,7 +344,7 @@ class MList
     {
         if( is_int( $i ) === false )
         {
-            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
+            throw new MWrongTypeException( "\$i", "int", $i );
         }
 
         if( count( $this->list ) >= $i )
@@ -336,6 +377,11 @@ class MList
 
     public function /* bool */ removeOne( $value )
     {
+        if( $this->isValidType( $value)===false )
+        {
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
+        }
+        
         $result = array_search( $value, $this->list );
 
         if( $result === false )
@@ -350,9 +396,14 @@ class MList
 
     public function replace( $i, $value )
     {
+        if( $this->isValidType( $value)===false )
+        {
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
+        }
+        
         if( is_int( $i ) === false )
         {
-            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
+            throw new MWrongTypeException( "\$i", "int", $i );
         }
 
         $this->list[$i] = $value;
@@ -367,6 +418,11 @@ class MList
 
     public function startsWith( $value )
     {
+        if( $this->isValidType( $value)===false )
+        {
+            throw new MWrongTypeException( "\$value", $this->getType(), $value);
+        }
+        
         if( $this->count() <= 0 )
         {
             return false;
@@ -384,7 +440,7 @@ class MList
     {
         if( is_int( $i ) === false )
         {
-            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
+            throw new MWrongTypeException( "\$i", "int", $i );
         }
 
         $value = $this->list[$i];
@@ -430,7 +486,7 @@ class MList
     {
         if( is_int( $i ) === false )
         {
-            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
+            throw new MWrongTypeException( "\$i", "int", $i );
         }
 
         if( $i >= $this->count() )
@@ -460,6 +516,63 @@ class MList
             $this->append( $array[$i] );
         }
     }
+
+    /**
+     * Return if a key exists.
+     * 
+     * @param int|string $offset
+     * @return bool
+     */
+    public function offsetExists( $offset )
+    {
+        return (array_key_exists($offset, $this->list)===true);
+    }
+
+    /**
+     * @param int|string $offset
+     * @return mixed
+     */
+    public function offsetGet( $offset )
+    {
+        if( $this->offsetExists($offset) )
+        {
+            return $this->list[$offset];
+        }
+        
+        return null;
+    }
+
+    /**
+     * @param int|string|null $offset
+     * @param mixed $value
+     */
+    public function offsetSet( $offset, $value )
+    {
+        if( $this->isValidType( $value)===false )
+        {
+            throw new MWrongTypeException( "\$value", $this->getType(), $value);
+        }
+        
+        if( $offset==null )
+        {
+            $this->list[]=$value;
+        }
+        else
+        {
+            $this->list[$offset]=$value;
+        }
+    }
+
+    /**
+     * @param int|string $offset
+     */
+    public function offsetUnset( $offset )
+    {
+        if( $this->offsetExists( $offset ) )
+        {
+            unset( $this->list[$offset] );
+        }
+    }
     
     //bool	operator!= ( const QList<T> & other ) const
     //QList<T>	operator+ ( const QList<T> & other ) const
@@ -469,8 +582,6 @@ class MList
     //QList<T> &	operator<< ( const T & value )
     //QList<T> &	operator= ( const QList<T> & other )
     //bool	operator== ( const QList<T> & other ) const
-    //T &	operator[] ( int i )
-    //const T &	operator[] ( int i ) const
 
 }
 
