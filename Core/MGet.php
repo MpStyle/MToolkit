@@ -26,7 +26,7 @@ use MToolkit\Core\MMap;
 
 class MGet extends MMap
 {
-    public function __construct( array $other = array() )
+    public function __construct(  )
     {
         parent::__construct( $_GET );
     }

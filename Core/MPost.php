@@ -26,7 +26,7 @@ use MToolkit\Core\MMap;
 
 class MPost extends MMap
 {
-    public function __construct( array $other = array() )
+    public function __construct( )
     {
         parent::__construct( $_POST );
     }
