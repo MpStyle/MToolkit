@@ -35,15 +35,25 @@ class MObject
     const DEBUG = "MToolkit\Core\MObject\Debug";
 
     /**
+     * @var array
+     */
+    private $properties = array();
+
+    /**
+     * @var bool
+     */
+    private $signalsBlocked = false;
+
+    /**
      * @var MPost
      */
     private $post;
-    
+
     /**
      * @var MGet
      */
     private $get;
-    
+
     /**
      * @var MObject 
      */
@@ -52,9 +62,27 @@ class MObject
     public function __construct( MObject $parent = null )
     {
         $this->parent = $parent;
-        
-        $this->post=new MPost();
-        $this->get=new MGet();
+
+        $this->post = new MPost();
+        $this->get = new MGet();
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSignalsBlocked()
+    {
+        return $this->signalsBlocked;
+    }
+
+    /**
+     * @param bool $signalsBlocked
+     * @return \MToolkit\Core\MObject
+     */
+    public function setSignalsBlocked( $signalsBlocked )
+    {
+        $this->signalsBlocked = $signalsBlocked;
+        return $this;
     }
 
     /**
@@ -172,6 +200,11 @@ class MObject
      */
     public function emit( $signal, $args = null )
     {
+        if ($this->signalsBlocked)
+        {
+            return;
+        }
+
         // Retrieve the signals
         $signals = $this->getSignals();
 
@@ -218,11 +251,17 @@ class MObject
         MSession::set( MObject::SIGNALS, $signals );
     }
 
+    /**
+     * Remove all signals
+     */
     public function disconnectSignals()
     {
         MSession::delete( MObject::SIGNALS );
     }
 
+    /**
+     * @return MObject
+     */
     public function getParent()
     {
         return $this->parent;
@@ -284,6 +323,48 @@ class MObject
         return $this->get;
     }
 
+    /**
+     * Returns the value of the object's <i>$name</i> property.
+     * 
+     * @param string $name
+     * @return mixed
+     */
+    public function __get( $name )
+    {
+        return $this->getProperty($name);
+    }
+
+    /**
+     * Sets the value of the object's <i>$name</i> property to <i>$value</i>.
+     * 
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set( $name, $value )
+    {
+        $this->setProperty($name, $value);
+    }
+
+    /**
+     * Returns the value of the object's <i>$name</i> property.
+     * @param string $name
+     * @return mixed
+     */
+    public function getProperty( $name )
+    {
+        return $this->properties[$name];
+    }
+
+    /**
+     * Sets the value of the object's <i>$name</i> property to <i>$value</i>.
+     * 
+     * @param string $name
+     * @param mixed $value
+     */
+    public function setProperty( $name, $value )
+    {
+        $this->properties[$name] = $value;
+    }
 }
 
 /**
