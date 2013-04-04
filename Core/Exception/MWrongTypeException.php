@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Core\Exception;
 
 /*
@@ -22,8 +23,17 @@ namespace MToolkit\Core\Exception;
 
 class MWrongTypeException extends \InvalidArgumentException
 {
-    public function __construct( $varName, $typeRequired, $typeGiven, $code=0, $previous=null )
+
+    public function __construct( $varName, $typeRequired, $given, $code = 0, $previous = null )
     {
-        parent::__construct("Wrong type exception for $varName: $typeRequired required, " . $typeGiven . " given.", $code, $previous);
+        $typeGiven = gettype( $given );
+
+        if ($typeGiven == 'object')
+        {
+            $typeGiven = get_class( $given );
+        }
+
+        parent::__construct( "Wrong type exception for $varName: $typeRequired required, " . $typeGiven . " given.", $code, $previous );
     }
+
 }
