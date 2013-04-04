@@ -22,7 +22,6 @@ namespace MToolkit\Controller;
  */
 
 require_once dirname( __FILE__ ) . '/../Core/MString.php';
-//require_once dirname( __FILE__ ) . '/MAbstractMasterPageController.php';
 require_once dirname( __FILE__ ) . '/../View/phpQuery.php';
 
 use MToolkit\Core\MString;

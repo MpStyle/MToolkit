@@ -142,8 +142,6 @@ abstract class MAbstractViewController extends MAbstractController
     /**
      * If template is setted (the path of the html of controller) and if controller is visible,
      * it renders the template.
-     * 
-     * @return MAbstractViewController
      */
     protected function render()
     {
@@ -170,8 +168,6 @@ abstract class MAbstractViewController extends MAbstractController
      * The method calls the render methods (<i>preRender</i>,
      * <i>render</i> and <i>postRender</i>) and it prints to screen 
      * the html of the controller rendered if it is visible.
-     * 
-     * @return MAbstractViewController
      */
     public function show()
     {

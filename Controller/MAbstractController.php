@@ -40,8 +40,6 @@ abstract class MAbstractController extends MObject
 
     /**
      * This method pre-renderize its children controllers.
-     * 
-     * @return MAbstractController
      */
     protected function preRender()
     {
@@ -54,8 +52,6 @@ abstract class MAbstractController extends MObject
 
     /**
      * This method post-renderize its children controllers.
-     * 
-     * @return MAbstractController
      */
     protected function postRender()
     {
