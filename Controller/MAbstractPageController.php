@@ -134,6 +134,7 @@ abstract class MAbstractPageController extends MAbstractViewController
 
         // renders the master page
         ob_start();
+        $this->masterPage->init();
         $this->masterPage->show();
         $masterPageRendered = ob_get_clean();
         /* @var $masterPageDoc phpQuery */ $masterPageDoc = phpQuery::newDocumentHTML( $masterPageRendered );
