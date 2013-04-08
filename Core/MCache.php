@@ -27,8 +27,9 @@ class MCache
     /**
      * @var string 
      */
-    private static $CACHE_FILE_PREFIX = "cache_";
-    private static $DELIMITER = "$$$$";
+    const CACHE_FILE_PREFIX = "cache_";
+    const DELIMITER = "$$$$";
+    const FILE_EXTENSION = "mcache";
 
     /**
      * @var string
@@ -79,7 +80,7 @@ class MCache
      */
     public function flush()
     {
-        $files = glob( $this->path . MCache::$CACHE_FILE_PREFIX . '*' ); // get all file names
+        $files = glob( $this->path . MCache::CACHE_FILE_PREFIX . '*' ); // get all file names
         foreach( $files as $file )
         {
             if( is_file( $file ) )
@@ -95,20 +96,20 @@ class MCache
      */
     public function get( $key )
     {
-        if( file_exists( MCache::generateFileName( $key ) ) === false )
+        if( file_exists( $this->generateFileName( $key ) ) === false )
         {
             return null;
         }
 
         $fileContent = file_get_contents( $this->generateFileName( $key ) );
 
-        $separatorPosition = strrpos( $fileContent, MCache::$DELIMITER );
+        $separatorPosition = strrpos( $fileContent, MCache::DELIMITER );
         $expired = substr( $fileContent, 0, $separatorPosition );
-        $cache = substr( $fileContent, $separatorPosition + strlen( MCache::$DELIMITER ) );
-
+        $cache = substr( $fileContent, $separatorPosition + strlen( MCache::DELIMITER ) );
+        
         if( $expired > microtime( true ) )
         {
-            return $cache;
+            return unserialize($cache);
         }
 
         return null;
@@ -116,12 +117,12 @@ class MCache
 
     /**
      * Store a <i>$value</i> in a cache file with <i>$key</i>.
-     * It is possible to pass a timestamp for the expiration.
+     * It is possible to pass a timestamp (microseconds) for the expiration.
      * 
-     * @param type $key
-     * @param type $value
-     * @param type $expired
-     * @return type
+     * @param string $key
+     * @param string $value
+     * @param float $expired
+     * @return bool
      */
     public function set( $key, $value, $expired = 0 )
     {
@@ -129,14 +130,14 @@ class MCache
         {
             $this->delete( $key );
         }
-
-        $success = file_put_contents( $this->generateFileName( $key ), $expired . MCache::$DELIMITER . $value );
+        
+        $success = file_put_contents( $this->generateFileName( $key ), $expired . MCache::DELIMITER . serialize($value) );
         return ($success != false);
     }
 
     private function generateFileName( $key )
     {
-        return $this->path . MCache::$CACHE_FILE_PREFIX . $key . '.txt';
+        return $this->path . MCache::CACHE_FILE_PREFIX . $key . '.' . MCache::FILE_EXTENSION;
     }
 
 }
