@@ -207,7 +207,7 @@ abstract class MAbstractViewController extends MAbstractController
 
         if (( $controller instanceof \MToolkit\Controller\MAbstractController ) === false)
         {
-            $message = sprintf( "Invalid object, it must be an instance of MAbstractController, %s is passed.", get_class( $controller ) );
+            $message = sprintf( "Invalid object for entry point in class %s, it must be an instance of MAbstractController, %s is passed.", get_class( $this ), get_class( $controller ) );
 
             throw new \Exception( $message );
         }

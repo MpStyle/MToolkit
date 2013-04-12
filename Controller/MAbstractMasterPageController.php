@@ -27,19 +27,32 @@ require_once __DIR__.'/MAbstractController.php';
 use MToolkit\Controller\MAbstractViewController;
 use MToolkit\Controller\MAbstractController;
 
+/**
+ * The classe MAbstractMasterPageController rappresents a base class for
+ * master page classes. <br />
+ * <br />
+ * A master page contains the parts of a web page repeated in more pages of the
+ * web site/web application. <br />
+ * <br />
+ * The notion of mster page for MToolkit is similar to ASP.Net.
+ * 
+ * @link http://msdn.microsoft.com/en-us/library/system.web.ui.masterpage.aspx ASP.Net notion for master page.
+ */
 abstract class MAbstractMasterPageController extends MAbstractPageController
 {
     /**
-     * @param string $template
-     * @param MAbstractViewController $parent
+     * Constructs an master page controller with the given <i>$template</i> and <i>$parent</i>.
+     * 
+     * @param string $template The path to the template of the master page. Must be set.
+     * @param MAbstractViewController $parent Must be set.
      */
-    public function __construct( $template = null, MAbstractController $parent=null )
+    public function __construct( $template, MAbstractController $parent )
     {
         parent::__construct( $template, $parent );
         
         if( $parent==null )
         {
-            trigger_error('The parent of MasterPage is not set. You must set it for a correct execution of the render process.', E_USER_WARNING);
+            trigger_error( sprintf( 'The parent of the master page is not set in %s. You must set it for a correct execution of the render process.', get_class( $this )), E_USER_WARNING);
         }
     }
 }

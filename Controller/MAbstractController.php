@@ -24,9 +24,15 @@ require_once __DIR__.'/../Core/MObject.php';
 
 use \MToolkit\Core\MObject;
 
+/**
+ * MAbstractController class provides a base methods
+ * for the controller classes. <br />
+ */
 abstract class MAbstractController extends MObject
 {
     /**
+     * Constructs an abstract controller with the given <i>$parent</i>.
+     * 
      * @param MObject $parent
      */
     public function __construct( MObject $parent=null )
@@ -34,34 +40,40 @@ abstract class MAbstractController extends MObject
         parent::__construct( $parent );
     }
     
+    /**
+     * This method initialize the controller.
+     */
     public function init()
     {
     }   
 
     /**
-     * This method pre-renderize its children controllers.
+     * This method pre-renderize the controller.
      */
     protected function preRender()
     {
     }
 
     /**
-     * Render this controller.
+     * Render the controller.
      */
     protected abstract function render();
 
     /**
-     * This method post-renderize its children controllers.
+     * This method post-renderize the controller.
      */
     protected function postRender()
     {
     }
     
     /**
-     * Print to screen the controller rendered in method <i>render()</i>
+     * Print to screen the controller rendered in method <i>MAbstractController::render()</i>
      */
     public abstract function show();
     
+    /**
+     * It is the entry point to load the controller.
+     */
     public abstract static function run();
 
 }
