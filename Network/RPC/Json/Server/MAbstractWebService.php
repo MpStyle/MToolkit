@@ -20,9 +20,9 @@ namespace MToolkit\Network\RPC\Json\Server;
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__).'/MResponse.php';
-require_once dirname(__FILE__).'/MRequest.php';
-require_once dirname(__FILE__).'/../../../../Core/MObject.php';
+require_once __DIR__.'/MResponse.php';
+require_once __DIR__.'/MRequest.php';
+require_once __DIR__.'/../../../../Core/MObject.php';
 
 use MToolkit\Core\MObject;
 

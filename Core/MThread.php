@@ -21,8 +21,8 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once dirname( __FILE__ ) . '/MObject.php';
-require_once dirname( __FILE__ ) . '/Exception/MThreadException.php';
+require_once __DIR__ . '/MObject.php';
+require_once __DIR__ . '/Exception/MThreadException.php';
 
 use \MToolkit\Core\Exception\MThreadException;
 use \MToolkit\Core\MObject;

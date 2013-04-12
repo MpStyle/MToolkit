@@ -21,9 +21,9 @@ namespace MToolkit\Model;
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__) . '/../Core/MObject.php';
-require_once dirname(__FILE__) . '/../Core/MList.php';
-require_once dirname(__FILE__) . '/MAbstractDataModel.php';
+require_once __DIR__ . '/../Core/MObject.php';
+require_once __DIR__ . '/../Core/MList.php';
+require_once __DIR__ . '/MAbstractDataModel.php';
 
 use MToolkit\Core\MObject;
 use MToolkit\Model\MAbstractDataModel;

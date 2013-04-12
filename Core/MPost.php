@@ -20,7 +20,7 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__).'/MMap.php';
+require_once __DIR__.'/MMap.php';
 
 use MToolkit\Core\MMap;
 

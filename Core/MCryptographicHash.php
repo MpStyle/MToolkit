@@ -20,7 +20,7 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__).'/Enum/Algorithm.php';
+require_once __DIR__.'/Enum/Algorithm.php';
 
 use MToolkit\Core\Enum\Algorithm;
 

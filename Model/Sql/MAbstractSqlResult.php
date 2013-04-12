@@ -1,7 +1,7 @@
 <?php
 namespace MToolkit\Model\Sql;
 
-require_once dirname(__FILE__).'/../MAbstractTableModel.php';
+require_once __DIR__.'/../MAbstractTableModel.php';
 
 use MToolkit\Model\MAbstractTableModel;
 

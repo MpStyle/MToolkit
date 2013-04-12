@@ -1,7 +1,7 @@
 <?php
 namespace MToolkit\Model\Sql;
 
-require_once dirname(__FILE__).'/MAbstractSqlResult.php';
+require_once __DIR__.'/MAbstractSqlResult.php';
 
 /*
  * This file is part of MToolkit.

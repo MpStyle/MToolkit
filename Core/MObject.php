@@ -2,9 +2,9 @@
 
 namespace MToolkit\Core;
 
-require_once dirname( __FILE__ ) . '/MSession.php';
-require_once dirname( __FILE__ ) . '/MGet.php';
-require_once dirname( __FILE__ ) . '/MPost.php';
+require_once __DIR__ . '/MSession.php';
+require_once __DIR__ . '/MGet.php';
+require_once __DIR__ . '/MPost.php';
 
 /*
  * This file is part of MToolkit.

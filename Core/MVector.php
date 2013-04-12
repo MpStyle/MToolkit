@@ -21,8 +21,8 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once dirname( __FILE__ ) . '/Exception/MWrongTypeException.php';
-require_once dirname( __FILE__ ) . '/MAbstractTemplate.php';
+require_once __DIR__ . '/Exception/MWrongTypeException.php';
+require_once __DIR__ . '/MAbstractTemplate.php';
 
 use \MToolkit\Core\Exception\MWrongTypeException;
 use \MToolkit\Core\MAbstractTemplate;

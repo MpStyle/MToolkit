@@ -20,7 +20,7 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__).'/../Core/MObject.php';
+require_once __DIR__.'/../Core/MObject.php';
 
 use \MToolkit\Core\MObject;
 

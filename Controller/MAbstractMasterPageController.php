@@ -21,8 +21,8 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__).'/MAbstractViewController.php';
-require_once dirname(__FILE__).'/MAbstractController.php';
+require_once __DIR__.'/MAbstractViewController.php';
+require_once __DIR__.'/MAbstractController.php';
 
 use MToolkit\Controller\MAbstractViewController;
 use MToolkit\Controller\MAbstractController;

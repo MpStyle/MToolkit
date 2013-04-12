@@ -21,7 +21,7 @@ namespace MToolkit\Model;
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__) . '/MAbstractDataModel.php';
+require_once __DIR__ . '/MAbstractDataModel.php';
 
 class MFileSystemModel extends MAbstractDataModel
 {

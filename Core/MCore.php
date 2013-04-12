@@ -18,5 +18,5 @@
  * @author  Michele Pagnin
  */
 
-require_once dirname(__FILE__) . '/MGlobal.php';
-require_once dirname(__FILE__) . '/MObject.php';
+require_once __DIR__ . '/MGlobal.php';
+require_once __DIR__ . '/MObject.php';

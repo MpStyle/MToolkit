@@ -1,9 +1,9 @@
 <?php
 namespace MToolkit\Model\Sql;
 
-require_once dirname(__FILE__) . '/MDbConnection.php';
-require_once dirname(__FILE__) . '/MMysqliResult.php';
-require_once dirname(__FILE__) . '/MAbstractSqlQuery.php';
+require_once __DIR__ . '/MDbConnection.php';
+require_once __DIR__ . '/MMysqliResult.php';
+require_once __DIR__ . '/MAbstractSqlQuery.php';
 
 /*
  * This file is part of MToolkit.

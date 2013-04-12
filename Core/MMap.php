@@ -21,8 +21,8 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once dirname( __FILE__ ) . '/MAbstractTemplate.php';
-require_once dirname( __FILE__ ) . '/MList.php';
+require_once __DIR__ . '/MAbstractTemplate.php';
+require_once __DIR__ . '/MList.php';
 
 use \MToolkit\Core\MList;
 use \MToolkit\Core\Exception\MWrongTypeException;

@@ -21,7 +21,7 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once dirname( __FILE__ ) . '/../Core/MSession.php';
+require_once __DIR__ . '/../Core/MSession.php';
 
 abstract class MAbstractViewController extends MAbstractController
 {

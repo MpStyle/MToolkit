@@ -1393,7 +1393,7 @@ class phpQueryObject
 		print('<pre>');
 		print_r($in);
 		// file debug
-//		file_put_contents(dirname(__FILE__).'/phpQuery.log', print_r($in, true)."\n", FILE_APPEND);
+//		file_put_contents(__DIR__.'/phpQuery.log', print_r($in, true)."\n", FILE_APPEND);
 		// quite handy debug trace
 //		if ( is_array($in))
 //			print_r(array_slice(debug_backtrace(), 3));
@@ -5691,12 +5691,12 @@ function pq($arg1, $context = null) {
 // add plugins dir and Zend framework to include path
 set_include_path(
 	get_include_path()
-		.PATH_SEPARATOR.dirname(__FILE__).'/phpQuery/'
-		.PATH_SEPARATOR.dirname(__FILE__).'/phpQuery/plugins/'
+		.PATH_SEPARATOR.__DIR__.'/phpQuery/'
+		.PATH_SEPARATOR.__DIR__.'/phpQuery/plugins/'
 );
 // why ? no __call nor __get for statics in php...
 // XXX __callStatic will be available in PHP 5.3
 phpQuery::$plugins = new phpQueryPlugins();
 // include bootstrap file (personal library config)
-if (file_exists(dirname(__FILE__).'/phpQuery/bootstrap.php'))
-	require_once dirname(__FILE__).'/phpQuery/bootstrap.php';
+if (file_exists(__DIR__.'/phpQuery/bootstrap.php'))
+	require_once __DIR__.'/phpQuery/bootstrap.php';

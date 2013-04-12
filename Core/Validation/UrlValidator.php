@@ -20,7 +20,7 @@ namespace Core\Validation;
  * @author  Michele Pagnin
  */
 
-require_once dirname( __FILE__ ) . '/AbstractValidator.php';
+require_once __DIR__ . '/AbstractValidator.php';
 
 class UrlValidator extends AbstractValidator
 {
