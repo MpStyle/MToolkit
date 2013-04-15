@@ -35,6 +35,11 @@ class MObject
     const DEBUG = "MToolkit\Core\MObject\Debug";
 
     /**
+     * @var MSlot[]
+     */
+    private $signals = array();
+
+    /**
      * @var array
      */
     private $properties = array();
@@ -119,7 +124,7 @@ class MObject
      */
     public static function setDebug( $bool )
     {
-        MSession::set( MObject::DEBUG, bool );
+        MSession::set( MObject::DEBUG, $bool );
     }
 
     /**
@@ -140,56 +145,44 @@ class MObject
     }
 
     /**
+     * @param \MToolkit\Core\MObject $sender
      * @param string $signal
-     * @param object $context
-     * @param string $slot
+     * @param \MToolkit\Core\MObject $receiver
+     * @param string $method
      */
-    public function connect( $signal, $object, $method )
+    public function connect( MObject $sender, $signal, MObject $receiver, $method )
     {
-        // Create a slot object
-        $slot = new MSlot();
-        $slot->setObject( $object )
-                ->setMethod( $method );
-
-        // Retrieve the signals
-        $signals = $this->getSignals();
-
-        // Create a new signal if not exists
-        if (array_key_exists( $signal, $signals ) === false)
+        if ($sender != $this)
         {
-            $signals[$signal] = array();
+            $sender->connect( $sender, $signal, $receiver, $method );
         }
 
-        // Add new slot to signal
-        $signals[$signal][] = $slot;
+        $slot = new MSlot();
+        $slot->setMethod( $method )
+                ->setSender( $sender );
 
-        // Store signals
-        $this->storeSignals( $signals );
+        $this->signals[$signal] = $slot;
     }
 
     /**
+     * @param \MToolkit\Core\MObject $sender
      * @param string $signal
-     * @param object $context
-     * @param string $slot
+     * @param \MToolkit\Core\MObject $receiver
+     * @param string $method
      */
-    public function disconnect( $signal, $object, $method )
+    public function disconnect( MObject $sender, $signal, MObject $receiver, $method )
     {
-        // Retrieve the signals
-        $signals = $this->getSignals();
-
-        // Remove signal
-        for ( $i = 0; $i < count( $signals[$signal] ); $i++ )
+        if ($this != $sender)
         {
-            /* @var $slot MSlot */ $slot = $signals[$signal][$i];
-
-            if ($slot->getObject() == $object && $slot->getMethod() == $method)
-            {
-                unset( $signals[$signal][$i] );
-            }
+            $sender->disconnect( $sender, $signal, $receiver, $method );
         }
 
-        // Store signals
-        $this->storeSignals( $signals );
+        if (!isset( $this->signals[$signal] ))
+        {
+            return;
+        }
+
+        unset( $this->signals[$signal] );
     }
 
     /**
@@ -205,15 +198,12 @@ class MObject
             return;
         }
 
-        // Retrieve the signals
-        $signals = $this->getSignals();
-
-        if (isset( $signals[$signal] ) === false)
+        if (isset( $this->signals[$signal] ) === false)
         {
             return;
         }
 
-        $slots = $signals[$signal];
+        $slots = $this->signals[$signal];
 
         foreach ( $slots as /* @var $slot MSlot */ $slot )
         {
@@ -232,31 +222,11 @@ class MObject
     }
 
     /**
-     * Return the signals stored in the session.
-     * 
-     * @return array
-     */
-    private function getSignals()
-    {
-        return MSession::get( MObject::SIGNALS );
-    }
-
-    /**
-     * Store the <i>$signals</i> in the session.
-     * 
-     * @param array $signals
-     */
-    private function storeSignals( $signals )
-    {
-        MSession::set( MObject::SIGNALS, $signals );
-    }
-
-    /**
      * Remove all signals
      */
     public function disconnectSignals()
     {
-        MSession::delete( MObject::SIGNALS );
+        $this->signals = array();
     }
 
     /**
@@ -331,7 +301,7 @@ class MObject
      */
     public function __get( $name )
     {
-        return $this->getProperty($name);
+        return $this->getProperty( $name );
     }
 
     /**
@@ -342,7 +312,7 @@ class MObject
      */
     public function __set( $name, $value )
     {
-        $this->setProperty($name, $value);
+        $this->setProperty( $name, $value );
     }
 
     /**
@@ -365,6 +335,7 @@ class MObject
     {
         $this->properties[$name] = $value;
     }
+
 }
 
 /**
@@ -372,17 +343,28 @@ class MObject
  */
 class MSlot
 {
-    private $object;
+    /**
+     *
+     * @var MObject
+     */
+    private $sender;
+
+    /**
+     * @var string
+     */
     private $method;
 
-    public function getObject()
+    /**
+     * @return MObject
+     */
+    public function getSender()
     {
-        return $this->object;
+        return $this->sender;
     }
 
-    public function setObject( $object )
+    public function setSender( MObject $sender )
     {
-        $this->object = $object;
+        $this->sender = $sender;
         return $this;
     }
 
