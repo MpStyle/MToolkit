@@ -21,12 +21,19 @@ namespace MToolkit\Core\Enum;
  */
 
 /**
- * This file contains some type oh algorithms for hashing.
+ * This enum type defines what happens to the aspect ratio when scaling an rectangle.
  */
-final class Algorithm
+final class AspectRatioMode
 {
-    const MD4='md4';
-    const MD5='md5';
-    const SHA256='sha256';
-    const SHA512='sha512';
+    // The size is scaled freely. The aspect ratio is not preserved.
+    const IGNORE_ASPECT_RATIO=	0;	
+    
+    // The size is scaled to a rectangle as large as possible inside a given rectangle, 
+    // preserving the aspect ratio.
+    const KEEP_ASPECT_RATIO=	1;	
+    
+    // The size is scaled to a rectangle as small as possible outside a given rectangle, 
+    // preserving the aspect ratio.    
+    const KEEP_ASPECT_RATIO_BY_EXPANDING=	2;	
 }
+

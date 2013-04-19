@@ -1,5 +1,5 @@
 <?php
-namespace MToolkit\Core\Enum;
+namespace MToolkit\Core;
 
 /*
  * This file is part of MToolkit.
@@ -20,13 +20,10 @@ namespace MToolkit\Core\Enum;
  * @author  Michele Pagnin
  */
 
-/**
- * This file contains some type oh algorithms for hashing.
- */
-final class Algorithm
+require_once __DIR__.'/MCoreApplication.php';
+
+class MApplication extends MCoreApplication
 {
-    const MD4='md4';
-    const MD5='md5';
-    const SHA256='sha256';
-    const SHA512='sha512';
+    
 }
+

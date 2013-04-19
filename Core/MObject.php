@@ -30,7 +30,6 @@ use MToolkit\Core\MPost;
 
 class MObject
 {
-    const ROOT_PATH = "MToolkit\Core\MObject\RootPath";
     const SIGNALS = "MToolkit\Core\MObject\Signals";
     const DEBUG = "MToolkit\Core\MObject\Debug";
 
@@ -88,33 +87,6 @@ class MObject
     {
         $this->signalsBlocked = $signalsBlocked;
         return $this;
-    }
-
-    /**
-     * Set the root path of the project.
-     * 
-     * @param string $path
-     */
-    public static function setRootPath( $path )
-    {
-        MSession::set( MObject::ROOT_PATH, $path );
-    }
-
-    /**
-     * Return the root path of the project.
-     * 
-     * @return string|null
-     */
-    public static function getRootPath()
-    {
-        $rootPath = MSession::get( MObject::ROOT_PATH );
-
-        if ($rootPath == null)
-        {
-            return '.';
-        }
-
-        return $rootPath;
     }
 
     /**
