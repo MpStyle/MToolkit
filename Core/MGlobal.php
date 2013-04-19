@@ -28,7 +28,7 @@
 function __autoload($name)
 {
     $rootPaths=array();
-    $rootPaths=array_merge($rootPaths, (array)\MToolkit\Core\MObject::getRootPath() );
+    $rootPaths=array_merge($rootPaths, (array)\MToolkit\Core\MApplication::getApplicationDirPath() );
     
     $classPath=$name;
     $classPath= str_replace("\\", "/", $classPath);

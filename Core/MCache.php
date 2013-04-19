@@ -107,7 +107,7 @@ class MCache
         $expired = substr( $fileContent, 0, $separatorPosition );
         $cache = substr( $fileContent, $separatorPosition + strlen( MCache::DELIMITER ) );
         
-        if( $expired > microtime( true ) )
+        if( $expired==-1 || $expired > microtime( true ) )
         {
             return unserialize($cache);
         }
@@ -124,7 +124,7 @@ class MCache
      * @param float $expired
      * @return bool
      */
-    public function set( $key, $value, $expired = 0 )
+    public function set( $key, $value, $expired = -1 )
     {
         if( file_exists( MCache::generateFileName( $key ) ) === true )
         {
