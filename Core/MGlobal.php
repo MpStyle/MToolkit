@@ -27,16 +27,14 @@
  */
 function __autoload($name)
 {
-    $rootPaths=array();
-    $rootPaths=array_merge($rootPaths, (array)\MToolkit\Core\MApplication::getApplicationDirPath() );
+    $rootPaths=array_merge(array(), (array)\MToolkit\Core\MApplication::getApplicationDirPath() );
     
-    $classPath=$name;
-    $classPath= str_replace("\\", "/", $classPath);
+    $classPath= str_replace("\\", DIRECTORY_SEPARATOR, $name);
     $classPath.=".php";
     
     foreach($rootPaths as $rootPath)
     {
-        $path= $rootPath."/".$classPath;
+        $path= $rootPath.DIRECTORY_SEPARATOR.$classPath;
 
         if( file_exists( $path )===true )
         {
@@ -58,8 +56,12 @@ function M_ASSERT($test)
         $trace = debug_backtrace();
         $lastTrace = $trace[0];
 
-        $output = 'ASSERT FAIL: "%b" in file %s, line %s.<br />';
-        $output = sprintf($output, $lastTrace['args'][0], $lastTrace['file'], $lastTrace['line']);
+        $output = sprintf(
+            'ASSERT FAIL: "%b" in file %s, line %s.<br />'
+            , $lastTrace['args'][0]
+            , $lastTrace['file']
+            , $lastTrace['line']
+        );
 
         trigger_error($output, E_USER_WARNING);
     }
