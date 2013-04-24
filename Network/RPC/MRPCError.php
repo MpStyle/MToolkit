@@ -1,5 +1,5 @@
 <?php
-namespace MToolkit\Network\RPC\Json\Server;
+namespace MToolkit\Network\RPC;
 
 /*
  * This file is part of MToolkit.
@@ -20,87 +20,54 @@ namespace MToolkit\Network\RPC\Json\Server;
  * @author  Michele Pagnin
  */
 
-/**
- * This class implement the standard RPC 2.0 using Json.
- * 
- * Example
- * {"jsonrpc": "2.0", "method": "subtract", "params": [42, 23], "id": 1} 
- */
-class MRequest
+abstract class MRPCError
 {
-    /**
-     * @var string 
-     */
-    private $jsonrpc='2.0';
-    
-    /**
-     * @var string 
-     */
-    private $method=null;
-    
-    /**
-     * @var mixed 
-     */
-    private $params=null;
-    
     /**
      * @var int 
      */
-    private $id=null;
+    private $code=-1;
+    
+    /**
+     * @var string 
+     */
+    private $message;
+    
+    /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param string $code
+     * @return \MToolkit\Network\RPC\MRPCError
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+        
+        return $this;
+    }
 
     /**
      * @return string
      */
-    public function getMethod()
+    public function getMessage()
     {
-        return $this->method;
+        return $this->message;
     }
 
     /**
-     * @param string $method 
+     * @param string $message
+     * @return \MToolkit\Network\RPC\MRPCError
      */
-    public function setMethod($method)
+    public function setMessage($message)
     {
-        $this->method = $method;
+        $this->message = $message;
         
         return $this;
     }
-
-    /**
-     * @return object 
-     */
-    public function getParams()
-    {
-        return $this->params;
-    }
-
-    /**
-     * @param object $params 
-     */
-    public function setParams($params)
-    {
-        $this->params = $params;
-        
-        return $this;
-    }
-
-    /**
-     * @return int 
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id 
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        
-        return $this;
-    }
-
-
+    
 }

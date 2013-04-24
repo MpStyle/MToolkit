@@ -1,5 +1,5 @@
 <?php
-namespace MToolkit\Network\RPC\Json\Server;
+namespace MToolkit\Network\RPC\Json;
 
 /*
  * This file is part of MToolkit.
@@ -20,27 +20,10 @@ namespace MToolkit\Network\RPC\Json\Server;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/MError.php';
-require_once __DIR__.'/../../../../Core/Json/MJsonObject.php';
-
-use MToolkit\Core\Json\MJsonObject;
-
-/**
- * Examples:
- * <ul>
- * <li>{"jsonrpc": "2.0", "result": 19, "id": 1}</li>
- * <li>{"jsonrpc": "2.0", "error": {"code": -32601, "message": "Procedure not found."}, "id": 10} </li>
- * </ul>
- */
-class MResponse extends MJsonObject
-{
+abstract class MRPCResponse
+{    
     /**
-     * @var string 
-     */
-    private $jsonrpc='2.0';
-    
-    /**
-     * @var mixed 
+     * @var array 
      */
     private $result=null;
     
@@ -50,12 +33,12 @@ class MResponse extends MJsonObject
     private $id=null;
     
     /**
-     * @var MError
+     * @var MRPCJsonError
      */
     private $error=null;
 
     /**
-     * @return JsonObject 
+     * @return array 
      */
     public function getResult()
     {
@@ -63,21 +46,28 @@ class MResponse extends MJsonObject
     }
 
     /**
-     * @param mixed $result
-     * @return \MToolkit\Network\RPC\Json\MResponse 
+     * @param array $result
+     * @return \MToolkit\Network\RPC\Json\MRPCResponse
      */
-    public function setResult( $result)
+    public function setResult( array $result)
     {
         $this->result = $result;
         
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * @param int $id
+     * @return \MToolkit\Network\RPC\Json\MRPCResponse
+     */
     public function setId($id)
     {
         $this->id = $id;
@@ -85,35 +75,22 @@ class MResponse extends MJsonObject
         return $this;
     }
 
+    /**
+     * @return MRPCJsonError
+     */
     public function getError()
     {
         return $this->error;
     }
 
-    public function setError($error)
+    /**
+     * @param \MToolkit\Network\RPC\Json\MRPCJsonError $error
+     * @return \MToolkit\Network\RPC\Json\MRPCResponse
+     */
+    public function setError(MRPCJsonError $error)
     {
         $this->error = $error;
         
         return $this;
-    }
-
-    
-    public function toJson()
-    {        
-        $array=array(
-            'jsonrpc' => $this->jsonrpc
-            , 'result' => $this->result
-            , 'id' => $this->id
-        );
-        
-        if( $this->error!=null )
-        {
-            $array['error']=array(
-                'code' => $this->error->getCode()
-                , 'message' => $this->error->getMessage()
-            );
-        }
-        
-        return json_encode($array);
     }
 }

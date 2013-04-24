@@ -20,25 +20,63 @@ namespace MToolkit\Network\RPC\Json\Server;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/MResponse.php';
-require_once __DIR__.'/MRequest.php';
+require_once __DIR__.'/../MRPCJsonResponse.php';
+require_once __DIR__.'/../MRPCJsonRequest.php';
+require_once __DIR__.'/../MRPCJsonError.php';
 require_once __DIR__.'/../../../../Core/MObject.php';
+require_once __DIR__.'/MRPCJsonServerException.php';
 
 use MToolkit\Core\MObject;
+use MToolkit\Network\RPC\Json\MRPCJsonRequest;
+use MToolkit\Network\RPC\Json\MRPCJsonResponse;
+use MToolkit\Network\RPC\Json\MRPCJsonError;
+use MToolkit\Network\RPC\Json\MRPCJsonServerException;
 
 class MAbstractWebService extends MObject
 {
     /**
-     * @var Response
+     * @var MRPCJsonResponse
      */
     private $response=null;
     
     /**
-     * @var Request
+     * @var MRPCJsonRequest
      */
     private $request=null;
     
     public function __construct()
+    {
+        
+    }
+    
+    /**
+     * @return MRPCJsonResponse 
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+    
+    /**
+     * @return MRPCJsonRequest 
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * @param MRPCJsonResponse $response 
+     */
+    public function setResponse( MRPCJsonResponse $response)
+    {
+        $this->response = $response;
+    }
+
+    public function init()
+    {}
+    
+    public function execute()
     {
         try
         {
@@ -49,17 +87,17 @@ class MAbstractWebService extends MObject
             // Is valid request?
             if( $request==false )
             {
-                throw new \Exception(sprintf('Invalid body (%s).', $rawRequest));
+                throw new MRPCJsonServerException(sprintf('Invalid body (%s).', $rawRequest));
             }
             
             // Does the request respect the 2.0 specification?
             if( $request->jsonrpc!='2.0' )
             {
-                throw new \Exception(sprintf('The request does not respect the 2.0 specification.'));
+                throw new MRPCJsonServerException(sprintf('The request does not respect the 2.0 specification.'));
             }
             
             // Set the request properties
-            $this->request=new MRequest();
+            $this->request=new MRPCJsonRequest();
             $this->request
                     ->setMethod($request->method)
                     ->setParams($request->params)
@@ -73,12 +111,12 @@ class MAbstractWebService extends MObject
             // Does the call fail?
             if( $callResponse===false )
             {
-                throw new \Exception('No service.');
+                throw new MRPCJsonServerException('No service.');
             }
         }
-        catch(Exception $ex)
+        catch(MRPCJsonServerException $ex)
         {            
-            $error=new MError();
+            $error=new MRPCJsonError();
             $error->setCode( -1 );
             $error->setMessage( $ex->getMessage() );
             
@@ -87,38 +125,6 @@ class MAbstractWebService extends MObject
         }
     }
     
-    /**
-     * @return MResponse 
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-    
-    /**
-     * @return string
-     */
-    public function getJsonResponse()
-    {
-        return $this->response->toJson();
-    }
-    
-    /**
-     * @return MRequest 
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * @param MResponse $response 
-     */
-    public function setResponse( MResponse $response)
-    {
-        $this->response = $response;
-    }
-
     public static function run()
     {
         /* @var $classes string[] */ $classes = get_declared_classes();
@@ -126,7 +132,9 @@ class MAbstractWebService extends MObject
         /* @var $entryPoint string */ $entryPoint = $classes[count($classes) - 1];
 
         /* @var $webService MAbstractWebService */ $webService=new $entryPoint();
+        $webService->init();
+        $webService->execute();
         
-        echo $webService->getJsonResponse();
+        echo json_encode( $this->getResponse()->toArray() );
     }
 }

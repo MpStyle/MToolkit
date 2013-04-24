@@ -34,7 +34,7 @@ class MCoreApplication
     /**
      * Set the root path of the project.
      * 
-     * @param string $path
+     * @param string|array $path
      */
     public static function setApplicationDirPath( $path )
     {

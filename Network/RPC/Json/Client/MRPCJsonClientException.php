@@ -20,53 +20,7 @@ namespace MToolkit\Network\RPC\Json\Server;
  * @author  Michele Pagnin
  */
 
-class MError
+class MRPCJsonClientException extends \Exception
 {
-    /**
-     * @var int 
-     */
-    private $code=-1;
     
-    /**
-     * @var string 
-     */
-    private $message;
-    
-    /**
-     * @return string
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * @param int $code
-     * @return \MToolkit\Network\RPC\Json\Error 
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-        
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    /**
-     * @param string $message
-     * @return \MToolkit\Network\RPC\Json\Error 
-     */
-    public function setMessage($message)
-    {
-        $this->message = $message;
-        
-        return $this;
-    }
 }
