@@ -22,11 +22,10 @@ namespace MToolkit\Controller;
  */
 
 require_once __DIR__ . '/../Core/MString.php';
-require_once __DIR__ . '/../View/phpQuery.php';
+require_once __DIR__ . '/../View/GanonEngine.php';
 
 use MToolkit\Core\MString;
 use MToolkit\Controller\MAbstractMasterPageController;
-use \phpQuery;
 
 abstract class MAbstractPageController extends MAbstractViewController
 {
@@ -137,12 +136,12 @@ abstract class MAbstractPageController extends MAbstractViewController
         $this->masterPage->init();
         $this->masterPage->show();
         $masterPageRendered = ob_get_clean();
-        /* @var $masterPageDoc phpQuery */ $masterPageDoc = phpQuery::newDocumentHTML( $masterPageRendered );
+        /* @var $masterPageDoc HTML_Parser_HTML5 */ $masterPageDoc = str_get_dom( $masterPageRendered );
         
         // renders the current page
         parent::render();
         $pageRendered = $this->getOutput();
-        /* @var $pageDoc phpQuery */ $pageDoc = phpQuery::newDocumentHTML( $pageRendered );
+        /* @var $pageDoc HTML_Parser_HTML5 */ $pageDoc = str_get_dom( $pageRendered );
         
         // assemblies the master page and current page
         foreach ( $this->masterPageParts as $masterPagePart )
@@ -150,11 +149,17 @@ abstract class MAbstractPageController extends MAbstractViewController
             $masterPagePlaceholderId = '#' . $masterPagePart[MAbstractPageController::MASTER_PAGE_PLACEHOLDER_ID];
             $pageContentId = '#' . $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID];
             
-            $masterPageDoc[ $masterPagePlaceholderId]= $pageDoc[ $pageContentId];
+            $contents=$pageDoc($pageContentId);
+            $content=$contents[0];
+            
+            $placeHolders=$masterPageDoc($masterPagePlaceholderId);
+            $placeHolder=$placeHolders[0];
+            
+            $placeHolder->setInnerText( (string)$content->getInnerText() );
         }
         
         // set the output of page with the assemblies
-        $this->setOutput( (string) $masterPageDoc->html() );
+        $this->setOutput( (string) $masterPageDoc );
     }
 
 }
