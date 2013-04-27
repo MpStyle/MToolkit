@@ -42,6 +42,11 @@ class MSqlQueryModel extends MAbstractDataModel
         parent::__construct($parent);
     }
 
+    /**
+     * @param string $query
+     * @param \PDO|\mysqli|null $db
+     * @throws Exception
+     */
     public function setQuery( $query, $db = null )
     {
         if( $db==null )
@@ -65,16 +70,27 @@ class MSqlQueryModel extends MAbstractDataModel
         $this->query->exec();
     }
     
+    /**
+     * @return int
+     */
     public function columnCount()
     {
         return $this->query->getResult()->columnCount();
     }
 
+    /**
+     * @param int $row
+     * @param int $column
+     * @return mixed
+     */
     public function getData($row, $column)
     {
         return $this->query->getResult()->getData($row, $column);
     }
 
+    /**
+     * @return int
+     */
     public function rowCount()
     {
         return $this->query->getResult()->rowCount();
