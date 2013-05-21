@@ -32,6 +32,36 @@ use MToolkit\Network\RPC\Json\MRPCJsonResponse;
 use MToolkit\Network\RPC\Json\MRPCJsonError;
 use MToolkit\Network\RPC\Json\MRPCJsonServerException;
 
+/**
+ * This class is the base class for the web service classes.
+ * A tipical implementation of web service RPC in JSON is:
+ * 
+ * class TestWS extends MAbstractWebService
+ * {
+ *      public function __construct()
+ *      {
+ *          parent::__construct();
+ *      }
+ * 
+ *      public function add( $params )
+ *      {
+ *          $a=$params['a'];
+ *          $b=$params['b'];
+ * 
+ *          $response=new MRPCJsonResponse();
+ * 
+ *          // The result must be an array.
+ *          $response->setResult( array( $a+$b ) );
+ * 
+ *          $this->setResponse( $response );
+ *      }
+ * }
+ * 
+ * TestWS::run();
+ * 
+ * An example of JSON request could be:
+ * {"jsonrpc": "2.0", "method": "add", "params": { 'a': 2, 'b':3 }, "id": 1}
+ */
 class MAbstractWebService extends MObject
 {
     /**
@@ -66,6 +96,9 @@ class MAbstractWebService extends MObject
     }
 
     /**
+     * Set the response of the web service.
+     * It must be valorizated by derived classes.
+     * 
      * @param MRPCJsonResponse $response 
      */
     public function setResponse( MRPCJsonResponse $response)
@@ -76,6 +109,9 @@ class MAbstractWebService extends MObject
     public function init()
     {}
     
+    /**
+     * Reads the request and run the web method.
+     */
     public function execute()
     {
         try
