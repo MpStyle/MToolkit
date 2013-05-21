@@ -45,8 +45,8 @@ use MToolkit\Network\RPC\Json\MRPCJsonServerException;
  * 
  *      public function add( $params )
  *      {
- *          $a=$params['a'];
- *          $b=$params['b'];
+ *          $a=(int)$params['a'];
+ *          $b=(int)$params['b'];
  * 
  *          $response=new MRPCJsonResponse();
  * 
@@ -65,11 +65,15 @@ use MToolkit\Network\RPC\Json\MRPCJsonServerException;
 class MAbstractWebService extends MObject
 {
     /**
+     * The response from the web service.
+     * 
      * @var MRPCJsonResponse
      */
     private $response=null;
     
     /**
+     * The request received by the web service.
+     * 
      * @var MRPCJsonRequest
      */
     private $request=null;
@@ -161,6 +165,9 @@ class MAbstractWebService extends MObject
         }
     }
     
+    /**
+     * Run the instance of the web service.
+     */
     public static function run()
     {
         /* @var $classes string[] */ $classes = get_declared_classes();
