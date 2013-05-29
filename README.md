@@ -14,3 +14,37 @@ The experiences with other toolkit in different platforms have led to create thi
 MToolkit borns like a mash-up of two frameworks: .NET and Qt. o_O
 
 Yes, the framework of the evil and the desktop framework for excellence.
+
+
+Let's start
+-----------
+
+Create a folder for your project.
+
+Download the latest version of MToolkit in this folder.
+
+On the root of your project create a new file (*Settings.php*) with this content:
+
+<code>
+
+<?php
+require_once __DIR__.'/MToolkit/Core/MCore.php';
+
+use MToolkit\Core\MApplication;
+
+class Settings
+{
+    public static function run()
+    {
+        // Set the root path of the project
+        MApplication::setApplicationDirPath(__DIR__);
+    }
+}
+
+Settings::run();
+
+</code>
+
+This file sets the root of your project and now you no longer have to use *require*, *require_once*, *include*, *include_once* directives. 
+
+**This file must be include in every entry page of your project.**
