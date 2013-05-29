@@ -21,7 +21,7 @@ Let's start
 
 Create a folder for your project.
 
-Download the latest version of MToolkit in this folder.
+Download the latest version of MToolkit in project folder.
 
 On the root of your project create a new file (*Settings.php*) with this content:
 
