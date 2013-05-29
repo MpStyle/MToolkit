@@ -25,7 +25,7 @@ Download the latest version of MToolkit in this folder.
 
 On the root of your project create a new file (*Settings.php*) with this content:
 
-`
+```
 
 <?php
 require_once __DIR__.'/MToolkit/Core/MCore.php';
@@ -43,7 +43,7 @@ class Settings
 
 Settings::run();
 
-`
+```
 
 This file sets the root of your project and now you no longer have to use *require*, *require_once*, *include*, *include_once* directives. 
 
