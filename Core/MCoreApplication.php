@@ -30,6 +30,34 @@ class MCoreApplication
     const ORGANIZATION_DOMAIN='MToolkit\Core\MCoreApplication\OrganizationDomain';
     const ORGANIZATION_NAME='MToolkit\Core\MCoreApplication\OrganizationName';
     const APPLICATION_DIR_PATH = "MToolkit\Core\MCoreApplication\ApplicationDirPath";
+    const DEBUG = "MToolkit\Core\MObject\Debug";
+    
+    /**
+     * Set the debug mode.
+     * 
+     * @param string $path
+     */
+    public static function setDebug( $bool )
+    {
+        MSession::set( MCoreApplication::DEBUG, $bool );
+    }
+
+    /**
+     * Return if the debug mode is actived.
+     * 
+     * @return string|null
+     */
+    public static function getDebug()
+    {
+        $debug = MSession::get( MCoreApplication::DEBUG );
+
+        if ($debug === null)
+        {
+            return false;
+        }
+
+        return $debug;
+    }
     
     /**
      * Set the root path of the project.

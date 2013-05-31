@@ -31,7 +31,6 @@ use MToolkit\Core\MPost;
 class MObject
 {
     const SIGNALS = "MToolkit\Core\MObject\Signals";
-    const DEBUG = "MToolkit\Core\MObject\Debug";
 
     /**
      * @var MSlot[]
@@ -87,33 +86,6 @@ class MObject
     {
         $this->signalsBlocked = $signalsBlocked;
         return $this;
-    }
-
-    /**
-     * Set the debug mode.
-     * 
-     * @param string $path
-     */
-    public static function setDebug( $bool )
-    {
-        MSession::set( MObject::DEBUG, $bool );
-    }
-
-    /**
-     * Return if the debug mode is actived.
-     * 
-     * @return string|null
-     */
-    public static function getDebug()
-    {
-        $debug = MSession::get( MObject::DEBUG );
-
-        if ($debug === null)
-        {
-            return false;
-        }
-
-        return $debug;
     }
 
     /**
