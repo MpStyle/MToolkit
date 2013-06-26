@@ -21,14 +21,53 @@ namespace MToolkit\Core;
  */
 
 require_once __DIR__.'/MMap.php';
+require_once __DIR__.'/Exception/ReadOnlyObjectException.php';
 
 use MToolkit\Core\MMap;
+use MToolkit\Core\Exception\ReadOnlyObjectException;
 
 class MGet extends MMap
 {
     public function __construct(  )
     {
         parent::__construct( $_GET );
+    }
+    
+    public function clear()
+    {
+        throw new ReadOnlyObjectException('MGet','clear()');
+    }
+
+    public function erase( $pos )
+    {
+        throw new ReadOnlyObjectException('MGet','erase( $pos )');
+    }
+
+    public function insert( $key, $value )
+    {
+        throw new ReadOnlyObjectException('MGet','insert( $key, $value )');
+    }
+
+    public function remove( $key )
+    {
+        throw new ReadOnlyObjectException('MGet','remove( $key )');
+    }
+
+    /**
+     * @param int|string|null $offset
+     * @param mixed $value
+     */
+    public function offsetSet( $offset, $value )
+    {
+        throw new ReadOnlyObjectException('MGet','offsetSet( $offset, $value )');
+    }
+
+    /**
+     * @param int|string $offset
+     */
+    public function offsetUnset( $offset )
+    {
+        throw new ReadOnlyObjectException('MGet', 'offsetUnset( $offset )');
     }
 }
 
