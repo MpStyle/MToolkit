@@ -21,10 +21,10 @@ namespace MToolkit\Core;
  */
 
 require_once __DIR__.'/MMap.php';
-require_once __DIR__.'/Exception/ReadOnlyObjectException.php';
+require_once __DIR__.'/Exception/MReadOnlyObjectException.php';
 
 use MToolkit\Core\MMap;
-use MToolkit\Core\Exception\ReadOnlyObjectException;
+use MToolkit\Core\Exception\MReadOnlyObjectException;
 
 class MGet extends MMap
 {
@@ -35,22 +35,22 @@ class MGet extends MMap
     
     public function clear()
     {
-        throw new ReadOnlyObjectException('MGet','clear()');
+        throw new MReadOnlyObjectException('MGet','clear()');
     }
 
     public function erase( $pos )
     {
-        throw new ReadOnlyObjectException('MGet','erase( $pos )');
+        throw new MReadOnlyObjectException('MGet','erase( $pos )');
     }
 
     public function insert( $key, $value )
     {
-        throw new ReadOnlyObjectException('MGet','insert( $key, $value )');
+        throw new MReadOnlyObjectException('MGet','insert( $key, $value )');
     }
 
     public function remove( $key )
     {
-        throw new ReadOnlyObjectException('MGet','remove( $key )');
+        throw new MReadOnlyObjectException('MGet','remove( $key )');
     }
 
     /**
@@ -59,7 +59,7 @@ class MGet extends MMap
      */
     public function offsetSet( $offset, $value )
     {
-        throw new ReadOnlyObjectException('MGet','offsetSet( $offset, $value )');
+        throw new MReadOnlyObjectException('MGet','offsetSet( $offset, $value )');
     }
 
     /**
@@ -67,7 +67,22 @@ class MGet extends MMap
      */
     public function offsetUnset( $offset )
     {
-        throw new ReadOnlyObjectException('MGet', 'offsetUnset( $offset )');
+        throw new MReadOnlyObjectException('MGet', 'offsetUnset( $offset )');
+    }
+    
+    /**
+     * @param string $key
+     * @param mixed $defaultValue
+     * @return mixed
+     */
+    public function getValue( $key, $defaultValue = null )
+    {
+        if( isset( $_GET[$key] )===false )
+        {
+            return $defaultValue;
+        }
+        
+        return parent::getValue($key, $defaultValue);
     }
 }
 

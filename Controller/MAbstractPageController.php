@@ -26,6 +26,7 @@ require_once __DIR__ . '/../View/GanonEngine.php';
 
 use MToolkit\Core\MString;
 use MToolkit\Controller\MAbstractMasterPageController;
+use MToolkit\Core\Exception\MElementIdNotFoundException;
 
 abstract class MAbstractPageController extends MAbstractViewController
 {
@@ -150,9 +151,27 @@ abstract class MAbstractPageController extends MAbstractViewController
             $pageContentId = '#' . $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID];
             
             $contents=$pageDoc($pageContentId);
+            
+            // If the element was not found in the page
+            if( count($contents)<=0 )
+            {
+                throw new MElementIdNotFoundException( 
+                        $this->getTemplate(),
+                        $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID]);
+            }
+            
             $content=$contents[0];
             
             $placeHolders=$masterPageDoc($masterPagePlaceholderId);
+            
+            // If the element was not found in the master page
+            if( count($placeHolders)<=0 )
+            {
+                throw new MElementIdNotFoundException( 
+                        $this->getMasterPage()->getTemplate(),
+                        $masterPagePart[MAbstractPageController::MASTER_PAGE_PLACEHOLDER_ID]);
+            }
+            
             $placeHolder=$placeHolders[0];
             
             $placeHolder->setInnerText( (string)$content->getInnerText() );

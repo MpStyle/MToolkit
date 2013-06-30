@@ -1,7 +1,7 @@
 <?php
 namespace MToolkit\Core\Exception;
 
-class ReadOnlyObjectException extends \Exception
+class MReadOnlyObjectException extends \Exception
 {
     public function __construct($className, $methodName) 
     {
