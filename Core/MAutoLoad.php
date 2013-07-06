@@ -18,6 +18,8 @@
  * @author  Michele Pagnin
  */
 
+require_once __DIR__.'/MApplication.php';
+
 /**
  * Autoload re-implementation following PSR-0 Standard.
  * No namespaces are defined here, otherwise this method is not
@@ -27,10 +29,10 @@
  */
 function __autoload($name)
 {
-    $path=$name;
+    $path= str_replace("_", DIRECTORY_SEPARATOR, $name);
     $path= str_replace("\\", "/", $path);
     $path.=".php";
-    $path=  \MToolkit\Core\MObject::getRootPath()."/".$path;
+    $path= MToolkit\Core\MApplication::getApplicationDirPath()."/".$path;
         
     if( file_exists( $path )===true )
     {
