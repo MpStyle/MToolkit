@@ -22,6 +22,10 @@ namespace MToolkit\Controller;
  */
 
 require_once __DIR__ . '/../Core/MSession.php';
+require_once __DIR__ . '/../Core/Exception/MTemplateNotFoundException.php';
+
+use MToolkit\Core\MSession;
+use MToolkit\Core\Exception\MTemplateNotFoundException;
 
 abstract class MAbstractViewController extends MAbstractController
 {
@@ -54,6 +58,11 @@ abstract class MAbstractViewController extends MAbstractController
     {
         parent::__construct( $parent );
 
+        if( file_exists( $template )==false )
+        {
+            throw new MTemplateNotFoundException($template);
+        }
+        
         $this->template = $template;
     }
 

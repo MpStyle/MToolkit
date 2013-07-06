@@ -20,10 +20,10 @@ namespace MToolkit\Core\Exception;
  * @author  Michele Pagnin
  */
 
-class MElementIdNotFoundException extends \Exception
+class MTemplateNotFoundException extends \Exception
 {
-    public function __construct($fileName, $idElement) 
+    public function __construct($templatePath) 
     {
-        parent::__construct("The element with id '" . $idElement . "' was not founded in the file '" . $fileName . "'.");
+        parent::__construct("Template file (".$templatePath.") not found.");
     }
 }
