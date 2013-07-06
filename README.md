@@ -55,3 +55,71 @@ Settings::run();
 This file sets the root of your project and now you no longer have to use *require*, *require_once*, *include*, *include_once* directives. 
 
 **This file must be include in every entry page of your project.**
+
+Entry page
+-----------
+
+An entry page is the page loaded at start time.
+Now, we will see how create the controller of the entry page and his html code.
+
+Controller:
+
+```
+
+require_once __DIR__ . '/../Settings.php';
+
+use \MToolkit\Controller\MAbstractPageController;
+
+class EntryPage extends MAbstractPageController
+{
+    private $masterPage;
+    
+    public function __construct()
+    {
+        parent::__construct(__DIR__.'/EntryPage.view.php');
+    }
+    
+    public function foo()
+    {
+        return "foo()";
+    }
+}
+        
+        
+```
+
+The html code will be write into the file *EntryPage.view.php*:
+
+```
+<?php /* @var $this EntryPage */ ?>
+<html>
+    <head>
+        <title>Entry page</title>
+    </head>
+    <body>
+        <b>Hello World!</b>
+    </body>
+</html>
+```
+
+Now from the html file, it will be possible to call a public method of the class *EntryPage* using the syntax:
+
+```
+<?php echo $this->foo(); ?>
+```
+
+Like this:
+
+
+```
+<?php /* @var $this EntryPage */ ?>
+<html>
+    <head>
+        <title>Entry page</title>
+    </head>
+    <body>
+        <b>Hello World!</b>
+        <?php echo $this->foo(); ?>
+    </body>
+</html>
+```
