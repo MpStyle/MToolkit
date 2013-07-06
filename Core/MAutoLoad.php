@@ -40,6 +40,6 @@ function __autoload($name)
     }
     else
     {
-        throw new \Exception("Class not found: " . $name);
+        trigger_error( "Class not found: " . $name, E_USER_WARNING );
     }
 }
