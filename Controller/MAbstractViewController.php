@@ -1,5 +1,4 @@
 <?php
-
 namespace MToolkit\Controller;
 
 /*
@@ -23,6 +22,7 @@ namespace MToolkit\Controller;
 
 require_once __DIR__ . '/../Core/MSession.php';
 require_once __DIR__ . '/../Core/Exception/MTemplateNotFoundException.php';
+require_once __DIR__ . '/../View/GanonEngine.php';
 
 use MToolkit\Core\MSession;
 use MToolkit\Core\Exception\MTemplateNotFoundException;
@@ -49,6 +49,16 @@ abstract class MAbstractViewController extends MAbstractController
      * @var string|null 
      */
     private $output = "";
+    
+    /**
+     * @var string CSS class
+     */
+    private $class=null;
+    
+    /**
+     * @var string CSS style
+     */
+    private $style=null;
 
     /**
      * @param string $template The path of the file containing the html of the controller.
@@ -58,11 +68,11 @@ abstract class MAbstractViewController extends MAbstractController
     {
         parent::__construct( $parent );
 
-        if( file_exists( $template )==false )
+        if ( file_exists( $template ) == false )
         {
-            throw new MTemplateNotFoundException($template);
+            throw new MTemplateNotFoundException( $template );
         }
-        
+
         $this->template = $template;
     }
 
@@ -139,7 +149,7 @@ abstract class MAbstractViewController extends MAbstractController
         $this->isVisible = $isVisible;
         return $this;
     }
-    
+
     /**
      * @return bool
      */
@@ -155,24 +165,91 @@ abstract class MAbstractViewController extends MAbstractController
     protected function render()
     {
         // It's better if the path of the template file is assigned.
-        if ($this->template == null)
+        if ( $this->template == null )
         {
             trigger_error( "The path of the template file is null in " . get_class( $this ) . ' class.' . PHP_EOL, E_NOTICE );
+            return;
         }
-        
-        if ($this->template != null)
-        {   
-            if ($this->isVisible !== false)
-            {   
-                ob_start();
-                
-                include $this->template;
 
-                $this->output .= ob_get_clean();
-            }
+        if ( $this->isVisible === false )
+        {
+            return;
         }
+
+        ob_start();
+
+        include $this->template;
+
+        $this->output .= ob_get_clean();
+        
+        $this->renderControls();
     }
 
+    public function setClass( $class )
+    {
+        $this->class=$class;
+        return $this;
+    }
+    
+    public function getClass()
+    {
+        return $this->class;
+    }
+    
+    public function getStyle()
+    {
+        return $this->style;
+    }
+
+    public function setStyle( $style )
+    {
+        $this->style = $style;
+        return $this;
+    }
+    
+    protected function renderControls()
+    {
+        /* @var $viewDoc HTML_Parser_HTML5 */ $viewDoc = str_get_dom( $this->getOutput() );
+        $controlsHtml=$viewDoc('php|*');
+                
+        foreach ($controlsHtml as /* @var $controlHtml \HTML_Node */ $controlHtml)
+        {
+            $tagName=$controlHtml->getTag();
+            $class=$controlHtml->getAttribute('namespace') . '\\' . $tagName;
+            /* @var $classInstance MAbstractViewController */ $classInstance=new $class();
+            
+            foreach($controlHtml->attributes as $attributeKey => $attributeValue)
+            {
+                $controlHtml->deleteAttribute($attributeKey);
+                
+                if( $attributeKey!='namespace' )
+                {
+                    $method='set'.ucfirst($attributeKey);
+                    $classInstance->$method($attributeValue);
+                }
+            }
+            
+            $controlHtml->setNamespace("");
+            $controlHtml->setTag("div");
+            $controlHtml->setAttribute('id', uniqid(str_replace('\\', '_', $class).'_'));
+            
+            if( $classInstance->getClass()!=null )
+            {
+                $controlHtml->setAttribute('class', $classInstance->getClass() );
+            }
+            
+            if( $classInstance->getStyle()!=null )
+            {
+                $controlHtml->setAttribute('style', $classInstance->getStyle() );
+            }
+            
+            $classInstance->render();
+            $controlHtml->setInnerText($classInstance->getOutput());
+        }
+        
+        $this->setOutput( (string) $viewDoc );
+    }
+    
     /**
      * The method calls the render methods (<i>preRender</i>,
      * <i>render</i> and <i>postRender</i>) and it prints to screen 
@@ -180,20 +257,20 @@ abstract class MAbstractViewController extends MAbstractController
      */
     public function show()
     {
-        if( $this->isVisible===false )
+        if ( $this->isVisible === false )
         {
             return;
         }
-        
+
 //        echo get_class( $this ) . "<br />";
-        
+
         $this->preRender();
         $this->render();
         $this->postRender();
-        
+
         echo $this->output;
-        
-        $this->output="";
+
+        $this->output = "";
     }
 
     /**
@@ -214,7 +291,7 @@ abstract class MAbstractViewController extends MAbstractController
 
         /* @var $controller \MToolkit\Controller\MAbstractController */ $controller = new $entryPoint();
 
-        if (( $controller instanceof \MToolkit\Controller\MAbstractController ) === false)
+        if ( ( $controller instanceof \MToolkit\Controller\MAbstractController ) === false )
         {
             $message = sprintf( "Invalid object for entry point in class %s, it must be an instance of MAbstractController, %s is passed.", get_class( $this ), get_class( $controller ) );
 
