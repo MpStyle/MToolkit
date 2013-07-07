@@ -218,6 +218,19 @@ abstract class MAbstractViewController extends MAbstractController
             $class=$controlHtml->getAttribute('namespace') . '\\' . $tagName;
             /* @var $classInstance MAbstractViewController */ $classInstance=new $class();
             
+            // Set control property
+            $classInstance->setParent($this);
+                    
+            if( $classInstance->getClass()!=null )
+            {
+                $controlHtml->setAttribute('class', $classInstance->getClass() );
+            }
+            
+            if( $classInstance->getStyle()!=null )
+            {
+                $controlHtml->setAttribute('style', $classInstance->getStyle() );
+            }
+            
             foreach($controlHtml->attributes as $attributeKey => $attributeValue)
             {
                 $controlHtml->deleteAttribute($attributeKey);
@@ -229,20 +242,12 @@ abstract class MAbstractViewController extends MAbstractController
                 }
             }
             
+            // Set the tag container of the control
             $controlHtml->setNamespace("");
             $controlHtml->setTag("div");
             $controlHtml->setAttribute('id', uniqid(str_replace('\\', '_', $class).'_'));
-            
-            if( $classInstance->getClass()!=null )
-            {
-                $controlHtml->setAttribute('class', $classInstance->getClass() );
-            }
-            
-            if( $classInstance->getStyle()!=null )
-            {
-                $controlHtml->setAttribute('style', $classInstance->getStyle() );
-            }
-            
+                        
+            // Show control
             $classInstance->render();
             $controlHtml->setInnerText($classInstance->getOutput());
         }
