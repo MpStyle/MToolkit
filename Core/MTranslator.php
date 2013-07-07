@@ -21,11 +21,16 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
+require_once __DIR__.'/Exception/MTranslationFilePathNotFoundException.php';
+
+use MToolkit\Core\Exception\MTranslationFilePathNotFoundException;
+
 class MTranslator
 {
 
     private $locales = array();
     private $translations = array();
+    private $fileType=array();
 
     /**
      * Add a static file containing a PHP array.
@@ -46,10 +51,26 @@ class MTranslator
      * @param string $filePath The path of the file.
      * @param string $locale 
      */
-    public function addTranslationFile($filePath, $locale)
+    public function addTranslationFile($filePath, $locale, $fileType=MTranslatorFileType::__ARRAY)
     {
+        if( file_exists( $filePath )==false )
+        {
+            throw new MTranslationFilePathNotFoundException($filePath);
+        }
+        
         $this->locales[$locale] = $filePath;
-        $this->translations[$locale] = include $filePath;
+        $this->fileType[$locale] = $fileType;
+        
+        switch ($this->fileType[$locale])
+        {
+            case MTranslatorFileType::__ARRAY:
+                $this->translations[$locale] = include $filePath;
+                break;
+            case MTranslatorFileType::JSON:
+                $jsonContent = file_get_contents($filePath);
+                $this->translations[$locale] = json_decode($jsonContent, true);
+                break;
+        }
     }
 
     /**
@@ -61,6 +82,7 @@ class MTranslator
     {
         unset($this->locales[$locale]);
         unset($this->translations[$locale]);
+        unset($this->fileType[$locale]);
     }
 
     /**
@@ -111,3 +133,8 @@ class MTranslator
 
 }
 
+final class MTranslatorFileType
+{
+    const __ARRAY='array';
+    const JSON='json';
+}
