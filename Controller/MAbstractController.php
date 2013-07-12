@@ -47,6 +47,9 @@ abstract class MAbstractController extends MObject
     {
     }   
 
+    public function load()
+    {}
+    
     /**
      * This method pre-renderize the controller.
      */
@@ -74,6 +77,7 @@ abstract class MAbstractController extends MObject
     /**
      * It is the entry point to load the controller.
      */
-    public abstract static function run();
+    public static function run()
+    {}
 
 }

@@ -21,11 +21,13 @@ namespace MToolkit\Controller;
  */
 
 require_once __DIR__ . '/../Core/MSession.php';
+require_once __DIR__ . '/../Core/MString.php';
 require_once __DIR__ . '/../Core/Exception/MTemplateNotFoundException.php';
 require_once __DIR__ . '/../View/GanonEngine.php';
 
 use MToolkit\Core\MSession;
 use MToolkit\Core\Exception\MTemplateNotFoundException;
+use MToolkit\Core\MString;
 
 abstract class MAbstractViewController extends MAbstractController
 {
@@ -59,6 +61,16 @@ abstract class MAbstractViewController extends MAbstractController
      * @var string CSS style
      */
     private $style=null;
+    
+    /**
+     * @var MAbstractViewController[] 
+     */
+    private $controls=array();
+    
+    /**
+     * @var string An array of key => value
+     */
+    private $attributes=array();
 
     /**
      * @param string $template The path of the file containing the html of the controller.
@@ -78,9 +90,107 @@ abstract class MAbstractViewController extends MAbstractController
 
     public function init()
     {
-        
+        $this->initControls();
     }
 
+    public function initControls()
+    {        
+        ob_start();
+        include $this->template;
+        $output = ob_get_clean();
+        
+        /* @var $viewDoc HTML_Parser_HTML5 */ $viewDoc = str_get_dom( $output );
+        $controlsHtml=$viewDoc('php|*');
+                
+        foreach ($controlsHtml as /* @var $controlHtml \HTML_Node */ $controlHtml)
+        {
+            $tagName=$controlHtml->getTag();
+            
+            $class=$controlHtml->getAttribute('namespace') . '\\' . $tagName;
+            /* @var $classInstance MAbstractViewController */ $classInstance=new $class();
+            
+            if( ($classInstance instanceof MAbstractViewController)===false )
+            {
+                throw new Exception( 'The class ' . get_class( $classInstance ) . ' must be inherit from MAbstractViewController.' );
+            }
+            
+            $classInstance->setParent($this);
+            
+            // Set control property and attributes
+            foreach($controlHtml->attributes as $attributeKey => $attributeValue)
+            {
+                $controlHtml->deleteAttribute($attributeKey);
+                
+                if( $attributeKey!='namespace' )
+                {
+                    $method='set'.ucfirst($attributeKey);
+                    
+                    if( method_exists( $classInstance, $method ) )
+                    {
+                        $classInstance->$method($attributeValue);
+                    }
+                    else
+                    {
+                        $classInstance->setAttribute($attributeKey, $attributeValue);
+                    }
+                }
+            }
+            
+            if( MString::isNullOrEmpty( $classInstance->getAttribute( 'id' ) ) )
+            {
+                throw new \Exception( 'The attribute id must be valorized for the ' . get_class( $classInstance ) . ' object.' );
+            }
+            
+            $id=$classInstance->getAttribute( 'id' );
+            $this->controls[$id]=$classInstance;
+        }
+    }
+    
+    /**
+     * @return array
+     */
+    public function getAttributes(  )
+    {
+        return $this->attributes;
+    }
+    
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function getAttribute( $name )
+    {
+        if( array_key_exists( $name, $this->attributes ) )
+        {
+            return $this->attributes[$name];
+        }
+        
+        return null;
+    }
+    
+    /**
+     * @param string $name
+     * @param string $value
+     */
+    public function setAttribute( $name, $value )
+    {
+        $this->attributes[$name]=$value;
+    }
+    
+    /**
+     * @param string $name the id of the control
+     * @return MAbstractViewController
+     */
+    public function getControl( $id )
+    {
+        if( array_key_exists( $id, $this->controls ) )
+        {
+            return $this->controls[$id];
+        }
+        
+        return null;
+    }
+    
     /**
      * The method returns <i>$this->output</i>.
      * <i>$this->output</i> contains the controller rendered.
@@ -216,40 +326,22 @@ abstract class MAbstractViewController extends MAbstractController
         {
             $tagName=$controlHtml->getTag();
             $class=$controlHtml->getAttribute('namespace') . '\\' . $tagName;
-            /* @var $classInstance MAbstractViewController */ $classInstance=new $class();
-            
-            // Set control property
-            foreach($controlHtml->attributes as $attributeKey => $attributeValue)
-            {
-                $controlHtml->deleteAttribute($attributeKey);
-                
-                if( $attributeKey!='namespace' )
-                {
-                    $method='set'.ucfirst($attributeKey);
-                    $classInstance->$method($attributeValue);
-                }
-            }
-            
-            $classInstance->setParent($this);
-                    
-            if( $classInstance->getClass()!=null )
-            {
-                $controlHtml->setAttribute('class', $classInstance->getClass() );
-            }
-            
-            if( $classInstance->getStyle()!=null )
-            {
-                $controlHtml->setAttribute('style', $classInstance->getStyle() );
-            }
-            
+            $objectId=$controlHtml->getAttribute('id');
+                        
             // Set the tag container of the control
             $controlHtml->setNamespace("");
             $controlHtml->setTag("div");
             $controlHtml->setAttribute('id', uniqid(str_replace('\\', '_', $class).'_'));
                         
+            $classAttribute=$this->getControl( $objectId )->getAttribute( 'class' );
+            if( MString::isNullOrEmpty( $classAttribute )===false )
+            {
+                $controlHtml->setAttribute('class', $classAttribute );
+            }
+                        
             // Show control
-            $classInstance->render();
-            $controlHtml->setInnerText($classInstance->getOutput());
+            $this->getControl( $objectId )->render();
+            $controlHtml->setInnerText($this->getControl( $objectId )->getOutput());
         }
         
         $this->setOutput( (string) $viewDoc );
@@ -304,6 +396,7 @@ abstract class MAbstractViewController extends MAbstractController
         }
 
         $controller->init();
+        $controller->load();
         $controller->show();
 
         // Clean the $_SESSION from signals.

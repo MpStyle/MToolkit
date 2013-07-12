@@ -1695,7 +1695,7 @@ class HTML_Node
 
     function getNamespace()
     {
-        if ($tag_ns === null)
+        if ($this->tag_ns === null)
         {
             $a = explode(':', $this->tag, 2);
             if (empty($a[1]))
@@ -1721,7 +1721,7 @@ class HTML_Node
 
     function getTag()
     {
-        if ($tag_ns === null)
+        if ($this->tag_ns === null)
         {
             $this->getNamespace();
         }
