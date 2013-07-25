@@ -183,6 +183,8 @@ abstract class MAbstractPageController extends MAbstractViewController
 
 }
 
+register_shutdown_function(array('MToolkit\Controller\MAbstractPageController','run'));
+
 final class CssRel
 {
     const STYLESHEET = "stylesheet";

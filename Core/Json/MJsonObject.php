@@ -1,8 +1,7 @@
 <?php
-
 namespace MToolkit\Core\Json;
 
-interface MJsonObject
+class MJsonObject
 {
 
     /**
@@ -10,7 +9,30 @@ interface MJsonObject
      * 
      * @return array 
      */
-    public abstract function toArray();
+    public function toArray()
+    {
+        $reflect = new \ReflectionClass( $this );
+        $propertyList = $reflect->getProperties();
+        $toReturn = array();
+
+        foreach ( $propertyList as &$property )
+        {
+            $reflectionProperty = $reflect->getProperty( $property->getName() );
+            $reflectionProperty->setAccessible( true );
+            
+            $propertyValue=$reflectionProperty->getValue($this);
+            
+            if ( is_object( $propertyValue ) && method_exists( $propertyValue, 'toArray' ) )
+            {
+                $toReturn[$property->getName()] = $propertyValue->toArray();
+            }
+            else
+            {
+                $toReturn[$property->getName()] = $propertyValue;
+            }
+        }
+        return $toReturn;
+    }
 
     /**
      * Sets the property of the class, using the <i>$json</i>.
@@ -18,6 +40,17 @@ interface MJsonObject
      * @param array $json
      * @return MJsonObject 
      */
-    public abstract static function fromArray(array $json);
+    public static function fromArray( array $json )
+    {
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function toJson()
+    {
+        return json_encode($this->toArray());
+    }
 }
 

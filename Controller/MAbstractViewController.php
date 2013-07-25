@@ -277,7 +277,7 @@ abstract class MAbstractViewController extends MAbstractController
         // It's better if the path of the template file is assigned.
         if ( $this->template == null )
         {
-            trigger_error( "The path of the template file is null in " . get_class( $this ) . ' class.' . PHP_EOL, E_NOTICE );
+            trigger_error( 'The path of the template file is null in ' . (string)get_class( $this ) . ' class', E_USER_ERROR );
             return;
         }
 
