@@ -181,3 +181,5 @@ class MAbstractWebService extends MObject
         echo json_encode( $this->getResponse()->toArray() );
     }
 }
+
+register_shutdown_function(array('MToolkit\Network\RPC\Json\Server\MAbstractWebService','run'));
