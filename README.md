@@ -23,6 +23,16 @@ MToolkit borns like a mash-up of two frameworks: .NET and Qt. o_O
 Yes, the framework of the evil and the desktop framework for excellence.
 
 
+Some good features
+------------------
+- Completely Object Oriented
+- Autoload of classes (PSR-0 Standard)
+- Autorun of pages and of RPC Json web services from controller classes
+- Javascript frameworks compatibility (jQuery, Bootstrap, etc)
+- Master page concept (http://msdn.microsoft.com/it-it/library/system.web.ui.masterpage.aspx)
+- Separation between business logic and graphics
+
+
 Let's start
 -----------
 
