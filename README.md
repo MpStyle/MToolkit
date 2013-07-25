@@ -103,7 +103,7 @@ class Index extends MAbstractPageController
 The html code will be write into the file *Index.view*:
 
 ```
-<?php /* @var $this EntryPage */ ?>
+<?php /* @var $this Index */ ?>
 <html>
     <head>
         <title>Entry page</title>
