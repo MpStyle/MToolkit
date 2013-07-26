@@ -359,8 +359,8 @@ abstract class MAbstractViewController extends MAbstractController
             return;
         }
 
-//        echo get_class( $this ) . "<br />";
-
+        $this->init();
+        $this->load();
         $this->preRender();
         $this->render();
         $this->postRender();

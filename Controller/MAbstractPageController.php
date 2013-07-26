@@ -205,9 +205,7 @@ abstract class MAbstractPageController extends MAbstractViewController
 
             throw new \Exception( $message );
         }
-
-        $controller->init();
-        $controller->load();
+        
         $controller->show();
 
         // Clean the $_SESSION from signals.
