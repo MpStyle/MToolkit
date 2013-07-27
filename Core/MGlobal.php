@@ -25,27 +25,30 @@
  * 
  * @param string $name The class name, namespace included.
  */
-function __autoload($name)
+function __autoload( $name )
 {
-    $applicationDirPath=\MToolkit\Core\MApplication::getApplicationDirPath();
-    
-    if( $applicationDirPath==null )
+    $applicationDirPath = \MToolkit\Core\MApplication::getApplicationDirPath();
+    if ( $applicationDirPath == null )
     {
-        return;
+        $applicationDirPath = array();
     }
-    
-    $rootPaths=array_merge(array(), (array)$applicationDirPath );
-    
-    $classPath= str_replace("\\", DIRECTORY_SEPARATOR, $name);
-    $classPath.=".php";
-    
-    include_once $classPath;
-    
-    foreach($rootPaths as $rootPath)
+
+    $includePaths = explode( ':', get_include_path() );
+    if ( $includePaths === false )
     {
-        $path= $rootPath.DIRECTORY_SEPARATOR.$classPath;
-        
-        if( file_exists( $path )===true )
+        $includePaths = array();
+    }
+
+    $rootPaths = array_merge( (array) $includePaths, (array) $applicationDirPath );
+
+    $classPath = str_replace( "\\", DIRECTORY_SEPARATOR, $name );
+    $classPath.=".php";
+
+    foreach ( $rootPaths as $rootPath )
+    {
+        $path = $rootPath . DIRECTORY_SEPARATOR . $classPath;
+
+        if ( file_exists( $path ) === true )
         {
             include_once $path;
         }
@@ -58,20 +61,20 @@ function __autoload($name)
  * 
  * @param boolean $test
  */
-function M_ASSERT($test)
+function M_ASSERT( $test )
 {
-    if ($test !== true)
+    if ( $test !== true )
     {
         $trace = debug_backtrace();
         $lastTrace = $trace[0];
 
         $output = sprintf(
-            'ASSERT FAIL: "%b" in file %s, line %s.<br />'
-            , $lastTrace['args'][0]
-            , $lastTrace['file']
-            , $lastTrace['line']
+                'ASSERT FAIL: "%b" in file %s, line %s.<br />'
+                , $lastTrace['args'][0]
+                , $lastTrace['file']
+                , $lastTrace['line']
         );
 
-        trigger_error($output, E_USER_WARNING);
+        trigger_error( $output, E_USER_WARNING );
     }
 }
