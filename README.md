@@ -31,6 +31,7 @@ Some good features
 - Javascript frameworks compatibility (jQuery, Bootstrap, etc)
 - Master page concept (http://msdn.microsoft.com/it-it/library/system.web.ui.masterpage.aspx)
 - Separation between business logic and graphics
+- Fluent setters
 
 
 Let's start
