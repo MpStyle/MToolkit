@@ -21,8 +21,41 @@ namespace MToolkit\Model;
  */
 
 require_once __DIR__.'/MAbstractDataModel.php';
+require_once __DIR__.'/../Core/MObject.php';
 
-abstract class MAbstractTableModel extends MAbstractDataModel
+use MToolkit\Core\MObject;
+
+class MTableModel extends MAbstractDataModel
 {
+    private $data=array();
     
+    public function __construct( MObject $parent = null )
+    {
+        parent::__construct( $parent );
+    }
+    
+    public function setDataFromArray( array $data )
+    {
+        $this->data=$data;
+    }
+    
+    public function columnCount()
+    {
+        if( $this->rowCount()<=0 )
+        {
+            return 0;
+        }
+        
+        return count( $this->data[0] );
+    }
+
+    public function getData( $row, $column )
+    {
+        return $this->data[$row][$column];
+    }
+
+    public function rowCount()
+    {
+        return count( $this->data );
+    }    
 }

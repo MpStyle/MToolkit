@@ -41,21 +41,18 @@ class MListModel extends MAbstractDataModel
      * @param MList|array|null $array
      * @param \MToolkit\Core\MObject $parent
      */
-    public function __construct($data, MObject $parent = null)
+    public function __construct(MObject $parent = null)
     {
         parent::__construct($parent);
 
-        if (is_array($data))
-        {
-            $this->data=new MList();
-            $this->data->fromArray($data);
-        }
-        else
-        {
-            $this->data = $data;
-        }
+        $this->data=new MList();
     }
 
+    public function setDataFromArray( array $data )
+    {
+        $this->data->fromArray($data);
+    }
+    
     /**
      * Return the number of rows in resultset.
      * 

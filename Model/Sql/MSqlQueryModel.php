@@ -44,7 +44,7 @@ class MSqlQueryModel extends MAbstractDataModel
 
     /**
      * @param string $query
-     * @param \PDO|\mysqli|null $db
+     * @param \PDO|null $db
      * @throws Exception
      */
     public function setQuery( $query, $db = null )
@@ -57,10 +57,6 @@ class MSqlQueryModel extends MAbstractDataModel
         if( $db instanceof \PDO )
         {
             $this->query=new MPDOQuery($query, $db);
-        }
-        else if( $db instanceof \mysqli )
-        {
-            $this->query=new MMysqliQuery($query, $db);
         }
         else
         {

@@ -67,7 +67,7 @@ class MPDOResult extends MAbstractSqlResult
     /**
      * Return an array contains the names of the fields.
      * 
-     * @return type
+     * @return array
      */
     public function getFields()
     {

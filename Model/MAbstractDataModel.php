@@ -52,4 +52,15 @@ abstract class MAbstractDataModel extends MObject
      * @param mixed $column
      */
     public abstract function getData( $row, $column );
+    
+    /**
+     * Returns true if element has any children; otherwise returns false.
+     * @param int $row
+     * @param int $column
+     * @return boolean
+     */
+    public function hasChildren( $row, $column )
+    {
+        return false;
+    }
 }
