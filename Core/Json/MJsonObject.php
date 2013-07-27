@@ -22,9 +22,16 @@ class MJsonObject
             
             $propertyValue=$reflectionProperty->getValue($this);
             
-            if ( is_object( $propertyValue ) && method_exists( $propertyValue, 'toArray' ) )
+            if ( is_object( $propertyValue ) )
             {
-                $toReturn[$property->getName()] = $propertyValue->toArray();
+                if( method_exists( $propertyValue, 'toArray' ) )
+                {
+                    $toReturn[$property->getName()] = $propertyValue->toArray();
+                }
+                else
+                {
+                    $toReturn[$property->getName()] = null;
+                }
             }
             else
             {
@@ -36,6 +43,7 @@ class MJsonObject
 
     /**
      * Sets the property of the class, using the <i>$json</i>.
+     * The default implementation returns null.
      * 
      * @param array $json
      * @return MJsonObject 
@@ -51,6 +59,15 @@ class MJsonObject
     public function toJson()
     {
         return json_encode($this->toArray());
+    }
+    
+    /**
+     * @param string $json
+     * @return MJsonObject
+     */
+    public static function fromJson( $json )
+    {
+        return MJsonObject::fromArray( json_decode($json) );
     }
 }
 
