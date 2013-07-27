@@ -31,7 +31,7 @@ class MHash
     {
         if( in_array( $hashAlgorithm, hash_algos() )==false )
         {
-            throw new Exception("Algorithm " . $hashAlgorithm . " not supported");
+            throw new \Exception("Algorithm " . $hashAlgorithm . " not supported");
         }
         
         $this->hashAlgorithm=$hashAlgorithm;
