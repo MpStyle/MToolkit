@@ -27,18 +27,27 @@
  */
 function __autoload($name)
 {
-    $rootPaths=array_merge(array(), (array)\MToolkit\Core\MApplication::getApplicationDirPath() );
+    $applicationDirPath=\MToolkit\Core\MApplication::getApplicationDirPath();
+    
+    if( $applicationDirPath==null )
+    {
+        return;
+    }
+    
+    $rootPaths=array_merge(array(), (array)$applicationDirPath );
     
     $classPath= str_replace("\\", DIRECTORY_SEPARATOR, $name);
     $classPath.=".php";
     
+    include_once $classPath;
+    
     foreach($rootPaths as $rootPath)
     {
         $path= $rootPath.DIRECTORY_SEPARATOR.$classPath;
-
+        
         if( file_exists( $path )===true )
         {
-            require_once $path;
+            include_once $path;
         }
     }
 }

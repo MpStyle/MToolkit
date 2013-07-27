@@ -66,23 +66,18 @@ class MCoreApplication
      */
     public static function setApplicationDirPath( $path )
     {
-        MSession::set( MCoreApplication::APPLICATION_DIR_PATH, $path );
+        $paths=array_merge(array(), (array)$path );
+        MSession::set( MCoreApplication::APPLICATION_DIR_PATH, $paths );
     }
 
     /**
      * Return the root path of the project.
      * 
-     * @return string|null
+     * @return array|null
      */
     public static function getApplicationDirPath()
     {
         $rootPath = MSession::get( MCoreApplication::APPLICATION_DIR_PATH );
-
-        if ($rootPath == null)
-        {
-            return '.';
-        }
-
         return $rootPath;
     }
     
