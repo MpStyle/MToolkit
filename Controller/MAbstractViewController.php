@@ -95,55 +95,7 @@ abstract class MAbstractViewController extends MAbstractController
 
     public function initControls()
     {        
-        ob_start();
-        include $this->template;
-        $output = ob_get_clean();
         
-        /* @var $viewDoc HTML_Parser_HTML5 */ $viewDoc = str_get_dom( $output );
-        $controlsHtml=$viewDoc('php|*');
-                
-        foreach ($controlsHtml as /* @var $controlHtml \HTML_Node */ $controlHtml)
-        {
-            $tagName=$controlHtml->getTag();
-            
-            $class=$controlHtml->getAttribute('namespace') . '\\' . $tagName;
-            /* @var $classInstance MAbstractViewController */ $classInstance=new $class();
-            
-            if( ($classInstance instanceof MAbstractViewController)===false )
-            {
-                throw new Exception( 'The class ' . get_class( $classInstance ) . ' must be inherit from MAbstractViewController.' );
-            }
-            
-            $classInstance->setParent($this);
-            
-            // Set control property and attributes
-            foreach($controlHtml->attributes as $attributeKey => $attributeValue)
-            {
-                $controlHtml->deleteAttribute($attributeKey);
-                
-                if( $attributeKey!='namespace' )
-                {
-                    $method='set'.ucfirst($attributeKey);
-                    
-                    if( method_exists( $classInstance, $method ) )
-                    {
-                        $classInstance->$method($attributeValue);
-                    }
-                    else
-                    {
-                        $classInstance->setAttribute($attributeKey, $attributeValue);
-                    }
-                }
-            }
-            
-            if( MString::isNullOrEmpty( $classInstance->getAttribute( 'id' ) ) )
-            {
-                throw new \Exception( 'The attribute id must be valorized for the ' . get_class( $classInstance ) . ' object.' );
-            }
-            
-            $id=$classInstance->getAttribute( 'id' );
-            $this->controls[$id]=$classInstance;
-        }
     }
     
     /**
@@ -319,32 +271,7 @@ abstract class MAbstractViewController extends MAbstractController
     
     protected function renderControls()
     {
-        /* @var $viewDoc HTML_Parser_HTML5 */ $viewDoc = str_get_dom( $this->getOutput() );
-        $controlsHtml=$viewDoc('php|*');
-                
-        foreach ($controlsHtml as /* @var $controlHtml \HTML_Node */ $controlHtml)
-        {
-            $tagName=$controlHtml->getTag();
-            $class=$controlHtml->getAttribute('namespace') . '\\' . $tagName;
-            $objectId=$controlHtml->getAttribute('id');
-                        
-            // Set the tag container of the control
-            $controlHtml->setNamespace("");
-            $controlHtml->setTag("div");
-            $controlHtml->setAttribute('id', uniqid(str_replace('\\', '_', $class).'_'));
-                        
-            $classAttribute=$this->getControl( $objectId )->getAttribute( 'class' );
-            if( MString::isNullOrEmpty( $classAttribute )===false )
-            {
-                $controlHtml->setAttribute('class', $classAttribute );
-            }
-                        
-            // Show control
-            $this->getControl( $objectId )->render();
-            $controlHtml->setInnerText($this->getControl( $objectId )->getOutput());
-        }
         
-        $this->setOutput( (string) $viewDoc );
     }
     
     /**
