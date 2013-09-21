@@ -113,6 +113,11 @@ class MTranslator
      */
     public function translate($locale, $message, $args=array())
     {
+        if( isset( $this->translations[$locale] )===false || isset($this->translations[$locale][$message])===false )
+        {
+            return null;
+        }
+        
         $translation= $this->translations[$locale][$message];
         
         $sprintfParams = $args;
