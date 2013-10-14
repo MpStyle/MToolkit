@@ -1,5 +1,4 @@
 <?php
-
 namespace MToolkit\Core;
 
 require_once __DIR__ . '/MSession.php';
@@ -35,12 +34,12 @@ class MObject
     /**
      * @var MSlot[]
      */
-    private $signals = array();
+    private $signals = array( );
 
     /**
      * @var array
      */
-    private $properties = array();
+    private $properties = array( );
 
     /**
      * @var bool
@@ -96,7 +95,7 @@ class MObject
      */
     public function connect( MObject $sender, $signal, MObject $receiver, $method )
     {
-        if ($sender != $this)
+        if( $sender!=$this )
         {
             $sender->connect( $sender, $signal, $receiver, $method );
         }
@@ -116,12 +115,12 @@ class MObject
      */
     public function disconnect( MObject $sender, $signal, MObject $receiver, $method )
     {
-        if ($this != $sender)
+        if( $this!=$sender )
         {
             $sender->disconnect( $sender, $signal, $receiver, $method );
         }
 
-        if (!isset( $this->signals[$signal] ))
+        if( !isset( $this->signals[$signal] ) )
         {
             return;
         }
@@ -137,24 +136,24 @@ class MObject
      */
     public function emit( $signal, $args = null )
     {
-        if ($this->signalsBlocked)
+        if( $this->signalsBlocked )
         {
             return;
         }
 
-        if (isset( $this->signals[$signal] ) === false)
+        if( isset( $this->signals[$signal] )===false )
         {
             return;
         }
 
         $slots = $this->signals[$signal];
 
-        foreach ( $slots as /* @var $slot MSlot */ $slot )
+        foreach( $slots as /* @var $slot MSlot */ $slot )
         {
             $method = $slot->getMethod();
             $object = $slot->getObject();
 
-            if ($args == null)
+            if( $args==null )
             {
                 $object->$method();
             }
@@ -170,7 +169,7 @@ class MObject
      */
     public function disconnectSignals()
     {
-        $this->signals = array();
+        $this->signals = array( );
     }
 
     /**
@@ -194,7 +193,7 @@ class MObject
      */
     public function post( $key )
     {
-        if (isset( $_POST[$key] ) === false)
+        if( isset( $_POST[$key] )===false )
         {
             return null;
         }
@@ -209,7 +208,7 @@ class MObject
      */
     public function get( $key )
     {
-        if (isset( $_GET[$key] ) === false)
+        if( isset( $_GET[$key] )===false )
         {
             return null;
         }
@@ -278,6 +277,86 @@ class MObject
     public function setProperty( $name, $value )
     {
         $this->properties[$name] = $value;
+    }
+
+    /**
+     * @param bool $obj
+     * @return boolean
+     */
+    public function equals( $obj )
+    {
+        return MObject::areEquals( $this, $obj );
+    }
+
+    /**
+     * @param mixed $obj1
+     * @param mixed $obj2
+     * @return boolean
+     * @throws Exception
+     */
+    public static function areEquals( $obj1, $obj2 )
+    {
+        if( gettype( $obj1 )!=gettype( $obj2 ) )
+        {
+            return false;
+        }
+
+        switch( gettype( $obj1 ) )
+        {
+            case "boolean":
+                return ($obj1===$obj2);
+                break;
+            case "integer":
+            case "double":
+            case "string":
+                return ($obj1==$obj2);
+                break;
+            case "array":
+                return (count( array_diff( $obj1, $obj2 ) )==0);
+                break;
+            case "object":
+                // Do nothing
+                break;
+            case "NULL":
+                return true;
+                break;
+            default:
+                throw new Exception( 'Types like "resource" and "unknown type" are incomparable.' );
+                break;
+        }
+
+        if( get_class( $obj1 )!=get_class( $obj2 ) )
+        {
+            return false;
+        }
+
+        $reflectObj1 = new \ReflectionClass( $obj1 );
+        $reflectObj2 = new \ReflectionClass( $obj2 );
+
+        /* @var $propertiesThis \ReflectionProperty[] */ $propertiesObj1 = $reflectObj1->getProperties();
+        /* @var $propertiesObj \ReflectionProperty[] */ $propertiesObj2 = $reflectObj2->getProperties();
+
+        if( count( $propertiesObj1 )!=count( $propertiesObj2 ) )
+        {
+            return false;
+        }
+
+        for( $i = 0; $i<count( $obj1 ); $i++ )
+        {
+            /* @var $propertyObj1 \ReflectionProperty */ $propertyObj1 = $propertiesObj1[$i];
+            /* @var $propertyObj2 \ReflectionProperty */ $propertyObj2 = $propertiesObj2[$i];
+
+            $propertyObj1->setAccessible( true );
+            $propertyObj2->setAccessible( true );
+
+            $areEquals = MObject::areEquals( $propertyObj1->getValue( $obj1 ), $propertyObj2->getValue( $obj2 ) );
+            if( $areEquals===false )
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }
