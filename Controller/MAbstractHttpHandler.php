@@ -1,5 +1,5 @@
 <?php
-namespace MToolkit\Core;
+namespace MToolkit\Controller;
 
 /*
  * This file is part of MToolkit.
@@ -20,11 +20,11 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once 'MObject.php';
+require_once __DIR__.'/../Core/MObject.php';
 
 use MToolkit\Core\MObject;
 
-abstract class MAutorunClass extends MObject 
+abstract class MAbstractHttpHandler extends MObject 
 {
     public abstract function run();
     
@@ -50,4 +50,4 @@ abstract class MAutorunClass extends MObject
     }
 }
 
-register_shutdown_function(array('\MToolkit\Core\MAutorunClass','autorun'));
+register_shutdown_function(array('\MToolkit\Controller\MAbstractHttpHandler','autorun'));
