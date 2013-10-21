@@ -36,9 +36,9 @@ abstract class MAbstractHttpHandler extends MObject
 
         /* @var $controller \MToolkit\Controller\MAbstractController */ $controller = new $entryPoint();
 
-        if ( ( $controller instanceof \MToolkit\Core\MAutorunClass ) === false )
+        if ( ( $controller instanceof \MToolkit\Controller\MAbstractHttpHandler ) === false )
         {
-            $message = sprintf( "Invalid object for entry point in class %s, it must be an instance of MAutorunClass, %s is passed.", get_class( $this ), get_class( $controller ) );
+            $message = sprintf( "Invalid object for entry point in class %s, it must be an instance of \MToolkit\Controller\MAbstractHttpHandler, %s is passed.", get_class( $this ), get_class( $controller ) );
 
             throw new \Exception( $message );
         }
