@@ -274,6 +274,12 @@ class MString
 
         return new MString($string);
     }
+    
+    public function replace( $before, $after )
+    {
+        $string = str_replace($before, $after, $this->text);
+        return new MString($string);
+    }
 
     /**
      * Returns a substring that contains the n leftmost characters of the string.
