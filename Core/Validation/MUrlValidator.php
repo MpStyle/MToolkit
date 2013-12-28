@@ -22,7 +22,7 @@ namespace Core\Validation;
 
 require_once __DIR__ . '/AbstractValidator.php';
 
-class UrlValidator extends AbstractValidator
+class MUrlValidator extends AbstractValidator
 {
     public function __construct( &$value )
     {

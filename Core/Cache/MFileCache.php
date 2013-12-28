@@ -1,6 +1,6 @@
 <?php
 
-namespace MToolkit\Core;
+namespace MToolkit\Core\Cache;
 
 /*
  * This file is part of MToolkit.
@@ -21,8 +21,14 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-class MCache
+require_once __DIR__.'/MAbstractCache.php';
+
+class MFileCache extends MAbstractCache
 {
+    public function __construct( MObject $parent = null )
+    {
+        parent::__construct( $parent );
+    }
 
     /**
      * @var string 
@@ -107,17 +113,18 @@ class MCache
         $expired = substr( $fileContent, 0, $separatorPosition );
         $cache = substr( $fileContent, $separatorPosition + strlen( MCache::DELIMITER ) );
         
-        if( $expired==-1 || $expired > microtime( true ) )
+        if( $expired==-1 || $expired > time() )
         {
             return unserialize($cache);
         }
-
+        
+        $this->delete($key);
         return null;
     }
 
     /**
      * Store a <i>$value</i> in a cache file with <i>$key</i>.
-     * It is possible to pass a timestamp (microseconds) for the expiration.
+     * It is possible to pass a timestamp (seconds) for the expiration.
      * 
      * @param string $key
      * @param string $value

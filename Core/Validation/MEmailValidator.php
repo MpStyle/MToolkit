@@ -23,7 +23,7 @@ namespace Core\Validation;
 
 require_once __DIR__ . '/AbstractValidator.php';
 
-class EmailValidator extends AbstractValidator
+class MEmailValidator extends AbstractValidator
 {
     public function __construct( &$value )
     {

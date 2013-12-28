@@ -20,32 +20,31 @@ namespace Core\Validation;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/AbstractValidator.php';
-
-class GroupValidator extends AbstractValidator
+abstract class MAbstractValidator
 {
     /**
-     * @var AbstractValidator[]
+     * @var mixed 
      */
-    private $validators=array();
-    
-    public function addValidator( AbstractValidator $validator )
-    {
-        $this->validators[]=$validator;;
-    }
+    private $value;
     
     /**
-     * @return boolean
+     * @return boolean 
      */
-    public function isValid()
+    public abstract function isValid();
+    
+    /**
+     * @return mixed
+     */
+    public function getValue()
     {
-        $isValid=true;
-        
-        foreach( $this->validators as /* @var $validator AbstractValidator */ $validator )
-        {
-            $isValid= $isValid && $validator->isValid();
-        }
-        
-        return $isValid;
+        return $this->value;
+    }
+
+    /**
+     * @param mixed $value
+     */
+    protected function setValue( &$value )
+    {
+        $this->value=$value;
     }
 }

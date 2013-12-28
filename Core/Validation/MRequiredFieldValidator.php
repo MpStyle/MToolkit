@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Core\Validation;
 
 /*
@@ -23,34 +24,40 @@ namespace Core\Validation;
 
 require_once __DIR__ . '/AbstractValidator.php';
 
-class RegexValidator extends AbstractValidator
+class MRequiredFieldValidator extends AbstractValidator
 {
-    /**
-     * @var string 
-     */
-    private $regex;
-
-    /**
-     * @param mixed $value
-     * @param string $regex
-     */
-    public function __construct( &$value, $regex )
+    public function __construct( &$value )
     {
         $this->setValue($value);
-        $this->regex = $regex;
     }
-
+    
     /**
+     * The field is valid if:
+     * <ul>
+     * <li>it is setted</li>
+     * <li>it is not equal to null</li>
+     * <li>it is not equal to empty string</li>
+     * </ul>
+     * 
      * @return boolean
      */
     public function isValid()
     {
-        if ( !preg_match( $this->regex, $this->getValue() ) )
+        if( isset( $this->getValue() )===false )
+        {
+            return false;
+        }
+        
+        if( $this->getValue()==null )
+        {
+            return false;
+        }
+        
+        if( $this->getValue()=='' )
         {
             return false;
         }
         
         return true;
-    }
-
+    }    
 }
