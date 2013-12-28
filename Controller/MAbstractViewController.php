@@ -71,6 +71,9 @@ abstract class MAbstractViewController extends MAbstractController
      * @var string An array of key => value
      */
     private $attributes=array();
+    
+    /* @var HTML_Parser_HTML5 */
+    private $pageDoc=null;
 
     /**
      * @param string $template The path of the file containing the html of the controller.
@@ -97,6 +100,9 @@ abstract class MAbstractViewController extends MAbstractController
     {        
         
     }
+    
+    public function load()
+    {}
     
     /**
      * @return array
@@ -165,6 +171,8 @@ abstract class MAbstractViewController extends MAbstractController
     protected function setOutput( $output )
     {
         $this->output = $output;
+        $this->pageDoc = str_get_dom( $this->getOutput() );
+        
         return $this;
     }
 
@@ -269,9 +277,22 @@ abstract class MAbstractViewController extends MAbstractController
         return $this;
     }
     
-    protected function renderControls()
+    /**
+     * This method pre-renderize the controller.
+     */
+    protected function preRender()
     {
-        
+    }
+    
+    protected function renderControls()
+    {   
+    }
+    
+    /**
+     * This method post-renderize the controller.
+     */
+    protected function postRender()
+    {
     }
     
     /**
@@ -286,6 +307,8 @@ abstract class MAbstractViewController extends MAbstractController
             return;
         }
 
+        header('Content-type: ' . $this->getHttpResponse()->getContentType() );
+        
         $this->init();
         $this->load();
         $this->preRender();
@@ -297,4 +320,8 @@ abstract class MAbstractViewController extends MAbstractController
         $this->output = "";
     }
 
+    public function getPageDoc()
+    {
+        return $this->pageDoc;
+    }
 }

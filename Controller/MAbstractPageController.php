@@ -1,5 +1,4 @@
 <?php
-
 namespace MToolkit\Controller;
 
 /*
@@ -35,14 +34,21 @@ abstract class MAbstractPageController extends MAbstractViewController
     const MASTER_PAGE_PLACEHOLDER_ID = 'MasterPagePlaceholderId';
     const PAGE_CONTENT_ID = 'PageContentId';
 
-    private $css = array();
-    private $javascript = array();
+    private $css = array( );
+    private $javascript = array( );
 
     /**
      * @var MAbstractMasterPageController 
      */
     private $masterPage = null;
-    private $masterPageParts = array();
+    private $masterPageParts = array( );
+
+    /**
+     * @var string|null 
+     */
+    private $pageTitle = null;
+    
+    
 
     /**
      * @param string $template
@@ -55,45 +61,63 @@ abstract class MAbstractPageController extends MAbstractViewController
 
     public function addCss( $href, $media = CssMedia::ALL, $rel = CssRel::STYLESHEET )
     {
-        if (MString::isNullOrEmpty( $href ) === false)
+        if( MString::isNullOrEmpty( $href )===false )
         {
             $this->css[] = array(
                 "href" => $href
                 , "rel" => $rel
-                , "media" => $media);
+                , "media" => $media );
         }
     }
 
     public function addJavascript( $src )
     {
-        if (MString::isNullOrEmpty( $src ) === false)
+        if( MString::isNullOrEmpty( $src )===false )
         {
-            $this->javascript[] = array("src" => $src);
+            $this->javascript[] = array( "src" => $src );
         }
     }
 
+    /**
+     * Render the link tag for CSS at the end of head tag.
+     */
     public function renderCss()
     {
+        $pageDoc = $this->getPageDoc();
         $html = "";
 
-        foreach ( $this->css as $item )
+        foreach( $this->css as $item )
         {
-            $html.=sprintf( MAbstractPageController::CSS_TEMPLATE, $item["rel"], $item["href"], $item["media"] );
+            $html.=sprintf( MAbstractPageController::CSS_TEMPLATE, $item["rel"], $item["href"], $item["media"] ) . "\n";
         }
-
-        echo $html;
+        
+        foreach( $pageDoc( 'head' ) as /* @var $element \HTML_Node */ $element )
+        {
+            $element->setInnerText( $element->getInnerText() . "\n" . $html );
+        }
+        
+        $this->setOutput( (string) $pageDoc );
     }
 
+    /**
+     * Render the script tag for Javascript at the end of head tag.
+     */
     public function renderJavascript()
     {
+        $pageDoc = $this->getPageDoc();
         $html = "";
 
-        foreach ( $this->javascript as $item )
+        foreach( $this->javascript as $item )
         {
-            $html.=sprintf( MAbstractPageController::JAVASCRIPT_TEMPLATE, $item["src"] );
+            $html.=sprintf( MAbstractPageController::JAVASCRIPT_TEMPLATE, $item["src"] ) . "\n";
         }
 
-        echo $html;
+        foreach( $pageDoc( 'head' ) as /* @var $element \HTML_Node */ $element )
+        {
+            $element->setInnerText( $element->getInnerText() . "\n" . $html );
+        }
+        
+        $this->setOutput( (string) $pageDoc );
     }
 
     public function getMasterPage()
@@ -124,9 +148,9 @@ abstract class MAbstractPageController extends MAbstractViewController
     }
 
     protected function render()
-    {   
+    {
         // If the master page is not set, render the page.
-        if ($this->masterPage == null)
+        if( $this->masterPage==null )
         {
             parent::render();
             return;
@@ -138,49 +162,72 @@ abstract class MAbstractPageController extends MAbstractViewController
         $this->masterPage->show();
         $masterPageRendered = ob_get_clean();
         /* @var $masterPageDoc HTML_Parser_HTML5 */ $masterPageDoc = str_get_dom( $masterPageRendered );
-        
+
         // renders the current page
         parent::render();
         $pageRendered = $this->getOutput();
         /* @var $pageDoc HTML_Parser_HTML5 */ $pageDoc = str_get_dom( $pageRendered );
-        
+
         // assemblies the master page and current page
-        foreach ( $this->masterPageParts as $masterPagePart )
+        foreach( $this->masterPageParts as $masterPagePart )
         {
             $masterPagePlaceholderId = '#' . $masterPagePart[MAbstractPageController::MASTER_PAGE_PLACEHOLDER_ID];
             $pageContentId = '#' . $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID];
-            
-            $contents=$pageDoc($pageContentId);
-            
+
+            $contents = $pageDoc( $pageContentId );
+
             // If the element was not found in the page
-            if( count($contents)<=0 )
+            if( count( $contents )<=0 )
             {
-                throw new MElementIdNotFoundException( 
-                        $this->getTemplate(),
-                        $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID]);
+                throw new MElementIdNotFoundException(
+                $this->getTemplate(), $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID] );
             }
-            
-            $content=$contents[0];
-            
-            $placeHolders=$masterPageDoc($masterPagePlaceholderId);
-            
+
+            $content = $contents[0];
+
+            $placeHolders = $masterPageDoc( $masterPagePlaceholderId );
+
             // If the element was not found in the master page
-            if( count($placeHolders)<=0 )
+            if( count( $placeHolders )<=0 )
             {
-                throw new MElementIdNotFoundException( 
-                        $this->getMasterPage()->getTemplate(),
-                        $masterPagePart[MAbstractPageController::MASTER_PAGE_PLACEHOLDER_ID]);
+                throw new MElementIdNotFoundException(
+                $this->getMasterPage()->getTemplate(), $masterPagePart[MAbstractPageController::MASTER_PAGE_PLACEHOLDER_ID] );
             }
-            
-            $placeHolder=$placeHolders[0];
-            
-            $placeHolder->setInnerText( (string)$content->getInnerText() );
+
+            $placeHolder = $placeHolders[0];
+
+            $placeHolder->setInnerText( (string) $content->getInnerText() );
         }
-        
+
         // set the output of page with the assemblies
         $this->setOutput( (string) $masterPageDoc );
+        
+        $this->renderTitle();
+        $this->renderCss();
+        $this->renderJavascript();
     }
     
+    public function renderTitle()
+    {
+        $pageDoc = $this->getPageDoc();
+        
+        // Render page title
+        if( $this->pageTitle!=null )
+        {
+            foreach( $pageDoc( 'title' ) as $element )
+            {
+                $element->setInnerText($this->pageTitle);
+            }
+            
+            $this->setOutput( (string) $pageDoc );
+        }
+    }
+
+    public function postRender()
+    {
+        parent::postRender();
+    }
+
     /**
      * This function run the UI process of the web application.
      * 
@@ -195,26 +242,37 @@ abstract class MAbstractPageController extends MAbstractViewController
     {
         /* @var $classes string[] */ $classes = get_declared_classes();
 
-        /* @var $entryPoint string */ $entryPoint = $classes[count( $classes ) - 1];
+        /* @var $entryPoint string */ $entryPoint = $classes[count( $classes )-1];
 
         /* @var $controller \MToolkit\Controller\MAbstractController */ $controller = new $entryPoint();
 
-        if ( ( $controller instanceof \MToolkit\Controller\MAbstractPageController ) === false )
+        if( ( $controller instanceof \MToolkit\Controller\MAbstractPageController )===false )
         {
             $message = sprintf( "Invalid object for entry point in class %s, it must be an instance of MAbstractController, %s is passed.", get_class( $this ), get_class( $controller ) );
 
             throw new \Exception( $message );
         }
-        
+
         $controller->show();
 
         // Clean the $_SESSION from signals.
         $controller->disconnectSignals();
     }
 
+    public function getPageTitle()
+    {
+        return $this->pageTitle;
+    }
+
+    public function setPageTitle( $pageTitle )
+    {
+        $this->pageTitle = $pageTitle;
+        return $this;
+    }
+
 }
 
-register_shutdown_function(array('MToolkit\Controller\MAbstractPageController','run'));
+register_shutdown_function( array( 'MToolkit\Controller\MAbstractPageController', 'run' ) );
 
 final class CssRel
 {

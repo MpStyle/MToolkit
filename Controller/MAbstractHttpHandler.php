@@ -20,11 +20,11 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/../Core/MObject.php';
+require_once __DIR__.'/MAbstractController.php';
 
-use MToolkit\Core\MObject;
+use MToolkit\Controller\MAbstractController;
 
-abstract class MAbstractHttpHandler extends MObject 
+abstract class MAbstractHttpHandler extends MAbstractController 
 {
     public abstract function run();
     
@@ -43,6 +43,7 @@ abstract class MAbstractHttpHandler extends MObject
             throw new \Exception( $message );
         }
         
+        header('Content-type: ' . $controller->getHttpResponse()->getContentType() );
         $controller->run();
 
         // Clean the $_SESSION from signals.

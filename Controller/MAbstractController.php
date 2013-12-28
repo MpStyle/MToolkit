@@ -21,8 +21,10 @@ namespace MToolkit\Controller;
  */
 
 require_once __DIR__.'/../Core/MObject.php';
+require_once __DIR__.'/MHttpResponse.php';
 
 use \MToolkit\Core\MObject;
+use MToolkit\Controller\MAbstractController;
 
 /**
  * MAbstractController class provides a base methods
@@ -31,6 +33,11 @@ use \MToolkit\Core\MObject;
 abstract class MAbstractController extends MObject
 {
     /**
+     * @var MHttpResponse
+     */
+    private $httpResponse=null;
+    
+    /**
      * Constructs an abstract controller with the given <i>$parent</i>.
      * 
      * @param MObject $parent
@@ -38,46 +45,14 @@ abstract class MAbstractController extends MObject
     public function __construct( MObject $parent=null )
     {
         parent::__construct( $parent );
+        $this->httpResponse=new MHttpResponse();
     }
     
     /**
-     * This method initialize the controller.
+     * @return MHttpResponse
      */
-    public function init()
+    public function getHttpResponse()
     {
-    }   
-
-    public function load()
-    {}
-    
-    /**
-     * This method pre-renderize the controller.
-     */
-    protected function preRender()
-    {
+        return $this->httpResponse;
     }
-
-    /**
-     * Render the controller.
-     */
-    protected abstract function render();
-
-    /**
-     * This method post-renderize the controller.
-     */
-    protected function postRender()
-    {
-    }
-    
-    /**
-     * Print to screen the controller rendered in method <i>MAbstractController::render()</i>
-     */
-    public abstract function show();
-    
-    /**
-     * It is the entry point to load the controller.
-     */
-    public static function run()
-    {}
-
 }
