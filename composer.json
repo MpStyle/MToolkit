@@ -1,16 +1,16 @@
 {
-    "name": "MpStyle/MTollkit",
-    "description": "MToolkit is a simple PHP toolkit.",
-    "keywords": ["framework","toolkit", "Qt", ".NET"],
+    "name": "mpstyle/mtoolkit",
+    "description": "MToolkit is a simple PHP toolkit. Easy to understand. Fast to use.",
+    "keywords": ["framework","toolkit", "Qt", ".NET", "web framework"],
     "type": "library",
     "homepage": "https://github.com/MpStyle/MToolkit",
     "license": "LGPL",
     "authors": [
         {
             "name": "Michele Pagnin",
-            "email": "agv46@tiscali.it",
+            "email": "pagnin.michele@gmail.com",
             "homepage": "mpmp.altervista.org",
-            "role": "Developer"
+            "role": "Main Developer"
         }
     ],
     "require": {
