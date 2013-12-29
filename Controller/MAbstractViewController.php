@@ -23,11 +23,12 @@ namespace MToolkit\Controller;
 require_once __DIR__ . '/../Core/MSession.php';
 require_once __DIR__ . '/../Core/MString.php';
 require_once __DIR__ . '/../Core/Exception/MTemplateNotFoundException.php';
-require_once __DIR__ . '/../View/GanonEngine.php';
+require_once __DIR__ . '/MAbstractController.php';
 
 use MToolkit\Core\MSession;
 use MToolkit\Core\Exception\MTemplateNotFoundException;
 use MToolkit\Core\MString;
+use MToolkit\Controller\MAbstractController;
 
 abstract class MAbstractViewController extends MAbstractController
 {
@@ -71,9 +72,6 @@ abstract class MAbstractViewController extends MAbstractController
      * @var string An array of key => value
      */
     private $attributes=array();
-    
-    /* @var HTML_Parser_HTML5 */
-    private $pageDoc=null;
 
     /**
      * @param string $template The path of the file containing the html of the controller.
@@ -171,7 +169,6 @@ abstract class MAbstractViewController extends MAbstractController
     protected function setOutput( $output )
     {
         $this->output = $output;
-        $this->pageDoc = str_get_dom( $this->getOutput() );
         
         return $this;
     }
@@ -318,10 +315,5 @@ abstract class MAbstractViewController extends MAbstractController
         echo $this->output;
 
         $this->output = "";
-    }
-
-    public function getPageDoc()
-    {
-        return $this->pageDoc;
     }
 }

@@ -21,16 +21,18 @@ namespace MToolkit\Controller;
  */
 
 require_once __DIR__ . '/../Core/MString.php';
-require_once __DIR__ . '/../View/GanonEngine.php';
+require_once __DIR__ . '/../View/qp.php';
+require_once __DIR__ . '/MAbstractViewController.php';
 
 use MToolkit\Core\MString;
 use MToolkit\Controller\MAbstractMasterPageController;
 use MToolkit\Core\Exception\MElementIdNotFoundException;
+use MToolkit\Controller\MAbstractViewController;
 
 abstract class MAbstractPageController extends MAbstractViewController
 {
     const JAVASCRIPT_TEMPLATE = '<script type="text/javascript" src="%s"></script>';
-    const CSS_TEMPLATE = '<link rel="%s" type="text/css" href="%s" media="%s">';
+    const CSS_TEMPLATE = '<link rel="%s" type="text/css" href="%s" media="%s" />';
     const MASTER_PAGE_PLACEHOLDER_ID = 'MasterPagePlaceholderId';
     const PAGE_CONTENT_ID = 'PageContentId';
 
@@ -83,20 +85,20 @@ abstract class MAbstractPageController extends MAbstractViewController
      */
     public function renderCss()
     {
-        $pageDoc = $this->getPageDoc();
         $html = "";
 
         foreach( $this->css as $item )
         {
             $html.=sprintf( MAbstractPageController::CSS_TEMPLATE, $item["rel"], $item["href"], $item["media"] ) . "\n";
         }
-        
-        foreach( $pageDoc( 'head' ) as /* @var $element \HTML_Node */ $element )
-        {
-            $element->setInnerText( $element->getInnerText() . "\n" . $html );
-        }
-        
-        $this->setOutput( (string) $pageDoc );
+                
+        ob_start();
+        qp($this->getOutput(), "head")
+                ->append($html)
+                ->writeHTML();
+        $output = ob_get_clean();
+
+        $this->setOutput( $output );
     }
 
     /**
@@ -104,20 +106,20 @@ abstract class MAbstractPageController extends MAbstractViewController
      */
     public function renderJavascript()
     {
-        $pageDoc = $this->getPageDoc();
         $html = "";
-
+        
         foreach( $this->javascript as $item )
         {
             $html.=sprintf( MAbstractPageController::JAVASCRIPT_TEMPLATE, $item["src"] ) . "\n";
         }
 
-        foreach( $pageDoc( 'head' ) as /* @var $element \HTML_Node */ $element )
-        {
-            $element->setInnerText( $element->getInnerText() . "\n" . $html );
-        }
-        
-        $this->setOutput( (string) $pageDoc );
+        ob_start();
+        qp($this->getOutput(), "head")
+                ->append($html)
+                ->writeHTML();
+        $output = ob_get_clean();
+
+        $this->setOutput( $output );
     }
 
     public function getMasterPage()
@@ -161,46 +163,28 @@ abstract class MAbstractPageController extends MAbstractViewController
         $this->masterPage->init();
         $this->masterPage->show();
         $masterPageRendered = ob_get_clean();
-        /* @var $masterPageDoc HTML_Parser_HTML5 */ $masterPageDoc = str_get_dom( $masterPageRendered );
+        /* @var $masterPageDoc HTML_Parser_HTML5 */ //$masterPageDoc = str_get_dom( $masterPageRendered );
 
         // renders the current page
         parent::render();
         $pageRendered = $this->getOutput();
-        /* @var $pageDoc HTML_Parser_HTML5 */ $pageDoc = str_get_dom( $pageRendered );
+        /* @var $pageDoc HTML_Parser_HTML5 */ //$pageDoc = str_get_dom( $pageRendered );
 
         // assemblies the master page and current page
         foreach( $this->masterPageParts as $masterPagePart )
         {
             $masterPagePlaceholderId = '#' . $masterPagePart[MAbstractPageController::MASTER_PAGE_PLACEHOLDER_ID];
             $pageContentId = '#' . $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID];
-
-            $contents = $pageDoc( $pageContentId );
-
-            // If the element was not found in the page
-            if( count( $contents )<=0 )
-            {
-                throw new MElementIdNotFoundException(
-                $this->getTemplate(), $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID] );
-            }
-
-            $content = $contents[0];
-
-            $placeHolders = $masterPageDoc( $masterPagePlaceholderId );
-
-            // If the element was not found in the master page
-            if( count( $placeHolders )<=0 )
-            {
-                throw new MElementIdNotFoundException(
-                $this->getMasterPage()->getTemplate(), $masterPagePart[MAbstractPageController::MASTER_PAGE_PLACEHOLDER_ID] );
-            }
-
-            $placeHolder = $placeHolders[0];
-
-            $placeHolder->setInnerText( (string) $content->getInnerText() );
+            
+            ob_start();
+            qp($masterPageRendered, $masterPagePlaceholderId)
+                    ->append(qp($pageRendered, $pageContentId)->innerHtml())
+                    ->writeHTML();
+            $masterPageRendered = ob_get_clean();
         }
-
+        
         // set the output of page with the assemblies
-        $this->setOutput( (string) $masterPageDoc );
+        $this->setOutput( $masterPageRendered );
         
         $this->renderTitle();
         $this->renderCss();
@@ -209,17 +193,16 @@ abstract class MAbstractPageController extends MAbstractViewController
     
     public function renderTitle()
     {
-        $pageDoc = $this->getPageDoc();
-        
         // Render page title
         if( $this->pageTitle!=null )
         {
-            foreach( $pageDoc( 'title' ) as $element )
-            {
-                $element->setInnerText($this->pageTitle);
-            }
+            ob_start();
+            qp($this->getOutput(), "title")
+                    ->append($this->pageTitle)
+                    ->writeHTML();
+            $output = ob_get_clean();
             
-            $this->setOutput( (string) $pageDoc );
+            $this->setOutput( $output );
         }
     }
 
