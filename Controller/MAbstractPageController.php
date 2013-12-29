@@ -163,12 +163,12 @@ abstract class MAbstractPageController extends MAbstractViewController
         $this->masterPage->init();
         $this->masterPage->show();
         $masterPageRendered = ob_get_clean();
-        /* @var $masterPageDoc HTML_Parser_HTML5 */ //$masterPageDoc = str_get_dom( $masterPageRendered );
+        $masterPageRendered = mb_convert_encoding($masterPageRendered, $this->getCharset(), 'auto');
 
         // renders the current page
         parent::render();
         $pageRendered = $this->getOutput();
-        /* @var $pageDoc HTML_Parser_HTML5 */ //$pageDoc = str_get_dom( $pageRendered );
+        $pageRendered = mb_convert_encoding($pageRendered, $this->getCharset(), 'auto');
 
         // assemblies the master page and current page
         foreach( $this->masterPageParts as $masterPagePart )
@@ -177,6 +177,7 @@ abstract class MAbstractPageController extends MAbstractViewController
             $pageContentId = '#' . $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID];
             
             ob_start();
+            
             qp($masterPageRendered, $masterPagePlaceholderId)
                     ->append(qp($pageRendered, $pageContentId)->innerHtml())
                     ->writeHTML();
@@ -196,19 +197,16 @@ abstract class MAbstractPageController extends MAbstractViewController
         // Render page title
         if( $this->pageTitle!=null )
         {
+            $title = mb_convert_encoding($this->pageTitle, $this->getCharset(), 'auto');
+            
             ob_start();
             qp($this->getOutput(), "title")
-                    ->append($this->pageTitle)
+                    ->append($title)
                     ->writeHTML();
             $output = ob_get_clean();
             
             $this->setOutput( $output );
         }
-    }
-
-    public function postRender()
-    {
-        parent::postRender();
     }
 
     /**

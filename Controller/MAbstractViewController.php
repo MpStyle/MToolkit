@@ -72,6 +72,8 @@ abstract class MAbstractViewController extends MAbstractController
      * @var string An array of key => value
      */
     private $attributes=array();
+    
+    private $charset='iso-8859-1';
 
     /**
      * @param string $template The path of the file containing the html of the controller.
@@ -316,4 +318,17 @@ abstract class MAbstractViewController extends MAbstractController
 
         $this->output = "";
     }
+    
+    public function getCharset()
+    {
+        return $this->charset;
+    }
+
+    public function setCharset( $charset )
+    {
+        $this->charset = $charset;
+        return $this;
+    }
+
+
 }
