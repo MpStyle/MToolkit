@@ -20,12 +20,13 @@ namespace MToolkit\Core\Cache;
  * @author  Michele Pagnin
  */
 
-require_once '../MObject.php';
+require_once __DIR__ . '/../MObject.php';
 
 use MToolkit\Core\MObject;
 
 abstract class MAbstractCache extends MObject
 {
+
     public function __construct( MObject $parent = null )
     {
         parent::__construct( $parent );
@@ -37,30 +38,33 @@ abstract class MAbstractCache extends MObject
      * @param string $key
      */
     public abstract function delete( $key );
-    
+
     /**
      * Remove all cache records.
      */
     public abstract function flush();
-    
+
     /**
      * Return the content of a cache record with <i>$key</i>.
      * 
      * @param string $key
      * @return string|null
      */
-    public abstract function get( $key );
-    
+    public abstract function fetch( $key );
+
     /**
      * Store a <i>$value</i> in a cache record with <i>$key</i>.
-     * It is possible to pass a timestamp (microseconds) for the expiration.
+     * Time To Live; seconds. After the ttl has 
+     * passed, the stored variable will be expunged from the cache (on the next 
+     * request). If no ttl is supplied (or if the ttl is 0), the value will 
+     * persist until it is removed from the cache manually, or otherwise fails 
+     * to exist in the cache (clear, restart, etc.).
      * 
      * @param string $key
      * @param string $value
-     * @param float $expired
+     * @param int $ttl
      * @return bool
      */
-    public abstract function set( $key, $value, $expired = -1 );
+    public abstract function store( $key, $value, $ttl = 0 );
 }
-
 

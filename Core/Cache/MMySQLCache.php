@@ -21,6 +21,9 @@ namespace MToolkit\Core\Cache;
  */
 
 require_once __DIR__ . '/MAbstractCache.php';
+require_once __DIR__ . '/../../Model/Sql/MDbConnection.php';
+
+use MToolkit\Model\Sql\MDbConnection;
 
 class MMySQLCache extends MAbstractCache
 {
@@ -43,7 +46,7 @@ class MMySQLCache extends MAbstractCache
 
     private function init()
     {
-        $query = "CREATE TABLE `" . $this->cacheTableName . "`
+        $query = "CREATE TABLE IF NOT EXISTS `" . $this->cacheTableName . "`
             (
                 `Key` VARCHAR(500) PRIMARY KEY,
                 `Value` LONGTEXT,
@@ -94,16 +97,31 @@ class MMySQLCache extends MAbstractCache
         $stmt->closeCursor();
     }
 
-    public function set( $key, $value, $expired = -1 )
+    /**
+     * Store a <i>$value</i> in a cache record with <i>$key</i>.
+     * Time To Live; seconds. After the ttl has 
+     * passed, the stored variable will be expunged from the cache (on the next 
+     * request). If no ttl is supplied (or if the ttl is 0), the value will 
+     * persist until it is removed from the cache manually, or otherwise fails 
+     * to exist in the cache (clear, restart, etc.).
+     * 
+     * @param string $key
+     * @param string $value
+     * @param int $ttl
+     * @return bool
+     */
+    public function store( $key, $value, $ttl = -1 )
     {
         $this->delete( $key );
+
+        $expired = time()+$ttl;
 
         $query = "INSERT INTO `" . $this->cacheTableName . "` (`Key`, `Value`, `Expired`)
             VALUES(?, ?, ?)
         ;";
         /* @var $connection \PDO */ $connection = MDbConnection::dbConnection();
         /* @var $stmt \PDOStatement */ $stmt = $connection->prepare( $query );
-        /* @var $result bool */ $result = $stmt->execute( array( $key, serialize($value), $expired ) );
+        /* @var $result bool */ $result = $stmt->execute( array( $key, serialize( $value ), $expired ) );
 
         if( $result===false )
         {
@@ -119,36 +137,36 @@ class MMySQLCache extends MAbstractCache
      * @param string $key
      * @return string|null
      */
-    public function get( $key )
+    public function fetch( $key )
     {
         $query = "SELECT `Key`, `Value`, `Expired` FROM `" . $this->cacheTableName . "` WHERE `key`=?;";
         /* @var $connection \PDO */ $connection = MDbConnection::dbConnection();
         /* @var $stmt \PDOStatement */ $stmt = $connection->prepare( $query );
-        /* @var $result bool */ $result = $stmt->execute( array($key) );
-        
-        if ( $result === false )
+        /* @var $result bool */ $result = $stmt->execute( array( $key ) );
+
+        if( $result===false )
         {
-            throw new \Exception( json_encode(  $stmt->errorInfo() ) );
+            throw new \Exception( json_encode( $stmt->errorInfo() ) );
         }
-        
-        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $rows = $stmt->fetchAll( \PDO::FETCH_ASSOC );
         $stmt->closeCursor();
-        
-        if( count($rows)<=0 )
+
+        if( count( $rows )<=0 )
         {
             return null;
         }
-        
-        $key=$rows[0]['Key'];
-        $value=$rows[0]['Value'];
-        $expired=$rows[0]['Expired'];
-        
-        if( $expired==-1 || $expired > time() )
+
+        $key = $rows[0]['Key'];
+        $value = $rows[0]['Value'];
+        $expired = $rows[0]['Expired'];
+
+        if( $expired==-1||$expired>time() )
         {
-            return unserialize($value);
+            return unserialize( $value );
         }
-        
-        $this->delete($key);
+
+        $this->delete( $key );
         return null;
     }
 

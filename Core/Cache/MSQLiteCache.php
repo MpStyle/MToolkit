@@ -94,9 +94,24 @@ class MSQLiteCache extends MAbstractCache
         $stmt->closeCursor();
     }
 
-    public function set( $key, $value, $expired = -1 )
+    /**
+     * Store a <i>$value</i> in a cache record with <i>$key</i>.
+     * Time To Live; seconds. After the ttl has 
+     * passed, the stored variable will be expunged from the cache (on the next 
+     * request). If no ttl is supplied (or if the ttl is 0), the value will 
+     * persist until it is removed from the cache manually, or otherwise fails 
+     * to exist in the cache (clear, restart, etc.).
+     * 
+     * @param string $key
+     * @param string $value
+     * @param int $ttl
+     * @return bool
+     */
+    public function store( $key, $value, $ttl = -1 )
     {
         $this->delete( $key );
+        
+        $expired=time()+$ttl;
 
         $query = "INSERT INTO `" . $this->cacheTableName . "` (`Key`, `Value`, `Expired`)
             VALUES(?, ?, ?)
@@ -119,7 +134,7 @@ class MSQLiteCache extends MAbstractCache
      * @param string $key
      * @return string|null
      */
-    public function get( $key )
+    public function fetch( $key )
     {
         $query = "SELECT `Key`, `Value`, `Expired` FROM `" . $this->cacheTableName . "` WHERE `key`=?;";
         /* @var $connection \PDO */ $connection = MDbConnection::dbConnection();

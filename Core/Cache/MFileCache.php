@@ -78,7 +78,10 @@ class MFileCache extends MAbstractCache
      */
     public function delete( $key )
     {
-        unlink( $this->generateFileName( $key ) );
+        if( file_exists( $this->generateFileName( $key ) ) === true )
+        {
+            unlink( $this->generateFileName( $key ) );
+        }
     }
 
     /**
@@ -100,7 +103,7 @@ class MFileCache extends MAbstractCache
      * @param string $key
      * @return string|null
      */
-    public function get( $key )
+    public function fetch( $key )
     {
         if( file_exists( $this->generateFileName( $key ) ) === false )
         {
@@ -123,20 +126,23 @@ class MFileCache extends MAbstractCache
     }
 
     /**
-     * Store a <i>$value</i> in a cache file with <i>$key</i>.
-     * It is possible to pass a timestamp (seconds) for the expiration.
+     * Store a <i>$value</i> in a cache record with <i>$key</i>.
+     * Time To Live; seconds. After the ttl has 
+     * passed, the stored variable will be expunged from the cache (on the next 
+     * request). If no ttl is supplied (or if the ttl is 0), the value will 
+     * persist until it is removed from the cache manually, or otherwise fails 
+     * to exist in the cache (clear, restart, etc.).
      * 
      * @param string $key
      * @param string $value
-     * @param float $expired
+     * @param int $ttl
      * @return bool
      */
-    public function set( $key, $value, $expired = -1 )
+    public function store( $key, $value, $ttl = -1 )
     {
-        if( file_exists( MCache::generateFileName( $key ) ) === true )
-        {
-            $this->delete( $key );
-        }
+        $this->delete($key);
+        
+        $expired=time()+$ttl;
         
         $success = file_put_contents( $this->generateFileName( $key ), $expired . MCache::DELIMITER . serialize($value) );
         return ($success != false);
