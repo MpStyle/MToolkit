@@ -29,6 +29,13 @@ use MToolkit\Controller\MAbstractMasterPageController;
 use MToolkit\Core\Exception\MElementIdNotFoundException;
 use MToolkit\Controller\MAbstractViewController;
 
+/**
+ * <b>Every html template file must</b> contains the tag for the content-type, 
+ * also for the template of the view, not only for the page.<br />
+ * <br />
+ * For example: <br />
+ * <code>&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8&quot; /&gt;</code>
+ */
 abstract class MAbstractPageController extends MAbstractViewController
 {
     const JAVASCRIPT_TEMPLATE = '<script type="text/javascript" src="%s"></script>';
@@ -36,13 +43,24 @@ abstract class MAbstractPageController extends MAbstractViewController
     const MASTER_PAGE_PLACEHOLDER_ID = 'MasterPagePlaceholderId';
     const PAGE_CONTENT_ID = 'PageContentId';
 
+    /**
+     * @var array
+     */
     private $css = array( );
+    
+    /**
+     * @var array
+     */
     private $javascript = array( );
 
     /**
      * @var MAbstractMasterPageController 
      */
     private $masterPage = null;
+    
+    /**
+     * @var array
+     */
     private $masterPageParts = array( );
 
     /**
@@ -50,8 +68,6 @@ abstract class MAbstractPageController extends MAbstractViewController
      */
     private $pageTitle = null;
     
-    
-
     /**
      * @param string $template
      * @param MAbstractViewController $parent
@@ -83,7 +99,7 @@ abstract class MAbstractPageController extends MAbstractViewController
     /**
      * Render the link tag for CSS at the end of head tag.
      */
-    public function renderCss()
+    protected function renderCss()
     {
         $html = "";
 
@@ -104,7 +120,7 @@ abstract class MAbstractPageController extends MAbstractViewController
     /**
      * Render the script tag for Javascript at the end of head tag.
      */
-    public function renderJavascript()
+    protected function renderJavascript()
     {
         $html = "";
         
@@ -122,12 +138,23 @@ abstract class MAbstractPageController extends MAbstractViewController
         $this->setOutput( $output );
     }
 
+    /**
+     * Gets the master page.
+     * 
+     * @return MAbstractMasterPageController|null
+     */
     public function getMasterPage()
     {
         return $this->masterPage;
     }
 
-    public function setMasterPage( $masterPage )
+    /**
+     * Sets the master page.
+     * 
+     * @param MAbstractMasterPageController $masterPage
+     * @return \MToolkit\Controller\MAbstractPageController
+     */
+    public function setMasterPage( MAbstractMasterPageController $masterPage )
     {
         $this->masterPage = $masterPage;
         return $this;
@@ -157,18 +184,16 @@ abstract class MAbstractPageController extends MAbstractViewController
             parent::render();
             return;
         }
-
+        
         // renders the master page
         ob_start();
         $this->masterPage->init();
         $this->masterPage->show();
         $masterPageRendered = ob_get_clean();
-        $masterPageRendered = mb_convert_encoding($masterPageRendered, $this->getCharset(), 'auto');
 
         // renders the current page
         parent::render();
         $pageRendered = $this->getOutput();
-        $pageRendered = mb_convert_encoding($pageRendered, $this->getCharset(), 'auto');
 
         // assemblies the master page and current page
         foreach( $this->masterPageParts as $masterPagePart )
@@ -179,7 +204,10 @@ abstract class MAbstractPageController extends MAbstractViewController
             ob_start();
             
             qp($masterPageRendered, $masterPagePlaceholderId)
-                    ->append(qp($pageRendered, $pageContentId)->innerHtml())
+                    ->append(
+                        qp($pageRendered, $pageContentId)
+                            ->innerHtml()
+                    )
                     ->writeHTML();
             $masterPageRendered = ob_get_clean();
         }
@@ -192,7 +220,10 @@ abstract class MAbstractPageController extends MAbstractViewController
         $this->renderJavascript();
     }
     
-    public function renderTitle()
+    /**
+     * Write the title in the title tag of the page.
+     */
+    protected function renderTitle()
     {
         // Render page title
         if( $this->pageTitle!=null )
@@ -240,11 +271,22 @@ abstract class MAbstractPageController extends MAbstractViewController
         $controller->disconnectSignals();
     }
 
+    /**
+     * Gets the title of the page.
+     * 
+     * @return string|null
+     */
     public function getPageTitle()
     {
         return $this->pageTitle;
     }
 
+    /**
+     * Sets the title of the page.
+     * 
+     * @param string|null $pageTitle
+     * @return \MToolkit\Controller\MAbstractPageController
+     */
     public function setPageTitle( $pageTitle )
     {
         $this->pageTitle = $pageTitle;
@@ -255,13 +297,18 @@ abstract class MAbstractPageController extends MAbstractViewController
 
 register_shutdown_function( array( 'MToolkit\Controller\MAbstractPageController', 'run' ) );
 
+/**
+ * CssRel is the enum for all possible <i>rel</i> attribute of the tag <i>link</i>.
+ */
 final class CssRel
 {
     const STYLESHEET = "stylesheet";
     const ALTERNATE_STYLESHEET = "alternate stylesheet";
-
 }
 
+/**
+ * CssMedia is the enum for all possible <i>media</i> attribute of the tag <i>link</i>.
+ */
 final class CssMedia
 {
     const ALL = "all";
@@ -274,5 +321,4 @@ final class CssMedia
     const SPEECH = "speech";
     const TTY = "tty";
     const TV = "tv";
-
 }

@@ -73,7 +73,7 @@ abstract class MAbstractViewController extends MAbstractController
      */
     private $attributes=array();
     
-    private $charset='iso-8859-1';
+    private $charset='UTF-8';
 
     /**
      * @param string $template The path of the file containing the html of the controller.
@@ -305,8 +305,6 @@ abstract class MAbstractViewController extends MAbstractController
         {
             return;
         }
-
-        header('Content-type: ' . $this->getHttpResponse()->getContentType() );
         
         $this->init();
         $this->load();
