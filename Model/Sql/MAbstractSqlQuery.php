@@ -1,8 +1,6 @@
 <?php
 namespace MToolkit\Model\Sql;
 
-require_once __DIR__.'/MAbstractSqlResult.php';
-
 /*
  * This file is part of MToolkit.
  *
@@ -22,8 +20,23 @@ require_once __DIR__.'/MAbstractSqlResult.php';
  * @author  Michele Pagnin
  */
 
-abstract class MAbstractSqlQuery
+require_once __DIR__.'/MAbstractSqlResult.php';
+require_once '../../Core/MObject.php';
+
+use MToolkit\Model\Sql\MAbstractSqlResult;
+use MToolkit\Core\MObject;
+
+/**
+ * The QSqlQuery class provides a means of executing and manipulating SQL 
+ * statements.
+ */
+abstract class MAbstractSqlQuery extends MObject
 {
+    public function __construct( MObject $parent = null )
+    {
+        parent::__construct( $parent );
+    }
+    
     /**
      * @var string 
      */
@@ -38,11 +51,17 @@ abstract class MAbstractSqlQuery
     private $errorCode;
     
     /**
+     * Executes a previously prepared SQL query. Returns true if the query 
+     * executed successfully; otherwise returns false.<br />
+     * Note that the last error for this query is reset when exec() is called.
+     * 
      * @return bool The correct execution of the query.
      */
     public abstract function exec();
     
     /**
+     * Returns the result associated with the query.
+     * 
      * @return MAbstractSqlResult The resultset of the query, if exists.
      */
     public abstract function getResult();

@@ -1,10 +1,5 @@
 <?php
-namespace MToolkit\Model\Sql;
-
-require_once __DIR__ . '/../MTableModel.php';
-require_once __DIR__ . '/MSql.php';
-
-use MToolkit\Model\MTableModel;
+namespace MToolkit\Model\Sql\MSql;
 
 /*
  * This file is part of MToolkit.
@@ -25,17 +20,15 @@ use MToolkit\Model\MTableModel;
  * @author  Michele Pagnin
  */
 
-abstract class MAbstractSqlResult extends MTableModel
+/**
+ * This enum type describes special SQL navigation locations:
+ * <ul>
+ * <li>BeforeFirstRow	-1	Before the first record.</li>
+ * <li>AfterLastRow	-2	After the last record.</li>
+ * </ul>
+ */
+final class Location
 {
-    public function __construct( MObject $parent = null )
-    {
-        parent::__construct( $parent );
-    }
-    
-    /**
-     * Return an array contains the names of the fields.
-     * 
-     * @return type
-     */
-    public abstract function getFields();
+    const BeforeFirstRow=-1;
+    const AfterLastRow=-2;
 }

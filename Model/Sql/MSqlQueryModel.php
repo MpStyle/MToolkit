@@ -1,4 +1,4 @@
-<?php
+l<?php
 namespace MToolkit\Model\Sql;
 
 /*
@@ -37,12 +37,19 @@ class MSqlQueryModel extends MAbstractDataModel
      */
     private $query;
     
+    /**
+     * Creates an empty MSqlQueryModel with the given parent.
+     * 
+     * @param \MToolkit\Core\MObject $parent
+     */
     public function __construct( MObject $parent=null )
     {
         parent::__construct($parent);
     }
 
     /**
+     * Returns the QSqlQuery associated with this model.
+     * 
      * @param string $query
      * @param \PDO|null $db
      * @throws Exception
@@ -67,6 +74,8 @@ class MSqlQueryModel extends MAbstractDataModel
     }
     
     /**
+     * Reimplemented from MAbstractDataModel::columnCount().
+     * 
      * @return int
      */
     public function columnCount()
@@ -75,6 +84,8 @@ class MSqlQueryModel extends MAbstractDataModel
     }
 
     /**
+     * Reimplemented from MAbstractDataModel::getData().
+     * 
      * @param int $row
      * @param int $column
      * @return mixed
@@ -85,6 +96,8 @@ class MSqlQueryModel extends MAbstractDataModel
     }
 
     /**
+     * Reimplemented from MAbstractDataModel::rowCount().
+     * 
      * @return int
      */
     public function rowCount()

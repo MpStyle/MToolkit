@@ -30,27 +30,56 @@ class MDbConnection
         $this->connection=array();
     }
 
+    /**
+     * Deprecated. Use <i>getDbConnection</i>.
+     * 
+     * @deprecated 
+     * @param string $name
+     * @return mixed
+     */
     public static function dbConnection( /* string */ $name="DefaultConnection" )
     {
+        return MDbConnection::getDbConnection($name);
+    }
+    
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public static function getDbConnection( /* string */ $name="DefaultConnection" )
+    {
         if( is_null( MDbConnection::$istance ) )
+        {
             return null;
+        }
 
         return MDbConnection::$istance->connection[$name];
     }
 
-    public static function addDbConnection( /* mixed */ $connection
-                                          , /* string */ $name="DefaultConnection" )
+    /**
+     * @param mixed $connection
+     * @param name $name
+     */
+    public static function addDbConnection( $connection, $name="DefaultConnection" )
     {
         if( is_null( MDbConnection::$istance ) )
+        {
             MDbConnection::$istance=new MDbConnection();
+        }
 
         MDbConnection::$istance->connection[$name]=$connection;
     }
 
-    public static function removeDbConnection( /* string */ $name="DefaultConnection" )
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public static function removeDbConnection( $name="DefaultConnection" )
     {
         if( is_null( MDbConnection::$istance ) )
+        {
             return;
+        }
 
         MDbConnection::$istance->connection[$name]=null;
     }

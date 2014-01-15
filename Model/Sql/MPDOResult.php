@@ -1,7 +1,6 @@
 <?php
-namespace MToolkit\Model\Sql;
 
-require_once __DIR__.'/MAbstractSqlResult.php';
+namespace MToolkit\Model\Sql;
 
 /*
  * This file is part of MToolkit.
@@ -22,26 +21,45 @@ require_once __DIR__.'/MAbstractSqlResult.php';
  * @author  Michele Pagnin
  */
 
+require_once __DIR__ . '/MAbstractSqlResult.php';
+require_once __DIR__ . '/MSqlRecord.php';
+require_once __DIR__ . '/MSql.php';
+
+use MToolkit\Model\Sql;
+use MToolkit\Model\Sql\MSqlRecord;
+
+/**
+ * The MSqlResult class provides an abstract interface for accessing data from 
+ * specific SQL databases.
+ */
 class MPDOResult extends MAbstractSqlResult
-{    
+{
+
     /**
      * Contains the names of the fields.
      * 
      * @var array
      */
-    private $fields=array();
-    
+    private $fields = array();
+
+    /**
+     * @var \PDOStatement
+     */
     private $statement;
+    private $at = 0;
+    private $rows;
 
     /**
      * @param \mysqli_stmt $statement
      */
-    public function __construct( \PDOStatement $statement )
-    {               
-        $this->statement=$statement;
-        
-        $rows = $this->statement->fetchAll(PDO::FETCH_ASSOC);
-        $this->fields = empty($rows) ? array() : array_keys( (array) $rows[0] );
+    public function __construct( \PDOStatement $statement, MObject $parent = null )
+    {
+        parent::__construct($parent);
+
+        $this->statement = $statement;
+
+        $this->rows = $this->statement->fetchAll( PDO::FETCH_ASSOC );
+        $this->fields = empty( $this->rows ) ? array() : array_keys( ( array ) $this->rows[ 0 ] );
     }
 
     /**
@@ -53,7 +71,7 @@ class MPDOResult extends MAbstractSqlResult
     {
         return $this->statement->rowCount();
     }
-    
+
     /**
      * Return the number of columns in resultset.
      * 
@@ -63,7 +81,7 @@ class MPDOResult extends MAbstractSqlResult
     {
         return $this->statement->columnCount();
     }
-    
+
     /**
      * Return an array contains the names of the fields.
      * 
@@ -73,7 +91,7 @@ class MPDOResult extends MAbstractSqlResult
     {
         return $this->fields;
     }
-    
+
     /**
      * Return the data at the <i>row</i> and <i>column</i>.
      * 
@@ -82,8 +100,57 @@ class MPDOResult extends MAbstractSqlResult
      */
     public function getData( $row, $column )
     {
-        /* @var $pdoResult array */ $pdoResult=$this->statement->fetchAll();
-        
-        return $pdoResult[$row][$column];
+        return $this->rows[ $row ][ $column ];
     }
+
+    public function getNumRowsAffected()
+    {
+        return $this->statement->rowCount();
+    }
+
+    /**
+     * Returns the current record if the query is active; otherwise returns an empty QSqlRecord. <br />
+     * The default implementation always returns an empty QSqlRecord.
+     * 
+     * @return \MToolkit\Model\Sql\MSqlRecord
+     */
+    public function getRecord()
+    {
+        return new MSqlRecord( $this->rows[ $this->at ] );
+    }
+
+    /**
+     * Returns the current (zero-based) row position of the result. May return 
+     * the special values MSql\Location::BeforeFirstRow or MSql\Location::AfterLastRow.
+     * 
+     * @return int
+     */
+    public function getAt()
+    {
+        if ( $this->at < 0 )
+        {
+            return MSql\Location::BeforeFirstRow;
+        }
+
+        if ( $this->at > $this->rowCount() )
+        {
+            return MSql\Location::AfterLastRow;
+        }
+
+        return $this->at;
+    }
+
+    /**
+     * This function is provided for derived classes to set the internal 
+     * (zero-based) row position to <i>$at</i>.
+     * 
+     * @param int $at
+     * @return \MToolkit\Model\Sql\MPDOResult
+     */
+    public function setAt( $at )
+    {
+        $this->at = $at;
+        return $this;
+    }
+
 }
