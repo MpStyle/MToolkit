@@ -20,7 +20,7 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once './Exception/MWrongTypeException.php';
+require_once __DIR__ . '/Exception/MWrongTypeException.php';
 
 use MToolkit\Core\Exception\MWrongTypeException;
 
@@ -49,6 +49,79 @@ use MToolkit\Core\Exception\MWrongTypeException;
  */
 class MDataType
 {
+    const INT=1;
+    const LONG=2;
+    const BOOLEAN=3;
+    const FLOAT=4;
+    const DOUBLE=5;
+    const STRING=6;
+    const NULL=7;
+    const __ARRAY=8;
+    const OBJECT=9;
+    const RESOURCE=10;
+    const UNKNOWN=99;
+    
+    /**
+     * Returns the type of <i>$value</i>.
+     * 
+     * @param mixed $value
+     * @return int MDataType::INT, MDataType::LONG, MDataType::BOOLEAN, etc
+     */
+    public static function getType($value)
+    {
+        if( is_int( $value ) )
+        {
+            return MDataType::INT;
+        }
+        
+        if( is_long( $value ) )
+        {
+            return MDataType::LONG;
+        }
+        
+        if( is_bool( $value ) )
+        {
+            return MDataType::BOOLEAN;
+        }
+        
+        if( is_float( $value ) )
+        {
+            return MDataType::FLOAT;
+        }
+        
+        if( is_double( $value ) )
+        {
+            return MDataType::DOUBLE;
+        }
+        
+        if( is_string( $value ) )
+        {
+            return MDataType::STRING;
+        }
+        
+        if( $value==null )
+        {
+            return MDataType::NULL;
+        }
+        
+        if( is_array( $value ) )
+        {
+            return MDataType::__ARRAY;
+        }
+        
+        if( is_object( $value ) )
+        {
+            return MDataType::OBJECT;
+        }
+        
+        if( is_resource( $value ) )
+        {
+            return MDataType::RESOURCE;
+        }
+        
+        return MDataType::UNKNOWN;
+    }
+    
     public static function mustBeInt( $value )
     {        
         if( is_int( $value )===false )
