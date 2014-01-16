@@ -111,9 +111,9 @@ class Index extends MAbstractPageController
         
 ```
 
-And the *view* file. It must contains the meta tag:
+And the *view* file. Every view file must contains the meta tag, with the correct *content-type*:
 ```
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">*", with the correct *content-type
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 ```
 *Index.view*:
 
