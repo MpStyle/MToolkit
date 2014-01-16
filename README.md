@@ -38,7 +38,7 @@ MToolkit components
 -------------------
 Like Qt, MToolkit has a lot of components, one for every type of usage.
 Here the list:
-- Core
+- [Core](Core)
 - Network
 - Model/Sql
 - Controller
