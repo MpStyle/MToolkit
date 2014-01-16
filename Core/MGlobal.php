@@ -56,7 +56,8 @@ function __autoload( $name )
 }
 
 /**
- * Prints a warning message containing the source code file name and line number if <i>$test</i> is false.
+ * Prints a warning message containing the source code file name and line number 
+ * if <i>$test</i> is false.<br />
  * M_ASSERT() is useful for testing pre- and post-conditions during development. 
  * 
  * @param boolean $test

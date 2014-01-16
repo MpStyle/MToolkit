@@ -101,13 +101,15 @@ class Index extends MAbstractPageController
         
 ```
 
-The html code will be write into the file *Index.view*:
+And the *view* file. It must contains the meta tag "*<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">*", with the correct *content-type*.
+*Index.view*:
 
 ```
 <?php /* @var $this Index */ ?>
 <html>
     <head>
         <title>Entry page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     </head>
     <body>
         <b><?php echo $this->helloWorld(); ?></b>
