@@ -34,6 +34,15 @@ Some good features
 - Separation between business logic and graphics
 - Fluent setters
 
+MToolkit components
+-------------------
+Like Qt, MToolkit has a lot of components, one for every type of usage.
+Here the list:
+- Networking
+- Model/Sql
+- Controller
+- View
+
 
 Let's start
 -----------
