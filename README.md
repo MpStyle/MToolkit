@@ -14,6 +14,7 @@ It borns from a requirement: develop a website quickly and powerfully.
 
 I know, someone can says "Use Zend Framwork, CakePHP!", but I could answer: "They are very good toolkits, but they aren't the toolkit that I want!" :P
 
+The development model of MToolkit is *rolling release*. I search some people (developer or not) to increase and modify this strategy: my goal is to manage the versioning of this framework. 
 
 
 The experiences with other toolkit in different platforms have led to create this toolkit.
