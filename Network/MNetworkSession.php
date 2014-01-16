@@ -1,6 +1,6 @@
 <?php
 
-namespace MToolkit\Core;
+namespace MToolkit\Network;
 
 if (session_id() == '')
 {
@@ -26,7 +26,7 @@ if (session_id() == '')
  * @author  Michele Pagnin
  */
 
-class MSession
+class MNetworkSession
 {
 
     /**
