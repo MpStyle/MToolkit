@@ -21,7 +21,9 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/MSession.php';
+require_once __DIR__ . '/../Network/MNetworkSession.php';
+
+use MToolkit\Network\MNetworkSession;
 
 /**
  * The MCoreApplication class provides an event loop for console MToolkit 
@@ -46,7 +48,7 @@ class MCoreApplication
      */
     public static function setDebug( $bool )
     {
-        MSession::set( MCoreApplication::DEBUG, $bool );
+        MNetworkSession::set( MCoreApplication::DEBUG, $bool );
     }
 
     /**
@@ -56,7 +58,7 @@ class MCoreApplication
      */
     public static function getDebug()
     {
-        $debug = MSession::get( MCoreApplication::DEBUG );
+        $debug = MNetworkSession::get( MCoreApplication::DEBUG );
 
         if ($debug === null)
         {
@@ -74,7 +76,7 @@ class MCoreApplication
     public static function setApplicationDirPath( $path )
     {
         $paths=array_merge(array(), (array)$path );
-        MSession::set( MCoreApplication::APPLICATION_DIR_PATH, $paths );
+        MNetworkSession::set( MCoreApplication::APPLICATION_DIR_PATH, $paths );
     }
 
     /**
@@ -84,7 +86,7 @@ class MCoreApplication
      */
     public static function getApplicationDirPath()
     {
-        $rootPath = MSession::get( MCoreApplication::APPLICATION_DIR_PATH );
+        $rootPath = MNetworkSession::get( MCoreApplication::APPLICATION_DIR_PATH );
         return $rootPath;
     }
     
@@ -98,7 +100,7 @@ class MCoreApplication
      */
     public static function getApplicationName()
     {
-        return MSession::get(MCoreApplication::APPLICATION_NAME);
+        return MNetworkSession::get(MCoreApplication::APPLICATION_NAME);
     }
     
     /**
@@ -108,7 +110,7 @@ class MCoreApplication
      */
     public static function getApplicationVersion()
     {
-        return MSession::get(MCoreApplication::APPLICATION_VERSION);
+        return MNetworkSession::get(MCoreApplication::APPLICATION_VERSION);
     }
     
     /**
@@ -122,7 +124,7 @@ class MCoreApplication
      */
     public static function getOrganizationDomain()
     {
-        return MSession::get(MCoreApplication::ORGANIZATION_DOMAIN);
+        return MNetworkSession::get(MCoreApplication::ORGANIZATION_DOMAIN);
     }
     
     /**
@@ -136,7 +138,7 @@ class MCoreApplication
      */
     public static function getOrganizationName()
     {
-        return MSession::get(MCoreApplication::ORGANIZATION_NAME);
+        return MNetworkSession::get(MCoreApplication::ORGANIZATION_NAME);
     }
     
     /**
@@ -149,7 +151,7 @@ class MCoreApplication
      */
     public static function setApplicationName ( $application )
     {
-        MSession::set(MCoreApplication::APPLICATION_NAME, $application);
+        MNetworkSession::set(MCoreApplication::APPLICATION_NAME, $application);
     }
     
     /**
@@ -159,7 +161,7 @@ class MCoreApplication
      */
     public static function setApplicationVersion ( $version )
     {
-        MSession::set(MCoreApplication::APPLICATION_VERSION, $version);
+        MNetworkSession::set(MCoreApplication::APPLICATION_VERSION, $version);
     }
     
     /**
@@ -173,7 +175,7 @@ class MCoreApplication
      */
     public static function setOrganizationDomain ( $orgDomain )
     {
-        MSession::set(MCoreApplication::ORGANIZATION_DOMAIN, $orgDomain);
+        MNetworkSession::set(MCoreApplication::ORGANIZATION_DOMAIN, $orgDomain);
     }
     
     /**
@@ -187,6 +189,6 @@ class MCoreApplication
      */
     public static function setOrganizationName ( $orgName )
     {
-        MSession::set(MCoreApplication::ORGANIZATION_NAME, $orgName);
+        MNetworkSession::set(MCoreApplication::ORGANIZATION_NAME, $orgName);
     }
 }

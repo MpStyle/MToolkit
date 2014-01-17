@@ -20,12 +20,12 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__ . '/../Core/MSession.php';
+require_once __DIR__ . '/../Network/MNetworkSession.php';
 require_once __DIR__ . '/../Core/MString.php';
 require_once __DIR__ . '/../Core/Exception/MTemplateNotFoundException.php';
 require_once __DIR__ . '/MAbstractController.php';
 
-use MToolkit\Core\MSession;
+use MToolkit\Network\MNetworkSession;
 use MToolkit\Core\Exception\MTemplateNotFoundException;
 use MToolkit\Core\MString;
 use MToolkit\Controller\MAbstractController;

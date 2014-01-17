@@ -20,7 +20,7 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__ . '/MSession.php';
+require_once __DIR__ . '/../Network/MNetworkSession.php';
 require_once __DIR__ . '/MGet.php';
 require_once __DIR__ . '/MPost.php';
 
