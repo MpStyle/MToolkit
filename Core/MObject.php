@@ -1,10 +1,6 @@
 <?php
 namespace MToolkit\Core;
 
-require_once __DIR__ . '/MSession.php';
-require_once __DIR__ . '/MGet.php';
-require_once __DIR__ . '/MPost.php';
-
 /*
  * This file is part of MToolkit.
  *
@@ -23,6 +19,10 @@ require_once __DIR__ . '/MPost.php';
  * 
  * @author  Michele Pagnin
  */
+
+require_once __DIR__ . '/MSession.php';
+require_once __DIR__ . '/MGet.php';
+require_once __DIR__ . '/MPost.php';
 
 use MToolkit\Core\MGet;
 use MToolkit\Core\MPost;
@@ -49,27 +49,32 @@ class MObject
     /**
      * @var MPost
      */
-    private $post;
+    private static $post=null;
 
     /**
      * @var MGet
      */
-    private $get;
+    private static $get=null;
 
     /**
      * @var MObject 
      */
     private $parent = null;
 
+    /**
+     * Constructs an object with parent object <i>$parent</i>.
+     * 
+     * @param \MToolkit\Core\MObject $parent
+     */
     public function __construct( MObject $parent = null )
     {
         $this->parent = $parent;
-
-        $this->post = new MPost();
-        $this->get = new MGet();
     }
 
     /**
+     * Returns true if signals are blocked; otherwise returns false.<br />
+     * Signals are not blocked by default.
+     * 
      * @return bool
      */
     public function getSignalsBlocked()
@@ -78,6 +83,10 @@ class MObject
     }
 
     /**
+     * If <i>$signalsBlocked</i> is true, signals emitted by this object are 
+     * blocked (i.e., emitting a signal will not invoke anything connected to 
+     * it). If block is false, no such blocking will occur.
+     * 
      * @param bool $signalsBlocked
      * @return \MToolkit\Core\MObject
      */
@@ -108,6 +117,10 @@ class MObject
     }
 
     /**
+     * Disconnects <i>$signal</i> in object <i>$sender</i> from method in object 
+     * <i>$receiver</i>. Returns true if the connection is successfully broken; 
+     * otherwise returns false.
+     * 
      * @param \MToolkit\Core\MObject $sender
      * @param string $signal
      * @param \MToolkit\Core\MObject $receiver
@@ -126,6 +139,8 @@ class MObject
         }
 
         unset( $this->signals[$signal] );
+        
+        return true;
     }
 
     /**
@@ -173,6 +188,8 @@ class MObject
     }
 
     /**
+     * Returns the parent object.
+     * 
      * @return MObject
      */
     public function getParent()
@@ -202,7 +219,7 @@ class MObject
     }
 
     /**
-     * @deprecated 
+     * @deprecated Use 
      * @param string $key
      * @return string|null
      */
@@ -221,9 +238,14 @@ class MObject
      * 
      * @return MPost
      */
-    public function getPost()
+    public static function getPost()
     {
-        return $this->post;
+        if( MObject::$post==null )
+        {
+            MObject::$post = new MPost();
+        }
+        
+        return MObject::$post;
     }
 
     /**
@@ -231,12 +253,18 @@ class MObject
      * 
      * @return MGet
      */
-    public function getGet()
+    public static function getGet()
     {
-        return $this->get;
+        if( MObject::$get==null )
+        {
+            MObject::$get = new MGet();
+        }
+        
+        return MObject::$get;
     }
 
     /**
+     * Overload of MObject::getProperty( $name ).<br />
      * Returns the value of the object's <i>$name</i> property.
      * 
      * @param string $name
@@ -248,6 +276,7 @@ class MObject
     }
 
     /**
+     * Overload of MObject::setProperty( $name, $value ).<br />
      * Sets the value of the object's <i>$name</i> property to <i>$value</i>.
      * 
      * @param string $name
@@ -260,6 +289,7 @@ class MObject
 
     /**
      * Returns the value of the object's <i>$name</i> property.
+     * 
      * @param string $name
      * @return mixed
      */

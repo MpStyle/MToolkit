@@ -20,14 +20,15 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/MCoreApplication.php';
+require_once __DIR__ . '/MObject.php';
+
+use MToolkit\Core\MObject;
 
 /**
- * The MApplication class manages the GUI application's control flow and main 
+ * The MSettings class provides persistent platform-independent application 
  * settings.
  */
-class MApplication extends MCoreApplication
+class MSettings extends MObject
 {
     
 }
-

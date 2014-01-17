@@ -23,6 +23,13 @@ namespace MToolkit\Core;
 
 require_once __DIR__.'/MSession.php';
 
+/**
+ * The MCoreApplication class provides an event loop for console MToolkit 
+ * applications.<br />
+ * This class is used by non-GUI applications to provide their event loop. For 
+ * non-GUI application that uses MToolkit, there should be exactly one 
+ * MCoreApplication object. For GUI applications, see MApplication.
+ */
 class MCoreApplication
 {
     const APPLICATION_NAME='MToolkit\Core\MCoreApplication\ApplicationName';
@@ -81,41 +88,103 @@ class MCoreApplication
         return $rootPath;
     }
     
+    /**
+     * This property holds the name of this application.<br />
+     * The value is used by the MSettings class when it is constructed using the 
+     * empty constructor. This saves having to repeat this information each time 
+     * a MSettings object is created.
+     * 
+     * @return string|null
+     */
     public static function getApplicationName()
     {
         return MSession::get(MCoreApplication::APPLICATION_NAME);
     }
     
+    /**
+     * This property holds the version of this application.
+     * 
+     * @return string|null
+     */
     public static function getApplicationVersion()
     {
         return MSession::get(MCoreApplication::APPLICATION_VERSION);
     }
     
+    /**
+     * This property holds the Internet domain of the organization that wrote 
+     * this application.<br />
+     * The value is used by the MSettings class when it is constructed using the 
+     * empty constructor. This saves having to repeat this information each time 
+     * a MSettings object is created.
+     * 
+     * @return string
+     */
     public static function getOrganizationDomain()
     {
         return MSession::get(MCoreApplication::ORGANIZATION_DOMAIN);
     }
     
+    /**
+     * This property holds the name of the organization that wrote this 
+     * application.<br />
+     * The value is used by the MSettings class when it is constructed using the 
+     * empty constructor. This saves having to repeat this information each time 
+     * a MSettings object is created.
+     * 
+     * @return string
+     */
     public static function getOrganizationName()
     {
         return MSession::get(MCoreApplication::ORGANIZATION_NAME);
     }
     
+    /**
+     * This property holds the name of this application.<br />
+     * The value is used by the MSettings class when it is constructed using the 
+     * empty constructor. This saves having to repeat this information each time 
+     * a MSettings object is created.
+     * 
+     * @param string $application
+     */
     public static function setApplicationName ( $application )
     {
         MSession::set(MCoreApplication::APPLICATION_NAME, $application);
     }
     
+    /**
+     * This property holds the version of this application.
+     * 
+     * @param string $version
+     */
     public static function setApplicationVersion ( $version )
     {
         MSession::set(MCoreApplication::APPLICATION_VERSION, $version);
     }
     
+    /**
+     * This property holds the Internet domain of the organization that wrote 
+     * this application.<br />
+     * The value is used by the MSettings class when it is constructed using the 
+     * empty constructor. This saves having to repeat this information each time 
+     * a MSettings object is created.
+     * 
+     * @param string $orgDomain
+     */
     public static function setOrganizationDomain ( $orgDomain )
     {
         MSession::set(MCoreApplication::ORGANIZATION_DOMAIN, $orgDomain);
     }
     
+    /**
+     * This property holds the name of the organization that wrote this 
+     * application.<br />
+     * The value is used by the MSettings class when it is constructed using the 
+     * empty constructor. This saves having to repeat this information each time 
+     * a MSettings object is created.
+     * 
+     * @param string $orgName
+     */
     public static function setOrganizationName ( $orgName )
     {
         MSession::set(MCoreApplication::ORGANIZATION_NAME, $orgName);

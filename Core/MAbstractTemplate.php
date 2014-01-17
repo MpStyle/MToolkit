@@ -21,6 +21,10 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
+require_once __DIR__ . '/MDataType.php';
+
+use MToolkit\Core\MDataType;
+
 abstract class MAbstractTemplate 
 {
     /**
@@ -29,7 +33,7 @@ abstract class MAbstractTemplate
     private $type = null;
 
     /**
-     * @param string $type
+     * @param null|int|string $type MDataType constants or the name of the class.
      * @param \MToolkit\Core\MObject $parent
      */
     public function __construct( $type=null, MObject $parent = null )
@@ -38,6 +42,13 @@ abstract class MAbstractTemplate
         $this->type=$type;
     }
 
+    /**
+     * Returns true if the <i>$object</i> has the right data type assigned in 
+     * the construct, otherwise false.
+     * 
+     * @param mixed $object
+     * @return boolean
+     */
     public function isValidType( $object )
     {
         if ( $this->type==null || $object==null )
@@ -50,14 +61,24 @@ abstract class MAbstractTemplate
             return true;
         }
         
-        return false;
+        return ( MDataType::getType( $object )==$this->type );
     }
 
+    /**
+     * Returns MDataType constants, or the name of the class, or null.
+     * 
+     * @return null|int|string
+     */
     public function getType()
     {
         return $this->type;
     }
 
+    /**
+     * 
+     * @param null|int|string $type MDataType constants, or the name of the class, or null.
+     * @return \MToolkit\Core\MAbstractTemplate
+     */
     public function setType( $type )
     {
         $this->type = $type;

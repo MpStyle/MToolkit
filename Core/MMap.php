@@ -35,6 +35,11 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
      */
     private $map = array();
 
+    /**
+     * Constructs an object with an array <i>$other</i>.
+     * 
+     * @param array $other
+     */
     public function __construct( array $other = array() )
     {
         if( count($other)>0 )
@@ -45,11 +50,22 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
 
     //QMap ( const QMap<Key, T> & other )
 
+    /**
+     * Removes all items from the map.
+     */
     public function clear()
     {
         $this->map = array();
     }
 
+    /**
+     * Returns true if the map contains an item with key <i>$key</i>; otherwise 
+     * returns false.
+     * 
+     * @param string $key
+     * @return boolean
+     * @throws MWrongTypeException
+     */
     public function contains( $key )
     {
         if (is_string( $key ) === false)
@@ -64,16 +80,33 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
 
     //int count ( const Key & key ) const
 
+    /**
+     * Returns the number of items associated with key key.
+     * 
+     * @return int
+     */
     public function count()
     {
         return count( $this->map );
     }
 
+    /**
+     * Returns true if the map contains no items; otherwise returns false.
+     * 
+     * @return int
+     */
     public function isEmpty()
     {
         return ( $this->count() == 0 );
     }
 
+    /**
+     * Removes the (key, value) pair pointed to by the iterator pos from the 
+     * map, and returns an iterator to the next item in the map.
+     * 
+     * @param string $pos
+     * @throws MWrongTypeException
+     */
     public function erase( $pos )
     {
         if (is_int( $pos ) === false)
@@ -86,6 +119,13 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
         unset( $this->map[$keys[$pos]] );
     }
 
+    /**
+     * Returns the value to the item with key <i>$key</i> in the map.
+     * 
+     * @param string $key
+     * @return mixed
+     * @throws MWrongTypeException
+     */
     public function find( $key )
     {
         if (is_string( $key ) === false)
@@ -103,6 +143,17 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
         return $this->map[$key];
     }
 
+    /**
+     * Inserts a new item with the key <i>$key</i> and a value of <i>$value</i>.<br />
+     * If there is already an item with the key <i>$key</i>, that item's value 
+     * is replaced with <i>$value</i>.<br />
+     * If there are multiple items with the key <i>$key</i>, the most recently 
+     * inserted item's value is replaced with <i>$value</i>.<br />
+     * 
+     * @param string $key
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public function insert( $key, $value )
     {
         if ($this->isValidType( $value ) === false)
@@ -120,6 +171,14 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
 
     //iterator	insertMulti ( const Key & key, const T & value )
 
+    /**
+     * Returns the value associated with the key <i>$key</i>.
+     * 
+     * @param mixed $value
+     * @param string $defaultKey
+     * @return string
+     * @throws MWrongTypeException
+     */
     public function getKey( $value, $defaultKey = null )
     {
         if ($this->isValidType( $value ) === false)
@@ -143,7 +202,8 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
     }
 
     /**
-     * Returns a list containing all the keys associated with value value in ascending order.
+     * Returns a list containing all the keys associated with value value in 
+     * ascending order.
      * 
      * @return \MToolkit\Core\MList
      */
@@ -159,6 +219,15 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
     //iterator	lowerBound ( const Key & key )
     //const_iterator	lowerBound ( const Key & key ) const
 
+    /**
+     * Removes all the items that have the key <i>$key</i> from the map. Returns 
+     * the number of items removed which is usually 1 but will be 0 if the key 
+     * isn't in the map.
+     * 
+     * @param string $key
+     * @return int
+     * @throws MWrongTypeException
+     */
     public function remove( $key )
     {
         if (is_string( $key ) === false)
@@ -170,6 +239,11 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
         return 1;
     }
 
+    /**
+     * Returns the number of (key, value) pairs in the map.
+     * 
+     * @return int
+     */
     public function size()
     {
         return $this->count();
@@ -177,6 +251,13 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
 
     //void	swap ( QMap<Key, T> & other )
 
+    /**
+     * Returns the number of (key, value) pairs in the map.
+     * 
+     * @param type $key
+     * @return type
+     * @throws MWrongTypeException
+     */
     public function take( $key )
     {
         if (is_string( $key ) === false)
@@ -191,6 +272,11 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
 
     //std::map<Key, T>	toStdMap () const
 
+    /**
+     * Returns a list containing all the keys in the map in ascending order. 
+     * 
+     * @return array[string]
+     */
     public function getUniqueKeys()
     {
         return $this->keys();
@@ -200,6 +286,14 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
     //iterator	upperBound ( const Key & key )
     //const_iterator	upperBound ( const Key & key ) const
 
+    /**
+     * Returns the value associated with the key key.
+     * 
+     * @param string $key
+     * @param mixed $defaultValue
+     * @return mixed
+     * @throws MWrongTypeException
+     */
     public function getValue( /* string */ $key, /* mixed */ $defaultValue = null )
     {
         if ($this->isValidType( $defaultValue ) === false)
@@ -225,11 +319,23 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
         return $value;
     }
 
+    /**
+     * Returns a list containing all the values in the map, in ascending order 
+     * of their keys. If a key is associated with multiple values, all of its 
+     * values will be in the list, and not just the most recently inserted one.
+     * 
+     * @return array[mixed]
+     */
     public function getValues()
     {
         return array_values( $this->map );
     }
 
+    /**
+     * All keys-values in array.
+     * 
+     * @return array
+     */
     public function __toArray()
     {
         //$return = clone $this->map;
