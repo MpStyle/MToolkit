@@ -29,7 +29,7 @@ use MToolkit\Core\Exception\MReadOnlyObjectException;
 class MGet extends MMap
 {
     public function __construct(  )
-    {
+    {   
         parent::__construct( $_GET );
     }
     

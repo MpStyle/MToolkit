@@ -23,10 +23,12 @@ namespace MToolkit\Core;
 
 require_once __DIR__ . '/MAbstractTemplate.php';
 require_once __DIR__ . '/MList.php';
+require_once __DIR__ . '/MDataType.php';
 
 use \MToolkit\Core\MList;
 use \MToolkit\Core\Exception\MWrongTypeException;
 use \MToolkit\Core\MAbstractTemplate;
+use MToolkit\Core\MDataType;
 
 class MMap extends MAbstractTemplate implements \ArrayAccess
 {
@@ -180,16 +182,13 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
      * @throws MWrongTypeException
      */
     public function getKey( $value, $defaultKey = null )
-    {
+    {        
         if ($this->isValidType( $value ) === false)
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
 
-        if (is_string( $defaultKey ) === false)
-        {
-            throw new MWrongTypeException( "\$defaultKey", "string", $defaultKey );
-        }
+        MDataType::mustBeNullableString($defaultKey);
 
         $key = array_search( $value, $this->map );
 
