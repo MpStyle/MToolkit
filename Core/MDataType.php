@@ -122,6 +122,12 @@ class MDataType
         return MDataType::UNKNOWN;
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not an int.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeInt( $value )
     {        
         if( is_int( $value )===false )
@@ -130,6 +136,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not a long.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeLong( $value )
     {
         if( is_long( $value )===false )
@@ -138,6 +150,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not a boolean.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeBoolean( $value )
     {
         if( is_bool( $value )===false )
@@ -146,6 +164,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not a float.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeFloat( $value )
     {
         if( is_float( $value )===false )
@@ -154,6 +178,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not a double.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeDouble( $value )
     {
         if( is_double( $value )===false )
@@ -162,6 +192,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not a string.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeString( $value )
     {
         if( is_string( $value )===false )
@@ -170,6 +206,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not a null.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeNull( $value )
     {
         if( $value!=null )
@@ -178,6 +220,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not an int or null.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeNullableInt( $value )
     {
         if( is_int( $value )===false && $value!=null )
@@ -186,6 +234,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not a long or null.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeNullableLong( $value )
     {
         if( is_long( $value )===false && $value!=null )
@@ -194,6 +248,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not a boolean or null.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeNullableBoolean( $value )
     {
         if( is_bool( $value )===false && $value!=null )
@@ -202,6 +262,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not a float or null.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeNullableFloat( $value )
     {
         if( is_float( $value )===false && $value!=null )
@@ -210,6 +276,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not a double or null.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeNullableDouble( $value )
     {
         if( is_double( $value )===false && $value!=null )
@@ -218,6 +290,12 @@ class MDataType
         }
     }
     
+    /**
+     * Throw an exception if <i>$value</i> is not a string or null.
+     * 
+     * @param mixed $value
+     * @throws MWrongTypeException
+     */
     public static function mustBeNullableString( $value )
     {
         if( is_string( $value )===false && $value!=null )
