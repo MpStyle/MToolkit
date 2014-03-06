@@ -83,6 +83,69 @@ class MListModel extends MAbstractDataModel
     {
         return $this->data->at($row);
     }
+    
+    /**
+     * Returns the data for the given <i>$section</i> in the header with the specified <i>$orientation</i>.
+     * 
+     * @param int|string $section
+     * @param int|Orientation $orientation
+     * @return null
+     */
+    public function getHeaderData( $section, $orientation )
+    {
+        $headerData = null;
+
+        if( count( $this->data )>0 )
+        {
+            return $headerData;
+        }
+
+        switch( $orientation )
+        {
+            case Orientation::Horizontal:
+                break;
+            case Orientation::Vertical:
+                $fields = array_keys( $this->data );
+                $headerData = $fields[$section];
+                break;
+        }
+
+        return $headerData;
+    }
+
+    /**
+     * Sets the data for the given <i>$section</i> in the header with the specified <i>$orientation</i> to the value supplied.<br />
+     * Returns true if the header's data was updated; otherwise returns false.
+     * 
+     * @param int|string $section
+     * @param int|Orientation $orientation
+     * @param mixed $value
+     * @return false
+     */
+    public function setHeaderData( $section, $orientation, $value )
+    {
+        $toReturn = false;
+
+        if( count( $this->data )>0 )
+        {
+            return $toReturn;
+        }
+
+        switch( $orientation )
+        {
+            case Orientation::Horizontal:
+                break;
+            case Orientation::Vertical:
+                $fields = array_keys( $this->data );
+                $values = array_values( $this->data );
+                $fields[$section] = $value;
+                $this->data = array_combine( $fields, $values );
+                $toReturn = true;
+                break;
+        }
+
+        return $toReturn;
+    }
 
 }
 

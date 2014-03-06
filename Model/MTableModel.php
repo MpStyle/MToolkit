@@ -20,32 +20,33 @@ namespace MToolkit\Model;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/MAbstractDataModel.php';
-require_once __DIR__.'/../Core/MObject.php';
+require_once __DIR__ . '/MAbstractDataModel.php';
+require_once __DIR__ . '/../Core/MObject.php';
 
 use MToolkit\Core\MObject;
+use MToolkit\Core\Enum\Orientation;
 
 class MTableModel extends MAbstractDataModel
 {
-    private $data=array();
-    
+    private $data = array( );
+
     public function __construct( MObject $parent = null )
     {
         parent::__construct( $parent );
     }
-    
+
     public function setDataFromArray( array $data )
     {
-        $this->data=$data;
+        $this->data = $data;
     }
-    
+
     public function columnCount()
     {
         if( $this->rowCount()<=0 )
         {
             return 0;
         }
-        
+
         return count( $this->data[0] );
     }
 
@@ -57,5 +58,81 @@ class MTableModel extends MAbstractDataModel
     public function rowCount()
     {
         return count( $this->data );
-    }    
+    }
+
+    /**
+     * Returns the data for the given <i>$section</i> in the header with the specified <i>$orientation</i>.
+     * 
+     * @param int|string $section
+     * @param int|Orientation $orientation
+     * @return null
+     */
+    public function getHeaderData( $section, $orientation )
+    {
+        $headerData = null;
+
+        if( count( $this->data )<0 )
+        {
+            return $headerData;
+        }
+        
+//        echo $section;
+
+        switch( $orientation )
+        {
+            case Orientation::Horizontal:
+                $fields = array_keys( $this->data[0] );
+                $headerData = $fields[$section];
+                break;
+            case Orientation::Vertical:
+                $fields = array_keys( $this->data );
+                $headerData = $fields[$section];
+                break;
+        }
+
+        return $headerData;
+    }
+
+    /**
+     * Sets the data for the given <i>$section</i> in the header with the specified <i>$orientation</i> to the value supplied.<br />
+     * Returns true if the header's data was updated; otherwise returns false.
+     * 
+     * @param int|string $section
+     * @param int|Orientation $orientation
+     * @param mixed $value
+     * @return false
+     */
+    public function setHeaderData( $section, $orientation, $value )
+    {
+        $toReturn = false;
+
+        if( count( $this->data )>0 )
+        {
+            return $toReturn;
+        }
+
+        switch( $orientation )
+        {
+            case Orientation::Horizontal:
+                for( $i = 0; $i<$this->rowCount(); $i++ )
+                {
+                    $fields = array_keys( $this->data[$i] );
+                    $values = array_values( $this->data[$i] );
+                    $fields[$section] = $value;
+                    $this->data[$i] = array_combine( $fields, $values );
+                }
+                $toReturn = true;
+                break;
+            case Orientation::Vertical:
+                $fields = array_keys( $this->data );
+                $values = array_values( $this->data );
+                $fields[$section] = $value;
+                $this->data = array_combine( $fields, $values );
+                $toReturn = true;
+                break;
+        }
+
+        return $toReturn;
+    }
+
 }

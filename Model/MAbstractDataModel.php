@@ -20,31 +20,60 @@ namespace MToolkit\Model;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/../Core/MObject.php';
+require_once __DIR__ . '/../Core/MObject.php';
+require_once __DIR__ . '/../Core/Enum/Orientation.php';
 
 use MToolkit\Core\MObject;
+use MToolkit\Core\Enum\Orientation;
 
 abstract class MAbstractDataModel extends MObject
 {
-    public function __construct( MObject $parent=null )
+
+    public function __construct( MObject $parent = null )
     {
         parent::__construct( $parent );
     }
+
+    /**
+     * Returns the data for the given <i>$section</i> in the header with the specified <i>$orientation</i>.
+     * 
+     * @param int|string $section
+     * @param int|Orientation $orientation
+     * @return null
+     */
+    public function getHeaderData( $section, $orientation )
+    {
+        return null;
+    }
     
+    /**
+     * Sets the data for the given <i>$section</i> in the header with the specified <i>$orientation</i> to the value supplied.<br />
+     * Returns true if the header's data was updated; otherwise returns false.
+     * 
+     * @param int|string $section
+     * @param int|Orientation $orientation
+     * @param mixed $value
+     * @return false
+     */
+    public function setHeaderData( $section, $orientation, $value )
+    {
+        return false;
+    }
+
     /**
      * Return the number of rows in resultset.
      * 
      * @return int
      */
     public abstract function rowCount();
-    
+
     /**
      * Return the number of columns in resultset.
      * 
      * @return int
      */
     public abstract function columnCount();
-    
+
     /**
      * Return the data at the <i>row</i> and <i>column</i>.
      * 
@@ -52,7 +81,7 @@ abstract class MAbstractDataModel extends MObject
      * @param mixed $column
      */
     public abstract function getData( $row, $column );
-    
+
     /**
      * Returns true if element has any children; otherwise returns false.
      * @param int $row
@@ -63,4 +92,5 @@ abstract class MAbstractDataModel extends MObject
     {
         return false;
     }
+
 }
