@@ -21,14 +21,59 @@ namespace MToolkit\Core;
  */
 
 require_once __DIR__ . '/MObject.php';
+require_once __DIR__ . '/../Model/Sql/MDbConnection.php';
 
 use MToolkit\Core\MObject;
+use MToolkit\Model\Sql\MDbConnection;
 
 /**
  * The MSettings class provides persistent platform-independent application 
  * settings.
  */
-class MSettings extends MObject
+abstract class MSettings extends MObject
 {
+    /**
+     * Returns the database connection by name.
+     * 
+     * @param string $name
+     * @return null
+     */
+    public static function getDbConnection( $name="DefaultConnection" )
+    {
+        return MDbConnection::getDbConnection($name);
+    }
     
+    /**
+     * Add a database connection by name.
+     * 
+     * @param \PDO $connection
+     * @param string $name
+     */
+    public static function addDbConnection( $connection, $name="DefaultConnection" )
+    {
+        MDbConnection::addDbConnection($connection, $name);
+    }
+
+    public abstract function run();
+
+    public static function autorun()
+    {
+        /* @var $classes string[] */ $classes = array_reverse( get_declared_classes() );
+        
+        foreach( $classes as $class )
+        {
+            $type = new \ReflectionClass($class);
+            $abstract = $type->isAbstract();
+            
+            if( is_subclass_of($class, '\MToolkit\Core\MSettings')===true && $abstract===false )
+            {
+                /* @var $settings \MToolkit\Core\MSettings */ $settings = new $class();
+                
+                $settings->run();
+            }
+        }
+    }
+
 }
+
+register_shutdown_function( array( '\MToolkit\Core\MSettings', 'autorun' ) );

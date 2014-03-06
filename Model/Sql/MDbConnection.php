@@ -37,7 +37,7 @@ class MDbConnection
      * @param string $name
      * @return mixed
      */
-    public static function dbConnection( /* string */ $name="DefaultConnection" )
+    public static function dbConnection( $name="DefaultConnection" )
     {
         return MDbConnection::getDbConnection($name);
     }
@@ -46,7 +46,7 @@ class MDbConnection
      * @param string $name
      * @return mixed
      */
-    public static function getDbConnection( /* string */ $name="DefaultConnection" )
+    public static function getDbConnection( $name="DefaultConnection" )
     {
         if( is_null( MDbConnection::$istance ) )
         {

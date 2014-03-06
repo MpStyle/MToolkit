@@ -21,3 +21,4 @@
 require_once __DIR__ . '/MGlobal.php';
 require_once __DIR__ . '/MObject.php';
 require_once __DIR__ . '/MApplication.php';
+require_once __DIR__ . '/MSettings.php';

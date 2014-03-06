@@ -21,7 +21,7 @@ namespace MToolkit\Controller;
  */
 
 require_once __DIR__ . '/../Core/MString.php';
-require_once __DIR__ . '/../View/qp.php';
+require_once __DIR__ . '/../View/QueryPath.php';
 require_once __DIR__ . '/MAbstractViewController.php';
 
 use MToolkit\Core\MString;
@@ -47,7 +47,7 @@ abstract class MAbstractPageController extends MAbstractViewController
      * @var array
      */
     private $css = array( );
-    
+
     /**
      * @var array
      */
@@ -57,7 +57,7 @@ abstract class MAbstractPageController extends MAbstractViewController
      * @var MAbstractMasterPageController 
      */
     private $masterPage = null;
-    
+
     /**
      * @var array
      */
@@ -67,7 +67,7 @@ abstract class MAbstractPageController extends MAbstractViewController
      * @var string|null 
      */
     private $pageTitle = null;
-    
+
     /**
      * @param string $template
      * @param MAbstractViewController $parent
@@ -107,10 +107,10 @@ abstract class MAbstractPageController extends MAbstractViewController
         {
             $html.=sprintf( MAbstractPageController::CSS_TEMPLATE, $item["rel"], $item["href"], $item["media"] ) . "\n";
         }
-                
+
         ob_start();
-        qp($this->getOutput(), "head")
-                ->append($html)
+        qp( $this->getOutput(), "head" )
+                ->append( $html )
                 ->writeHTML();
         $output = ob_get_clean();
 
@@ -123,15 +123,15 @@ abstract class MAbstractPageController extends MAbstractViewController
     protected function renderJavascript()
     {
         $html = "";
-        
+
         foreach( $this->javascript as $item )
         {
             $html.=sprintf( MAbstractPageController::JAVASCRIPT_TEMPLATE, $item["src"] ) . "\n";
         }
 
         ob_start();
-        qp($this->getOutput(), "head")
-                ->append($html)
+        qp( $this->getOutput(), "head" )
+                ->append( $html )
                 ->writeHTML();
         $output = ob_get_clean();
 
@@ -184,7 +184,7 @@ abstract class MAbstractPageController extends MAbstractViewController
             parent::render();
             return;
         }
-        
+
         // renders the master page
         ob_start();
         $this->masterPage->init();
@@ -200,26 +200,26 @@ abstract class MAbstractPageController extends MAbstractViewController
         {
             $masterPagePlaceholderId = '#' . $masterPagePart[MAbstractPageController::MASTER_PAGE_PLACEHOLDER_ID];
             $pageContentId = '#' . $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID];
-            
+
             ob_start();
-            
-            qp($masterPageRendered, $masterPagePlaceholderId)
+
+            qp( $masterPageRendered, $masterPagePlaceholderId )
                     ->append(
-                        qp($pageRendered, $pageContentId)
+                            qp( $pageRendered, $pageContentId )
                             ->innerHtml()
                     )
                     ->writeHTML();
             $masterPageRendered = ob_get_clean();
         }
-        
+
         // set the output of page with the assemblies
         $this->setOutput( $masterPageRendered );
-        
+
         $this->renderTitle();
         $this->renderCss();
         $this->renderJavascript();
     }
-    
+
     /**
      * Write the title in the title tag of the page.
      */
@@ -228,14 +228,14 @@ abstract class MAbstractPageController extends MAbstractViewController
         // Render page title
         if( $this->pageTitle!=null )
         {
-            $title = mb_convert_encoding($this->pageTitle, $this->getCharset(), 'auto');
-            
+            $title = mb_convert_encoding( $this->pageTitle, $this->getCharset(), 'auto' );
+
             ob_start();
-            qp($this->getOutput(), "title")
-                    ->append($title)
+            qp( $this->getOutput(), "title" )
+                    ->append( $title )
                     ->writeHTML();
             $output = ob_get_clean();
-            
+
             $this->setOutput( $output );
         }
     }
@@ -252,23 +252,21 @@ abstract class MAbstractPageController extends MAbstractViewController
      */
     public static function run()
     {
-        /* @var $classes string[] */ $classes = get_declared_classes();
+        /* @var $classes string[] */ $classes = array_reverse( get_declared_classes() );
 
-        /* @var $entryPoint string */ $entryPoint = $classes[count( $classes )-1];
-
-        /* @var $controller \MToolkit\Controller\MAbstractController */ $controller = new $entryPoint();
-
-        if( ( $controller instanceof \MToolkit\Controller\MAbstractPageController )===false )
+        foreach( $classes as $class )
         {
-            $message = sprintf( "Invalid object for entry point in class %s, it must be an instance of MAbstractController, %s is passed.", get_class( $this ), get_class( $controller ) );
+            if( is_subclass_of( $class, '\MToolkit\Controller\MAbstractController' )===true )
+            {
+                /* @var $controller \MToolkit\Controller\MAbstractController */ $controller = new $class();
+                $controller->show();
 
-            throw new \Exception( $message );
+                // Clean the $_SESSION from signals.
+                $controller->disconnectSignals();
+                
+                return;
+            }
         }
-
-        $controller->show();
-
-        // Clean the $_SESSION from signals.
-        $controller->disconnectSignals();
     }
 
     /**
@@ -304,6 +302,7 @@ final class CssRel
 {
     const STYLESHEET = "stylesheet";
     const ALTERNATE_STYLESHEET = "alternate stylesheet";
+
 }
 
 /**
@@ -321,4 +320,5 @@ final class CssMedia
     const SPEECH = "speech";
     const TTY = "tty";
     const TV = "tv";
+
 }
