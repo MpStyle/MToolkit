@@ -24,7 +24,7 @@ require_once __DIR__.'/../Core/MObject.php';
 require_once __DIR__.'/MHttpResponse.php';
 
 use \MToolkit\Core\MObject;
-use MToolkit\Controller\MAbstractController;
+use MToolkit\Controller\MHttpResponse;
 
 /**
  * MAbstractController class provides a base methods

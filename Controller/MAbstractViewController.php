@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Controller;
 
 /*
@@ -20,18 +21,19 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__ . '/../Network/MNetworkSession.php';
-require_once __DIR__ . '/../Core/MString.php';
 require_once __DIR__ . '/../Core/Exception/MTemplateNotFoundException.php';
 require_once __DIR__ . '/MAbstractController.php';
+require_once __DIR__ . '/../Core/MMap.php';
+require_once __DIR__ . '/../Core/MDataType.php';
 
-use MToolkit\Network\MNetworkSession;
 use MToolkit\Core\Exception\MTemplateNotFoundException;
-use MToolkit\Core\MString;
 use MToolkit\Controller\MAbstractController;
+use MToolkit\Core\MMap;
+use MToolkit\Core\MDataType;
 
 abstract class MAbstractViewController extends MAbstractController
 {
+
     const POST_SIGNALS = 'MToolkit\Controller\MAbstractViewController\PostSignals';
 
     /**
@@ -52,43 +54,44 @@ abstract class MAbstractViewController extends MAbstractController
      * @var string|null 
      */
     private $output = "";
-    
+
     /**
      * @var string CSS class
      */
-    private $class=null;
-    
+    private $class = null;
+
     /**
      * @var string CSS style
      */
-    private $style=null;
-    
+    private $style = null;
+
     /**
-     * @var MAbstractViewController[] 
+     * @var MMap[MAbstractViewController] 
      */
-    private $controls=array();
-    
+    private $controls = null;
+
     /**
      * @var string An array of key => value
      */
-    private $attributes=array();
-    
-    private $charset='UTF-8';
+    private $attributes = null;
+    private $charset = 'UTF-8';
 
     /**
      * @param string $template The path of the file containing the html of the controller.
      * @param MAbstractViewController $parent
      */
-    public function __construct( $template = null, MAbstractViewController $parent = null )
+    public function __construct($template = null, MAbstractViewController $parent = null)
     {
-        parent::__construct( $parent );
+        parent::__construct($parent);
 
-        if ( file_exists( $template ) == false )
+        if (file_exists($template) == false)
         {
-            throw new MTemplateNotFoundException( $template );
+            throw new MTemplateNotFoundException($template);
         }
 
         $this->template = $template;
+        $this->controls = new MMap();
+        $this->attributes=new MMap();
     }
 
     public function init()
@@ -97,58 +100,67 @@ abstract class MAbstractViewController extends MAbstractController
     }
 
     public function initControls()
-    {        
+    {
+    }
+
+    public function load()
+    {
         
     }
-    
-    public function load()
-    {}
-    
+
     /**
-     * @return array
+     * @return MMap
      */
-    public function getAttributes(  )
+    public function getAttributes()
     {
         return $this->attributes;
     }
-    
+
     /**
      * @param string $name
      * @return string
      */
-    public function getAttribute( $name )
+    public function getAttribute($name)
     {
-        if( array_key_exists( $name, $this->attributes ) )
-        {
-            return $this->attributes[$name];
-        }
-        
-        return null;
+        return $this->attributes->getValue($name);
     }
-    
+
     /**
      * @param string $name
      * @param string $value
      */
-    public function setAttribute( $name, $value )
+    public function setAttribute($name, $value)
     {
-        $this->attributes[$name]=$value;
+        $this->attributes->insert($name, $value);
     }
-    
+
     /**
      * @param string $name the id of the control
      * @return MAbstractViewController
      */
-    public function getControl( $id )
+    public function getControl($id)
     {
-        if( array_key_exists( $id, $this->controls ) )
+        MDataType::mustBeString($id);
+
+        if (array_key_exists($id, $this->controls))
         {
             return $this->controls[$id];
         }
-        
+
         return null;
     }
-    
+
+    /**
+     * @param string $id
+     * @param \MToolkit\Controller\MAbstractViewController $control
+     */
+    public function addControl($id, MAbstractViewController $control)
+    {
+        MDataType::mustBeString($id);
+
+        $this->controls->insert($id, $control);
+    }
+
     /**
      * The method returns <i>$this->output</i>.
      * <i>$this->output</i> contains the controller rendered.
@@ -168,10 +180,12 @@ abstract class MAbstractViewController extends MAbstractController
      * @param string $output
      * @return \MToolkit\Controller\MAbstractViewController
      */
-    protected function setOutput( $output )
+    protected function setOutput($output)
     {
-        $this->output = $output;
+        MDataType::mustBeString($output);
         
+        $this->output = $output;
+
         return $this;
     }
 
@@ -191,8 +205,10 @@ abstract class MAbstractViewController extends MAbstractController
      * @param string $template
      * @return \MToolkit\Controller\AbstractController
      */
-    protected function setTemplate( $template )
+    protected function setTemplate($template)
     {
+        MDataType::mustBeString($template);
+        
         $this->template = $template;
         return $this;
     }
@@ -213,8 +229,10 @@ abstract class MAbstractViewController extends MAbstractController
      * @param bool $isVisible
      * @return \MToolkit\Controller\MAbstractViewController
      */
-    public function setIsVisible( $isVisible )
+    public function setIsVisible($isVisible)
     {
+        MDataType::mustBeBoolean($isVisible);
+        
         $this->isVisible = $isVisible;
         return $this;
     }
@@ -224,7 +242,7 @@ abstract class MAbstractViewController extends MAbstractController
      */
     public static function isPostBack()
     {
-        return ( count( $_POST ) > 0 );
+        return ( count($_POST) > 0 );
     }
 
     /**
@@ -234,13 +252,13 @@ abstract class MAbstractViewController extends MAbstractController
     protected function render()
     {
         // It's better if the path of the template file is assigned.
-        if ( $this->template == null )
+        if ($this->template == null)
         {
-            trigger_error( 'The path of the template file is null in ' . (string)get_class( $this ) . ' class', E_USER_ERROR );
+            trigger_error('The path of the template file is null in ' . (string) get_class($this) . ' class', E_USER_ERROR);
             return;
         }
 
-        if ( $this->isVisible === false )
+        if ($this->isVisible === false)
         {
             return;
         }
@@ -250,50 +268,60 @@ abstract class MAbstractViewController extends MAbstractController
         include $this->template;
 
         $this->output .= ob_get_clean();
-        
+
         $this->renderControls();
     }
 
-    public function setClass( $class )
+    public function setClass($class)
     {
-        $this->class=$class;
+        $this->class = $class;
         return $this;
     }
-    
+
     public function getClass()
     {
         return $this->class;
     }
-    
+
     public function getStyle()
     {
         return $this->style;
     }
 
-    public function setStyle( $style )
+    public function setStyle($style)
     {
         $this->style = $style;
         return $this;
     }
-    
+
     /**
      * This method pre-renderize the controller.
      */
     protected function preRender()
     {
+        
     }
-    
+
     protected function renderControls()
-    {   
+    {
+        foreach( $this->controls as $key => $value )
+        {
+            ob_start();
+            $value->show();
+            $controlRendered = ob_get_clean();
+            
+            $this->output= qp( qp($this->output)->find("#".$key)->prepend($controlRendered) )->find("#".$key)->get(2)->remove();
+        }
     }
-    
+
     /**
      * This method post-renderize the controller.
      */
     protected function postRender()
     {
+        
     }
-    
+
     /**
      * The method calls the render methods (<i>preRender</i>,
      * <i>render</i> and <i>postRender</i>) and it prints to screen 
@@ -301,11 +329,11 @@ abstract class MAbstractViewController extends MAbstractController
      */
     public function show()
     {
-        if ( $this->isVisible === false )
+        if ($this->isVisible === false)
         {
             return;
         }
-        
+
         $this->init();
         $this->load();
         $this->preRender();
@@ -316,17 +344,16 @@ abstract class MAbstractViewController extends MAbstractController
 
         $this->output = "";
     }
-    
+
     public function getCharset()
     {
         return $this->charset;
     }
 
-    public function setCharset( $charset )
+    public function setCharset($charset)
     {
         $this->charset = $charset;
         return $this;
     }
-
 
 }

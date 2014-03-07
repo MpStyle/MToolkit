@@ -1,4 +1,5 @@
 <?php
+
 /** @file
  * This file contains the Query Path extension tools.
  *
@@ -16,6 +17,7 @@
  * @see Extension
  * @see ExtensionRegistry::extend()
  */
+
 namespace QueryPath;
 
 /** @addtogroup querypath_extensions Extensions
@@ -89,6 +91,8 @@ namespace QueryPath;
  *
  * @ingroup querypath_extensions
  */
-interface Extension {
-  public function __construct(\QueryPath\Query $qp);
+interface Extension
+{
+
+    public function __construct(\QueryPath\Query $qp);
 }
