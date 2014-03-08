@@ -30,24 +30,25 @@ abstract class MAbstractHttpHandler extends MAbstractController
     
     public static function autorun()
     {
-        /* @var $classes string[] */ $classes = get_declared_classes();
-
-        /* @var $entryPoint string */ $entryPoint = $classes[count( $classes ) - 1];
-
-        /* @var $controller \MToolkit\Controller\MAbstractController */ $controller = new $entryPoint();
-
-        if ( ( $controller instanceof \MToolkit\Controller\MAbstractHttpHandler ) === false )
-        {
-            $message = sprintf( "Invalid object for entry point in class %s, it must be an instance of \MToolkit\Controller\MAbstractHttpHandler, %s is passed.", get_class( $this ), get_class( $controller ) );
-
-            throw new \Exception( $message );
-        }
+        /* @var $classes string[] */ $classes = array_reverse( get_declared_classes() );
         
-        header('Content-type: ' . $controller->getHttpResponse()->getContentType() );
-        $controller->run();
-
-        // Clean the $_SESSION from signals.
-        $controller->disconnectSignals();
+        foreach( $classes as $class )
+        {
+            $type = new \ReflectionClass($class);
+            $abstract = $type->isAbstract();
+            
+            if( is_subclass_of($class, '\MToolkit\Controller\MAbstractHttpHandler')===true && $abstract===false )
+            {
+                /* @var $settings \MToolkit\Controller\MAbstractHttpHandler */ $handler = new $class();
+                
+                $handler->run();
+                
+                // Clean the $_SESSION from signals.
+                $handler->disconnectSignals();
+                
+                return;
+            }
+        }
     }
 }
 

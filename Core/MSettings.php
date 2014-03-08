@@ -70,6 +70,8 @@ abstract class MSettings extends MObject
                 /* @var $settings \MToolkit\Core\MSettings */ $settings = new $class();
                 
                 $settings->run();
+                
+                return;
             }
         }
     }
