@@ -27,12 +27,8 @@ require_once __DIR__ . '/../Core/MMap.php';
 require_once __DIR__ . '/../Core/MDataType.php';
 
 use \MToolkit\Core\MObject;
-<<<<<<< Updated upstream
-use MToolkit\Controller\MHttpResponse;
-=======
 use MToolkit\Core\MMap;
 use MToolkit\Core\MDataType;
->>>>>>> Stashed changes
 
 /**
  * MAbstractController class provides a base methods
