@@ -80,7 +80,7 @@ abstract class MAbstractViewController extends MAbstractController
      * @param string $template The path of the file containing the html of the controller.
      * @param MAbstractViewController $parent
      */
-    public function __construct($template = null, MAbstractViewController $parent = null)
+    public function __construct( $template, MAbstractViewController $parent = null )
     {
         parent::__construct($parent);
 
@@ -105,7 +105,6 @@ abstract class MAbstractViewController extends MAbstractController
 
     public function load()
     {
-        
     }
 
     /**
@@ -135,7 +134,7 @@ abstract class MAbstractViewController extends MAbstractController
     }
 
     /**
-     * @param string $name the id of the control
+     * @param string $id the id of the control
      * @return MAbstractViewController
      */
     public function getControl($id)

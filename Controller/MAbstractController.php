@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Controller;
 
 /*
@@ -20,11 +21,18 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/../Core/MObject.php';
-require_once __DIR__.'/MHttpResponse.php';
+require_once __DIR__ . '/../Core/MObject.php';
+require_once __DIR__ . '/MHttpResponse.php';
+require_once __DIR__ . '/../Core/MMap.php';
+require_once __DIR__ . '/../Core/MDataType.php';
 
 use \MToolkit\Core\MObject;
+<<<<<<< Updated upstream
 use MToolkit\Controller\MHttpResponse;
+=======
+use MToolkit\Core\MMap;
+use MToolkit\Core\MDataType;
+>>>>>>> Stashed changes
 
 /**
  * MAbstractController class provides a base methods
@@ -33,21 +41,28 @@ use MToolkit\Controller\MHttpResponse;
 abstract class MAbstractController extends MObject
 {
     /**
+     * @var MMap
+     */
+    private $controls;
+
+    /**
      * @var MHttpResponse
      */
-    private $httpResponse=null;
-    
+    private $httpResponse = null;
+
     /**
      * Constructs an abstract controller with the given <i>$parent</i>.
      * 
      * @param MObject $parent
      */
-    public function __construct( MObject $parent=null )
+    public function __construct( MObject $parent = null )
     {
         parent::__construct( $parent );
-        $this->httpResponse=new MHttpResponse();
+
+        $this->httpResponse = new MHttpResponse();
+        $this->controls = new MMap();
     }
-    
+
     /**
      * @return MHttpResponse
      */
@@ -55,4 +70,27 @@ abstract class MAbstractController extends MObject
     {
         return $this->httpResponse;
     }
+
+    /**
+     * @param string $id
+     * @param \MToolkit\Controller\MAbstractController $control
+     */
+    protected function addControl( $id, MAbstractController $control )
+    {
+        MDataType::mustBeString( $id );
+
+        $this->controls->insert( $id, $control );
+    }
+
+    /**
+     * @param string $id
+     * @return MAbstractController
+     */
+    protected function getControl( $id )
+    {
+        MDataType::mustBeString( $id );
+
+        return $this->controls->getValue( $id );
+    }
+
 }
