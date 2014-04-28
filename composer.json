@@ -1,5 +1,6 @@
 {
     "name": "mpstyle/mtoolkit",
+    "version": "0.1"
     "description": "MToolkit is a simple PHP toolkit. Easy to understand. Fast to use.",
     "keywords": ["framework","toolkit", "Qt", ".NET", "web framework"],
     "type": "library",
