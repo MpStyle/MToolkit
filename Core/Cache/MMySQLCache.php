@@ -48,7 +48,7 @@ class MMySQLCache extends MAbstractCache
     {
         $query = "CREATE TABLE IF NOT EXISTS `" . $this->cacheTableName . "`
             (
-                `Key` VARCHAR(500) PRIMARY KEY,
+                `Key` VARCHAR(255) PRIMARY KEY,
                 `Value` LONGTEXT,
                 `Expired` BIGINT
             );

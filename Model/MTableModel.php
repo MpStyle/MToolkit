@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Model;
 
 /*
@@ -22,13 +23,15 @@ namespace MToolkit\Model;
 
 require_once __DIR__ . '/MAbstractDataModel.php';
 require_once __DIR__ . '/../Core/MObject.php';
+require_once __DIR__ . '/../Core/MDataType.php';
 
 use MToolkit\Core\MObject;
 use MToolkit\Core\Enum\Orientation;
+use MToolkit\Core\MDataType;
 
 class MTableModel extends MAbstractDataModel
 {
-    private $data = array( );
+    private $data = array();
 
     public function __construct( MObject $parent = null )
     {
@@ -75,7 +78,7 @@ class MTableModel extends MAbstractDataModel
         {
             return $headerData;
         }
-        
+
 //        echo $section;
 
         switch( $orientation )

@@ -96,6 +96,16 @@ abstract class MAbstractPageController extends MAbstractViewController
         }
     }
 
+    protected function getCss()
+    {
+        return $this->css;
+    }
+    
+    protected function getJavascript()
+    {
+        return $this->javascript;
+    }
+    
     /**
      * Render the link tag for CSS at the end of head tag.
      */
