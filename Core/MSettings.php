@@ -78,4 +78,4 @@ abstract class MSettings extends MObject
 
 }
 
-register_shutdown_function( array( '\MToolkit\Core\MSettings', 'autorun' ) );
+MSettings::autorun();
