@@ -22,10 +22,11 @@ namespace MToolkit\Core;
  */
 
 require_once __DIR__ . '/MDataType.php';
+require_once __DIR__ . '/MObject.php';
 
 use MToolkit\Core\MDataType;
 
-abstract class MAbstractTemplate 
+abstract class MAbstractTemplate extends MObject
 {
     /**
      * @var string
