@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Core;
 
 /*
@@ -76,7 +77,7 @@ class MString
     {
         $result = substr( $this->text, $i, 1 );
 
-        if( $result===false )
+        if( $result === false )
         {
             return null;
         }
@@ -93,15 +94,15 @@ class MString
      */
     public function chop( $n )
     {
-        if( $n>=$this->size() )
+        if( $n >= $this->size() )
         {
             $this->text = "";
             return;
         }
 
-        $result = substr( $this->text, $i, strlen( $this->text )-$n );
+        $result = substr( $this->text, $i, strlen( $this->text ) - $n );
 
-        if( $result===true )
+        if( $result === true )
         {
             $this->text = $result;
         }
@@ -175,7 +176,7 @@ class MString
 
         $result = strpos( $text, $s );
 
-        return ( $result!==false );
+        return ( $result !== false );
     }
 
     /**
@@ -221,7 +222,7 @@ class MString
                 break;
         }
 
-        if( $pos===false )
+        if( $pos === false )
         {
             return -1;
         }
@@ -257,7 +258,7 @@ class MString
                 break;
         }
 
-        if( $pos===false )
+        if( $pos === false )
         {
             return -1;
         }
@@ -321,14 +322,14 @@ class MString
      */
     public function left( $n )
     {
-        if( $n<0||$n>$this->size() )
+        if( $n < 0 || $n > $this->size() )
         {
             return new MString( $this->text );
         }
 
         $result = substr( $this->text, 0, $n );
 
-        if( $result===false )
+        if( $result === false )
         {
             return null;
         }
@@ -345,15 +346,15 @@ class MString
      */
     public function right( $n )
     {
-        if( $n<0||$n>$this->size() )
+        if( $n < 0 || $n > $this->size() )
         {
             return new MString( $this->text );
         }
 
-        $pos = $n*-1;
+        $pos = $n * -1;
         $result = substr( $this->text, $pos );
 
-        if( $result===false )
+        if( $result === false )
         {
             return null;
         }
@@ -369,7 +370,7 @@ class MString
     {
         $str = (string) $string;
 
-        return ( $str==null||$str==MString::EMPTY_STRING );
+        return ( $str == null || $str == MString::EMPTY_STRING );
     }
 
     /**
@@ -379,7 +380,7 @@ class MString
      */
     public function isNull()
     {
-        return ( $this->text==null );
+        return ( $this->text == null );
     }
 
     /**
@@ -389,7 +390,7 @@ class MString
      */
     public function isEmpty()
     {
-        return ( $this->text==MString::EMPTY_STRING );
+        return ( $this->text == MString::EMPTY_STRING );
     }
 
     /**
@@ -408,7 +409,7 @@ class MString
     {
         $str = null;
 
-        if( $n==-1 )
+        if( $n == -1 )
         {
             $str = substr( $this->text, $position );
         }
@@ -476,11 +477,11 @@ class MString
      * @param int $position
      * @return \MToolkit\Core\MString
      */
-    public function truncate($position)
+    public function truncate( $position )
     {
-        return new MString( substr( (string)$this, 0, $position ) );
+        return new MString( substr( (string) $this, 0, $position ) );
     }
-    
+
     /**
      * Returns an uppercase copy of the string.
      * 
@@ -488,9 +489,9 @@ class MString
      */
     public function toUpper()
     {
-        return new MString( strtoupper( (string)$this ) );
+        return new MString( strtoupper( (string) $this ) );
     }
-    
+
     /**
      * Returns a lowercase copy of the string.
      * 
@@ -498,9 +499,9 @@ class MString
      */
     public function toLower()
     {
-        return new MString( strtolower( (string)$this ) );
+        return new MString( strtolower( (string) $this ) );
     }
-    
+
     /**
      * Returns a string that has whitespace removed from the start and the end.
      * Whitespace means any character for which QChar::isSpace() returns true. 
@@ -509,9 +510,31 @@ class MString
      * @param MString|string $charlist
      * @return \MToolkit\Core\MString
      */
-    public function trimmed( $charlist=null )
+    public function trimmed( $charlist = null )
     {
-        return new MString( trim( (string)$this, (string)$charlist ));
+        return new MString( trim( (string) $this, (string) $charlist ) );
     }
-}
 
+    /**
+     * Return true if <i>$haystack</i> starts with <i>$needle</i>, otherwise false.
+     * @param string $haystack
+     * @param string $needle
+     * @return boolean
+     */
+    public static function startsWith( $haystack, $needle )
+    {
+        return $needle === "" || strpos( $haystack, $needle ) === 0;
+    }
+
+    /**
+     * Return true if <i>$haystack</i> ends with <i>$needle</i>, otherwise false.
+     * @param string $haystack
+     * @param string $needle
+     * @return boolean
+     */
+    public static function endsWith( $haystack, $needle )
+    {
+        return $needle === "" || substr( $haystack, -strlen( $needle ) ) === $needle;
+    }
+
+}
