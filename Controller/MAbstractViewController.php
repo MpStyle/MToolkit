@@ -55,16 +55,6 @@ abstract class MAbstractViewController extends MAbstractController
     private $output = "";
 
     /**
-     * @var string CSS class
-     */
-    private $class = null;
-
-    /**
-     * @var string CSS style
-     */
-    private $style = null;
-
-    /**
      * @var MMap[MAbstractViewController] 
      */
     private $controls = null;
@@ -82,11 +72,6 @@ abstract class MAbstractViewController extends MAbstractController
     public function __construct( $template, MAbstractViewController $parent = null )
     {
         parent::__construct( $parent );
-
-        if( file_exists( $template )==false )
-        {
-            throw new MTemplateNotFoundException( $template );
-        }
 
         $this->template = $template;
         $this->controls = new MMap();
@@ -111,7 +96,7 @@ abstract class MAbstractViewController extends MAbstractController
     /**
      * @return MMap
      */
-    public function getAttributes()
+    public function &getAttributes()
     {
         return $this->attributes;
     }
@@ -120,7 +105,7 @@ abstract class MAbstractViewController extends MAbstractController
      * @param string $name
      * @return string
      */
-    public function getAttribute( $name )
+    public function getAttributeValue( $name )
     {
         return $this->attributes->getValue( $name );
     }
@@ -132,6 +117,16 @@ abstract class MAbstractViewController extends MAbstractController
     public function setAttribute( $name, $value )
     {
         $this->attributes->insert( $name, $value );
+    }
+
+    public function renderAttributes()
+    {
+        $input = iterator_to_array( $this->attributes );
+        $output = ' ' . implode( ' ', array_map( function ($v, $k)
+                        {
+                            return $k . '="' . $v . '"';
+                        }, $input, array_keys( $input ) ) );
+        return $output;
     }
 
     /**
@@ -242,7 +237,7 @@ abstract class MAbstractViewController extends MAbstractController
      */
     public static function isPostBack()
     {
-        return ( count( $_POST )>0 );
+        return ( count( $_POST ) > 0 );
     }
 
     /**
@@ -252,13 +247,12 @@ abstract class MAbstractViewController extends MAbstractController
     protected function render()
     {
         // It's better if the path of the template file is assigned.
-        if( $this->template==null )
+        if( $this->template == null || file_exists( $this->template ) == false )
         {
-            trigger_error( 'The path of the template file is null in ' . (string) get_class( $this ) . ' class', E_USER_ERROR );
-            return;
+            throw new MTemplateNotFoundException( ( $this->template == null ? 'null' : $this->template ) );
         }
 
-        if( $this->isVisible===false )
+        if( $this->isVisible === false )
         {
             return;
         }
@@ -274,23 +268,23 @@ abstract class MAbstractViewController extends MAbstractController
 
     public function setClass( $class )
     {
-        $this->class = $class;
+        $this->setAttribute( "class", $class );
         return $this;
     }
 
     public function getClass()
     {
-        return $this->class;
+        return $this->getAttributeValue( "class" );
     }
 
     public function getStyle()
     {
-        return $this->style;
+        return $this->getAttributeValue( "style" );
     }
 
     public function setStyle( $style )
     {
-        $this->style = $style;
+        $this->setAttribute( "style", $style );
         return $this;
     }
 
@@ -321,7 +315,7 @@ abstract class MAbstractViewController extends MAbstractController
     {
         
     }
-    
+
     protected function unload()
     {
         
@@ -334,7 +328,7 @@ abstract class MAbstractViewController extends MAbstractController
      */
     public function show()
     {
-        if( $this->isVisible===false )
+        if( $this->isVisible === false )
         {
             return;
         }
@@ -346,7 +340,7 @@ abstract class MAbstractViewController extends MAbstractController
         $this->postRender();
 
         echo $this->output;
-        
+
         $this->unload();
 
         $this->output = "";
