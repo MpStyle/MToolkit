@@ -30,12 +30,17 @@ use \MToolkit\Core\Exception\MWrongTypeException;
 use \MToolkit\Core\MAbstractTemplate;
 use MToolkit\Core\MDataType;
 
-class MMap extends MAbstractTemplate implements \ArrayAccess
+class MMap extends MAbstractTemplate implements \ArrayAccess, \Iterator
 {
     /**
      * @var array
      */
     private $map = array();
+    
+    /**
+     * @var integer
+     */
+    private $pos = 0;
 
     /**
      * Constructs an object with an array <i>$other</i>.
@@ -394,6 +399,37 @@ class MMap extends MAbstractTemplate implements \ArrayAccess
         }
     }
 
+    public function current()
+    {
+        $keys = $this->getKeys();
+
+        return $this->getValue( $keys->at( $this->pos ), null );
+    }
+
+    public function key()
+    {
+        $keys = $this->getKeys();
+
+        return $keys->at( $this->pos );
+    }
+
+    public function next()
+    {
+        $this->pos++;
+    }
+
+    public function rewind()
+    {
+        $this->pos = 0;
+    }
+
+    public function valid()
+    {
+        $keys = $this->getKeys();
+
+        return ( $this->pos >= 0 && $this->pos < $keys->count() );
+    }
+    
     //public function values ( $key )
     //bool	operator!= ( const QMap<Key, T> & other ) const
     //QMap<Key, T> &	operator= ( const QMap<Key, T> & other )

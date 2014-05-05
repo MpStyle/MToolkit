@@ -33,8 +33,13 @@ use MToolkit\Core\MDataType;
  * The MList class is a template class that provides lists.<br />
  * It provides accessing objects as arrays.
  */
-class MList extends MAbstractTemplate implements \ArrayAccess
+class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
 {
+    /**
+     * @var integer
+     */
+    private $pos = 0;
+    
     /**
      * @var array
      */
@@ -100,7 +105,7 @@ class MList extends MAbstractTemplate implements \ArrayAccess
      * @throws MWrongTypeException
      * @throws \OutOfBoundsException
      */
-    public function at( $i )
+    public function &at( $i )
     {
         MDataType::mustBeInt($i);
 
@@ -553,6 +558,11 @@ class MList extends MAbstractTemplate implements \ArrayAccess
             $this->append( $array[$i] );
         }
     }
+    
+    public function __toArray()
+    {
+        return $this->list;
+    }
 
     /**
      * Return if a key exists.
@@ -617,6 +627,31 @@ class MList extends MAbstractTemplate implements \ArrayAccess
         {
             unset( $this->list[$offset] );
         }
+    }
+
+    public function &current()
+    {
+        return $this->at( $this->pos );
+    }
+
+    public function key()
+    {
+        return null;
+    }
+
+    public function next()
+    {
+        $this->pos++;
+    }
+
+    public function rewind()
+    {
+        $this->pos = 0;
+    }
+
+    public function valid()
+    {
+        return ( $this->pos >= 0 && $this->pos < $this->count() );
     }
 }
 
