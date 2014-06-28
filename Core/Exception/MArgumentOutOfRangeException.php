@@ -1,5 +1,4 @@
 <?php
-namespace MToolkit\Core;
 
 /*
  * This file is part of MToolkit.
@@ -20,47 +19,14 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-class MListIterator implements \Iterator
+namespace MToolkit\Core\Exception;
+
+class MArgumentOutOfRangeException extends \Exception
 {
 
-    /**
-     * @var MList
-     */
-    private $list;
-
-    /**
-     * @var integer
-     */
-    private $pos = 0;
-
-    public function __construct( MList $list )
+    public function __construct($message, $code=-1, $previous=null)
     {
-        $this->list = $list;
-    }
-
-    public function current()
-    {
-        return $this->list->at( $this->pos );
-    }
-
-    public function key()
-    {
-        return null;
-    }
-
-    public function next()
-    {
-        $this->pos++;
-    }
-
-    public function rewind()
-    {
-        $this->pos = 0;
-    }
-
-    public function valid()
-    {
-        return ( $this->pos >= 0 && $this->pos < $this->list->count() );
+        parent::__construct($message, $code, $previous);
     }
 
 }

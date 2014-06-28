@@ -5,7 +5,7 @@ class MJsonObject
 {
 
     /**
-     * Returns a string rappresenting the json of the object.
+     * Returns an array rappresenting the object properties and their values.
      * 
      * @return array 
      */
@@ -42,11 +42,10 @@ class MJsonObject
     }
 
     /**
-     * Sets the property of the class, using the <i>$json</i>.
+     * Sets the properties of the class, using the <i>$json</i>.
      * The default implementation returns null.
      * 
      * @param array $json
-     * @return MJsonObject 
      */
     public static function fromArray( array $json )
     {
@@ -54,6 +53,8 @@ class MJsonObject
     }
 
     /**
+     * Returns a string rappresenting the object properties and their values.
+     * 
      * @return string
      */
     public function toJson()
@@ -62,6 +63,9 @@ class MJsonObject
     }
     
     /**
+     * Sets the properties of the class, using the <i>$json</i>.
+     * The default implementation returns null.
+     * 
      * @param string $json
      * @return MJsonObject
      */

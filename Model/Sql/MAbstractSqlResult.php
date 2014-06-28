@@ -25,7 +25,7 @@ use MToolkit\Model\MTableModel;
  * @author  Michele Pagnin
  */
 
-abstract class MAbstractSqlResult extends MTableModel
+abstract class MAbstractSqlResult extends MTableModel implements \ArrayAccess, \Iterator
 {
     public function __construct( MObject $parent = null )
     {
@@ -35,7 +35,7 @@ abstract class MAbstractSqlResult extends MTableModel
     /**
      * Return an array contains the names of the fields.
      * 
-     * @return type
+     * @return array
      */
     public abstract function getFields();
 }

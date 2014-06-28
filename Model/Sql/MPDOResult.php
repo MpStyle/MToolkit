@@ -24,14 +24,12 @@ namespace MToolkit\Model\Sql;
 require_once __DIR__ . '/MAbstractSqlResult.php';
 require_once __DIR__ . '/MSqlRecord.php';
 require_once __DIR__ . '/MSql.php';
+require_once __DIR__ . '/../../Core/Exception/MReadOnlyObjectException.php';
 
 use MToolkit\Model\Sql;
 use MToolkit\Model\Sql\MSqlRecord;
+use MToolkit\Core\Exception\MReadOnlyObjectException;
 
-/**
- * The MSqlResult class provides an abstract interface for accessing data from 
- * specific SQL databases.
- */
 class MPDOResult extends MAbstractSqlResult
 {
 
@@ -46,11 +44,20 @@ class MPDOResult extends MAbstractSqlResult
      * @var \PDOStatement
      */
     private $statement;
+    
+    /**
+     * @var int
+     */
     private $at = 0;
-    private $rows;
+    
+    /**
+     * @var array
+     */
+    private $rows=null;
 
     /**
-     * @param \mysqli_stmt $statement
+     * @param \PDOStatement $statement
+     * @param \MToolkit\Model\Sql\MObject $parent
      */
     public function __construct( \PDOStatement $statement, MObject $parent = null )
     {
@@ -58,7 +65,7 @@ class MPDOResult extends MAbstractSqlResult
 
         $this->statement = $statement;
 
-        $this->rows = $this->statement->fetchAll( PDO::FETCH_ASSOC );
+        $this->rows = $this->statement->fetchAll( \PDO::FETCH_ASSOC );
         $this->fields = empty( $this->rows ) ? array() : array_keys( ( array ) $this->rows[ 0 ] );
     }
 
@@ -151,6 +158,56 @@ class MPDOResult extends MAbstractSqlResult
     {
         $this->at = $at;
         return $this;
+    }
+
+    public function current()
+    {
+        return $this->rows[$this->getAt()];
+    }
+
+    public function key()
+    {
+        return $this->getAt();
+    }
+
+    public function next()
+    {
+        $this->at++;
+    }
+
+    public function offsetExists( $offset )
+    {
+        return (array_key_exists($offset, $this->rows)===true);
+    }
+
+    public function offsetGet( $offset )
+    {
+        if( $this->offsetExists($offset) )
+        {
+            return $this->rows[$offset];
+        }
+        
+        return null;
+    }
+
+    public function offsetSet( $offset, $value )
+    {
+        throw new MReadOnlyObjectException(__CLASS__, __METHOD__);
+    }
+
+    public function offsetUnset( $offset )
+    {
+        throw new MReadOnlyObjectException(__CLASS__, __METHOD__);
+    }
+
+    public function rewind()
+    {
+        $this->at = 0;
+    }
+
+    public function valid()
+    {
+        return ( $this->at >= 0 && $this->at < $this->rowCount() );
     }
 
 }

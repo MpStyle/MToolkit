@@ -23,8 +23,15 @@ namespace MToolkit\Core\Cache;
 
 require_once __DIR__.'/MAbstractCache.php';
 
+/**
+ * MFileCache class extends MAbstractCache.<br />
+ * This class stores cache records into files (in a chosen <i>path</i>).
+ */
 class MFileCache extends MAbstractCache
 {
+    /**
+     * @param \MToolkit\Core\Cache\MObject $parent
+     */
     public function __construct( MObject $parent = null )
     {
         parent::__construct( $parent );
@@ -78,9 +85,9 @@ class MFileCache extends MAbstractCache
      */
     public function delete( $key )
     {
-        if( file_exists( $this->generateFileName( $key ) ) === true )
+        if( file_exists( $this->getFileName( $key ) ) === true )
         {
-            unlink( $this->generateFileName( $key ) );
+            unlink( $this->getFileName( $key ) );
         }
     }
 
@@ -105,12 +112,12 @@ class MFileCache extends MAbstractCache
      */
     public function fetch( $key )
     {
-        if( file_exists( $this->generateFileName( $key ) ) === false )
+        if( file_exists( $this->getFileName( $key ) ) === false )
         {
             return null;
         }
 
-        $fileContent = file_get_contents( $this->generateFileName( $key ) );
+        $fileContent = file_get_contents( $this->getFileName( $key ) );
 
         $separatorPosition = strrpos( $fileContent, MCache::DELIMITER );
         $expired = substr( $fileContent, 0, $separatorPosition );
@@ -144,11 +151,11 @@ class MFileCache extends MAbstractCache
         
         $expired=time()+$ttl;
         
-        $success = file_put_contents( $this->generateFileName( $key ), $expired . MCache::DELIMITER . serialize($value) );
+        $success = file_put_contents( $this->getFileName( $key ), $expired . MCache::DELIMITER . serialize($value) );
         return ($success != false);
     }
 
-    private function generateFileName( $key )
+    private function getFileName( $key )
     {
         return $this->path . MCache::CACHE_FILE_PREFIX . $key . '.' . MCache::FILE_EXTENSION;
     }

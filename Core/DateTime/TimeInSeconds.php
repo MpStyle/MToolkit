@@ -1,6 +1,18 @@
 <?php
 namespace MToolkit\Core\DateTime;
 
+/**
+ * In <i>TimeInSeconds</i> enum are defined some constatns indicating 
+ * how many seconds there are in a:
+ * <ul>
+ *  <li>millisecond</li>
+ *  <li>second</li>
+ *  <li>minute</li>
+ *  <li>hour</li>
+ *  <li>day</li>
+ *  <li>week</li>
+ * </ul>
+ */
 final class TimeInSeconds
 {
     const MILLISECOND=0.001;

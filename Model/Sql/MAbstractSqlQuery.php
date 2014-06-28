@@ -21,7 +21,7 @@ namespace MToolkit\Model\Sql;
  */
 
 require_once __DIR__.'/MAbstractSqlResult.php';
-require_once '../../Core/MObject.php';
+require_once __DIR__.'/../../Core/MObject.php';
 
 use MToolkit\Model\Sql\MAbstractSqlResult;
 use MToolkit\Core\MObject;

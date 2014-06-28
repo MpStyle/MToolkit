@@ -22,8 +22,8 @@ namespace MToolkit\Core\Exception;
 
 class MElementIdNotFoundException extends \Exception
 {
-    public function __construct($fileName, $idElement) 
+    public function __construct($fileName, $idElement, $code=-1, \Exception $previous=null) 
     {
-        parent::__construct("The element with id '" . $idElement . "' was not founded in the file '" . $fileName . "'.");
+        parent::__construct("The element with id '" . $idElement . "' was not founded in the file '" . $fileName . "'.", $code, $previous);
     }
 }

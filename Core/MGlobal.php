@@ -18,6 +18,8 @@
  * @author  Michele Pagnin
  */
 
+require_once __DIR__.'/MApplication.php';
+
 /**
  * Autoload re-implementation following PSR-0 Standard.
  * No namespaces are defined here, otherwise this method is not

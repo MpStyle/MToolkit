@@ -22,8 +22,8 @@ namespace MToolkit\Core\Exception;
 
 class MReadOnlyObjectException extends \Exception
 {
-    public function __construct($className, $methodName) 
+    public function __construct($className, $methodName, $code=-1, \Exception $previous=null) 
     {
-        parent::__construct("The instance of " . $className . " is read-only. You can not use the method " . $methodName . ".");
+        parent::__construct("The instance of " . $className . " is read-only. You can not use the method " . $methodName . ".", $code, $previous);
     }
 }

@@ -21,11 +21,18 @@ namespace MToolkit\Controller;
  */
 
 require_once __DIR__.'/MAbstractController.php';
+require_once __DIR__.'/../Core/MDataType.php';
 
 use MToolkit\Controller\MAbstractController;
+use MToolkit\Core\MDataType;
 
 abstract class MAbstractHttpHandler extends MAbstractController 
 {
+    /**
+     * @var string
+     */
+    private $output=null;
+    
     public abstract function run();
     
     public static function autorun()
@@ -39,9 +46,16 @@ abstract class MAbstractHttpHandler extends MAbstractController
             
             if( is_subclass_of($class, '\MToolkit\Controller\MAbstractHttpHandler')===true && $abstract===false )
             {
-                /* @var $settings \MToolkit\Controller\MAbstractHttpHandler */ $handler = new $class();
+                /* @var $settings MAbstractHttpHandler */ $handler = new $class();
                 
                 $handler->run();
+                
+                MDataType::mustBeNullableString($handler->getOutput());
+                
+                if( $handler->getOutput()!=null )
+                {
+                    echo $handler->getOutput();
+                }
                 
                 // Clean the $_SESSION from signals.
                 $handler->disconnectSignals();
@@ -49,6 +63,27 @@ abstract class MAbstractHttpHandler extends MAbstractController
                 return;
             }
         }
+    }
+    
+    /**
+     * Returns, by reference, the string to print after the execution of the handler.
+     * @return string
+     */
+    public function &getOutput()
+    {
+        return $this->output;
+    }
+    
+    /**
+     * @param string $output
+     * @return \MToolkit\Controller\MAbstractHttpHandler
+     */
+    public function setOutput( $output )
+    {
+        MDataType::mustBeNullableString($output);
+        
+        $this->output = $output;
+        return $this;
     }
 }
 

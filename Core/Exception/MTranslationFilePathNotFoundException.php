@@ -22,9 +22,9 @@ namespace MToolkit\Core\Exception;
 
 class MTranslationFilePathNotFoundException extends \Exception
 {
-    public function __construct( $filePath )
+    public function __construct( $filePath, $code = -1, \Exception $previous = null )
     {
-        parent::__construct( 'Translation file path not found: ' . $filePath );
+        parent::__construct( 'Translation file path not found: ' . $filePath, $code, $previous );
     }
 }
 

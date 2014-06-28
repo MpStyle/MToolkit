@@ -22,6 +22,7 @@ namespace MToolkit\Core;
  */
 
 require_once __DIR__ . '/../Network/MNetworkSession.php';
+require_once __DIR__ . '/MCore.php';
 
 use MToolkit\Network\MNetworkSession;
 

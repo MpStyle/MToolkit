@@ -22,11 +22,10 @@ namespace MToolkit\Core;
  */
 
 require_once __DIR__ . '/MDataType.php';
-require_once __DIR__ . '/MObject.php';
 
 use MToolkit\Core\MDataType;
 
-abstract class MAbstractTemplate extends MObject
+abstract class MAbstractTemplate
 {
     /**
      * @var string
@@ -37,9 +36,8 @@ abstract class MAbstractTemplate extends MObject
      * @param null|int|string $type MDataType constants or the name of the class.
      * @param \MToolkit\Core\MObject $parent
      */
-    public function __construct( $type=null, MObject $parent = null )
+    public function __construct( $type=null )
     {
-        parent::__construct( $parent );
         $this->type=$type;
     }
 

@@ -51,6 +51,7 @@ class MString
 
     /**
      * Appends the string <i>$text</i> onto the end of this string.
+     * 
      * @param MString|string $text
      * @throws WrongTypeException 
      */
@@ -69,6 +70,7 @@ class MString
     /**
      * Returns the character at the given <i>$i</i> position in the string.
      * The position must be a valid index position in the string (i.e., 0 <= position < size()).
+     * 
      * @param int $i
      * @return string|null
      * @throws WrongTypeException 
@@ -126,17 +128,17 @@ class MString
      * @param CaseSensitivity $cs
      * @return int 
      */
-    public function compare( $other, $cs = CaseSensitivity::CaseSensitive )
+    public function compare( $other, $cs = CaseSensitivity::CASE_SENSITIVE )
     {
         $text = (string) $this->text;
         $o = (string) $other;
 
         switch( $cs )
         {
-            case CaseSensitivity::CaseSensitive:
+            case CaseSensitivity::CASE_SENSITIVE:
 
                 break;
-            case CaseSensitivity::CaseInsensitive:
+            case CaseSensitivity::CASE_INSENSITIVE:
                 $o = strtolower( $other );
                 $text = strtolower( $this->text );
                 break;
@@ -155,17 +157,17 @@ class MString
      * @param CaseSensitivity $cs
      * @return type 
      */
-    public function /* bool */ contains( MString $str, $cs = CaseSensitivity::CaseSensitive )
+    public function /* bool */ contains( MString $str, $cs = CaseSensitivity::CASE_SENSITIVE )
     {
         $text = (string) $this->text;
         $s = (string) $str;
 
         switch( $cs )
         {
-            case CaseSensitivity::CaseSensitive:
+            case CaseSensitivity::CASE_SENSITIVE:
 
                 break;
-            case CaseSensitivity::CaseInsensitive:
+            case CaseSensitivity::CASE_INSENSITIVE:
                 $s = strtolower( $other );
                 $text = strtolower( $this->text );
                 break;
@@ -204,17 +206,17 @@ class MString
      * @param CaseSensitivity $cs
      * @return int 
      */
-    public function indexOf( $str, $from = 0, $cs = CaseSensitivity::CaseInsensitive )
+    public function indexOf( $str, $from = 0, $cs = CaseSensitivity::CASE_INSENSITIVE )
     {
         $toSearch = (string) $str;
         $pos = false;
 
         switch( $cs )
         {
-            case CaseSensitivity::CaseInsensitive:
+            case CaseSensitivity::CASE_INSENSITIVE:
                 $pos = stripos( $this->text, $toSearch, $from );
                 break;
-            case CaseSensitivity::CaseSensitive:
+            case CaseSensitivity::CASE_SENSITIVE:
                 $pos = strpos( $this->text, $toSearch, $from );
                 break;
             default:
@@ -240,17 +242,17 @@ class MString
      * @param CaseSensitivity $cs
      * @return int
      */
-    public function lastIndexOf( $str, $from = 0, $cs = CaseSensitivity::CaseInsensitive )
+    public function lastIndexOf( $str, $from = 0, $cs = CaseSensitivity::CASE_INSENSITIVE )
     {
         $toSearch = (string) $str;
         $pos = false;
 
         switch( $cs )
         {
-            case CaseSensitivity::CaseInsensitive:
+            case CaseSensitivity::CASE_INSENSITIVE:
                 $pos = strripos( $this->text, $toSearch, $from );
                 break;
-            case CaseSensitivity::CaseSensitive:
+            case CaseSensitivity::CASE_SENSITIVE:
                 $pos = strrpos( $this->text, $toSearch, $from );
                 break;
             default:
@@ -293,16 +295,16 @@ class MString
      * @param CaseSensitivity $cs
      * @return \MToolkit\Core\MString
      */
-    public function replace( $before, $after, $cs = CaseSensitivity::CaseSensitive )
+    public function replace( $before, $after, $cs = CaseSensitivity::CASE_SENSITIVE )
     {
         $string = (string) $this;
 
         switch( $cs )
         {
-            case CaseSensitivity::CaseSensitive:
+            case CaseSensitivity::CASE_SENSITIVE:
                 $string = str_replace( (string) $before, (string) $after, (string) $this );
                 break;
-            case CaseSensitivity::CaseInsensitive:
+            case CaseSensitivity::CASE_INSENSITIVE:
                 $string = str_ireplace( (string) $before, (string) $after, (string) $this );
                 break;
             default:
@@ -464,7 +466,7 @@ class MString
      * @param CaseSensitivity $cs
      * @return \MToolkit\Core\MString
      */
-    public function removeOccurences( $string, $cs = CaseSensitivity::CaseSensitive )
+    public function removeOccurences( $string, $cs = CaseSensitivity::CASE_SENSITIVE )
     {
         return $this->replace( $string, MString::EMPTY_STRING, $cs );
     }
@@ -516,25 +518,27 @@ class MString
     }
 
     /**
-     * Return true if <i>$haystack</i> starts with <i>$needle</i>, otherwise false.
+     * Return true if the string starts with <i>$needle</i>, otherwise false.
+     * 
      * @param string $haystack
      * @param string $needle
      * @return boolean
      */
-    public static function startsWith( $haystack, $needle )
+    public function startsWith( $needle )
     {
-        return $needle === "" || strpos( $haystack, $needle ) === 0;
+        return $needle === "" || strpos( $this->text, $needle ) === 0;
     }
 
     /**
-     * Return true if <i>$haystack</i> ends with <i>$needle</i>, otherwise false.
+     * Return true if the string ends with <i>$needle</i>, otherwise false.
+     * 
      * @param string $haystack
      * @param string $needle
      * @return boolean
      */
-    public static function endsWith( $haystack, $needle )
+    public function endsWith( $needle )
     {
-        return $needle === "" || substr( $haystack, -strlen( $needle ) ) === $needle;
+        return $needle === "" || substr( $this->text, -strlen( $needle ) ) === $needle;
     }
 
 }

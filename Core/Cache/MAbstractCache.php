@@ -24,9 +24,20 @@ require_once __DIR__ . '/../MObject.php';
 
 use MToolkit\Core\MObject;
 
+/**
+ * Caching enables you to store data in memory for rapid access. When the data 
+ * is accessed again, applications can get the data from the cache instead of 
+ * retrieving it from the original source. This can improve performance and 
+ * scalability. In addition, caching makes data available when the data source 
+ * is temporarily unavailable.<br />
+ * The MToolkit Framework provides caching functionality that you can use to 
+ * improve the performance and scalability of you PHP project.
+ */
 abstract class MAbstractCache extends MObject
 {
-
+    /**
+     * @param \MToolkit\Core\MObject $parent
+     */
     public function __construct( MObject $parent = null )
     {
         parent::__construct( $parent );

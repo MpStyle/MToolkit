@@ -26,6 +26,9 @@ require_once __DIR__.'/Exception/MReadOnlyObjectException.php';
 use MToolkit\Core\MMap;
 use MToolkit\Core\Exception\MReadOnlyObjectException;
 
+/**
+ * Allows the access to the query string parameters.
+ */
 class MGet extends MMap
 {
     public function __construct(  )

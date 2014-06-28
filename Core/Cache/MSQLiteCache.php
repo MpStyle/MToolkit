@@ -22,11 +22,21 @@ namespace MToolkit\Core\Cache;
 
 require_once __DIR__.'/MAbstractCache.php';
 
+/**
+ * MSQLiteCache class extends MAbstractCache.<br />
+ * This class stores cache records into a SQLite database.
+ */
 class MSQLiteCache extends MAbstractCache
 {
     private $connection;
     private $cacheTableName;
 
+    /**
+     * @param \PDO $connection
+     * @param type $cacheTableName
+     * @param \MToolkit\Core\MObject $parent
+     * @throws Exception
+     */
     public function __construct( \PDO $connection, $cacheTableName = 'MToolkitCache', \MToolkit\Core\MObject $parent = null )
     {
         parent::__construct( $parent );
@@ -62,6 +72,12 @@ class MSQLiteCache extends MAbstractCache
         $stmt->closeCursor();
     }
 
+    /**
+     * Remove a single cache record.
+     * 
+     * @param string $key The key of the record.
+     * @throws \Exception
+     */
     public function delete( $key )
     {
         $query = "DELETE FROM `" . $this->cacheTableName . "`
@@ -79,6 +95,11 @@ class MSQLiteCache extends MAbstractCache
         $stmt->closeCursor();
     }
 
+    /**
+     * Remove all cache records.
+     * 
+     * @throws \Exception
+     */
     public function flush()
     {
         $query = "TRUNCATE TABLE `" . $this->cacheTableName . "`;";

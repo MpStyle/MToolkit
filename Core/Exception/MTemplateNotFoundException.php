@@ -22,8 +22,8 @@ namespace MToolkit\Core\Exception;
 
 class MTemplateNotFoundException extends \Exception
 {
-    public function __construct($templatePath) 
+    public function __construct($templatePath, $code=-1, \Exception $previous=null) 
     {
-        parent::__construct("Template file (".$templatePath.") not found.");
+        parent::__construct("Template file (".$templatePath.") not found.", $code, $previous);
     }
 }
