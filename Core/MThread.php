@@ -125,24 +125,3 @@ abstract class MThread extends MObject
         \sleep($seconds);
     }
 }
-
-//class TestThread extends MThread
-//{
-//    public function run()
-//    {
-//        MThread::sleep(1000);
-//        
-//        echo "ciao";
-//    }
-//}
-//
-//$testThread=new TestThread();
-//
-//$testThread->start();
-//
-//for( $i=0; $i<1000; $i++ )
-//{
-//    echo "buongiorno";
-//}
-//
-//$testThread->wait();
