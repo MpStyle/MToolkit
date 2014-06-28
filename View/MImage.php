@@ -22,22 +22,38 @@ namespace MToolkit\View;
  */
 
 require_once __DIR__ . '/../Core/Enum/AspectRatioMode.php';
+require_once __DIR__ . '/../Core/MFileInfo.php';
 
 use MToolkit\Core\Enum\AspectRatioMode;
+use MToolkit\Core\MFileInfo;
 
 class MImage
 {
     /**
-     * @var This variable contains the name of the friend classes.
+     * @var string|null
      */
-    private $__friends = array('MImage');
-    private $fileName=null;
-    private $resource=null;
-    private $height=-1;
-    private $width=-1;
-    private $type=null;
-    private $resourceAttr=null;
+    private $fileName = null;
     
+    /**
+     * @var resource
+     */
+    private $resource = null;
+    
+    /**
+     * @var int
+     */
+    private $height = -1;
+    
+    /**
+     * @var int
+     */
+    private $width = -1;
+    
+    /**
+     * @var string|null
+     */
+    private $type = null;
+
     /**
      * Saves the image to the file with the given <i>$fileName</i>, 
      * using the given image file <i>$format</i> and quality factor. <br />
@@ -53,24 +69,25 @@ class MImage
      */
     public function save( $fileName, $format = 'png', $quality = -1 )
     {
-        $return=false;
-        
-        switch ($format)
+        $format = ($this->type != null ? $this->type : $format);
+        $return = false;
+
+        switch( $format )
         {
             case 'gif':
-                $return=imagegif($this->resource, $fileName);
+                $return = imagegif( $this->resource, $fileName );
                 break;
             case 'jpg':
-                $return=imagejpeg($this->resource, $fileName, $quality);
+                $return = imagejpeg( $this->resource, $fileName, $quality );
                 break;
             case 'bmp':
-                $return=  imagewbmp($this->resource, $fileName);
+                $return = imagewbmp( $this->resource, $fileName );
                 break;
             default:
-                $return=imagepng($this->resource, $fileName, $quality);
+                $return = imagepng( $this->resource, $fileName, $quality );
                 break;
         }
-        
+
         return $return;
     }
 
@@ -90,17 +107,20 @@ class MImage
      */
     public static function fromData( $string )
     {
-        $newResource = imagecreatefromstring($string);
-        
-        $newImage=new MImage();
-        $newImage->resource=$newResource;
-        
-        $newImage->resource=$newResource;
-        list($newImage->width, $newImage->height, $newImage->type, $newImage->resourceAttr) = getimagesize( $newResource );
+        $newResource = imagecreatefromstring( $string );
 
+        return MImage::fromResource( $newResource );
+    }
+
+    public static function fromResource( $resource )
+    {
+        $newImage = new MImage();
+        $newImage->resource = $resource;
+        $newImage->width = imagesx( $resource );
+        $newImage->height = imagesy( $resource );
         return $newImage;
     }
-    
+
     /**
      * Resizes the color table to contain colorCount entries.
      * 
@@ -108,22 +128,10 @@ class MImage
      */
     public function setColorCount( $colorCount )
     {
-        imagetruecolortopalette($this->resource, true, $colorCount);
-    }
-    
-    public function __get( $key )
-    {
-        $trace = debug_backtrace();
-        if (isset( $trace[1]['class'] ) && in_array( $trace[1]['class'], $this->__friends ))
-        {
-            return $this->$key;
-        }
-
-        return null;
+        imagetruecolortopalette( $this->resource, true, $colorCount );
     }
 
     /**
-     * This is an overloaded function.
      * Returns a copy of the image scaled to a rectangle with the given width 
      * and height according to the given aspectRatioMode and transformMode.
      * If either the width or the height is zero or negative, 
@@ -136,29 +144,27 @@ class MImage
      */
     public function scaled( $width, $height, $aspectRatioMode = AspectRatioMode::IgnoreAspectRatio )
     {
-        switch ($aspectRatioMode)
+        switch( $aspectRatioMode )
         {
             case AspectRatioMode::IGNORE_ASPECT_RATIO:
                 break;
             case AspectRatioMode::KEEP_ASPECT_RATIO:
-                // nw:ow=nh:oh
-                $height=( $width*$this->getHeight() ) / $this->getWidth();
+                $height = ( $width * $this->getHeight() ) / $this->getWidth();
                 break;
             case AspectRatioMode::KEEP_ASPECT_RATIO_BY_EXPANDING:
-                $width=( $height*$this->getWidth() ) / $this->getHeight();
+                $width = ( $height * $this->getWidth() ) / $this->getHeight();
                 break;
         }
 
         $newResource = imagecreatetruecolor( $width, $height );
         imagecopyresampled( $newResource, $this->resource, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight() );
-        
-        $newImage=new MImage();
-        $newImage->resource=$newResource;
-        list($newImage->width, $newImage->height, $newImage->type, $newImage->resourceAttr) = getimagesize( $newResource );
+
+        $newImage = MImage::fromResource( $newResource );
+        $newImage->type = $this->type;
 
         return $newImage;
     }
-    
+
     /**
      * Returns a scaled copy of the image. 
      * The returned image is scaled to the given height using the specified 
@@ -167,11 +173,11 @@ class MImage
      * @param int $height
      * @return MImage
      */
-    public function scaledToHeight ( $height ) 
+    public function scaledToHeight( $height )
     {
-        return $this->scaled(0, $height, AspectRatioMode::KeepAspectRatioByExpanding);
+        return $this->scaled( 0, $height, AspectRatioMode::KeepAspectRatioByExpanding );
     }
-    
+
     /**
      * Returns a scaled copy of the image. 
      * The returned image is scaled to the given width using the specified transformation mode.
@@ -179,9 +185,9 @@ class MImage
      * @param int $width
      * @return MImage
      */
-    public function scaledToWidth ( $width ) 
+    public function scaledToWidth( $width )
     {
-        return $this->scaled($width, 0, AspectRatioMode::KeepAspectRatio);
+        return $this->scaled( $width, 0, AspectRatioMode::KeepAspectRatio );
     }
 
     /**
@@ -215,31 +221,41 @@ class MImage
      */
     public function load( $fileName )
     {
-        $resource = imageCreateFromPng( $fileName );
+        $file = new MFileInfo( $fileName );
+        $resource = false;
+        $this->type = $file->getSuffix();
 
-        if ($resource)
+        if( $this->type == "png" )
         {
-            imageAlphaBlending( $resource, true );
-            imageSaveAlpha( $resource, true );
+            $resource = imageCreateFromPng( $fileName );
+            if( $resource )
+            {
+                imageAlphaBlending( $resource, true );
+                imageSaveAlpha( $resource, true );
+            }
+        }
+        else if( $this->type == "gif" )
+        {
+            $resource = imagecreatefromgif( $fileName );
+        }
+        else if( $this->type == "jpg" || $this->type == "jpeg" )
+        {
+            $resource = imagecreatefromjpeg( $fileName );
         }
         else
         {
-            $resource = imagecreatefromgif( $fileName );
-
-            if ($resource === false)
-            {
-                imagecreatefromjpeg( $fileName );
-            }
+            return false;
         }
 
-        if ($resource === false)
+        if( $resource === false )
         {
             return false;
         }
 
         $this->resource = $resource;
         $this->fileName = $fileName;
-        list($this->width, $this->height, $this->type, $this->resourceAttr) = getimagesize( $this->fileName );
+        $this->width = imagesx( $this->resource );
+        $this->height = imagesy( $this->resource );
 
         return true;
     }
@@ -288,4 +304,3 @@ class MImage
     }
 
 }
-
