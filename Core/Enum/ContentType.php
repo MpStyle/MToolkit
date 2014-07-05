@@ -31,6 +31,7 @@ namespace MToolkit\Core\Enum;
  */
 final class ContentType
 {
+    const APPLICATION_JSON='Content-type: application/json';
     const IMAGE_PNG='Content-Type: image/png';
     const IMAGE_GIF='Content-Type: image/gif';
     const IMAGE_JPEG='Content-Type: image/jpeg';
