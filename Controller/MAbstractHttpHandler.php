@@ -46,7 +46,7 @@ abstract class MAbstractHttpHandler extends MAbstractController
             
             if( is_subclass_of($class, '\MToolkit\Controller\MAbstractHttpHandler')===true && $abstract===false )
             {
-                /* @var $settings MAbstractHttpHandler */ $handler = new $class();
+                /* @var $handler MAbstractHttpHandler */ $handler = new $class();
                 
                 $handler->run();
                 
