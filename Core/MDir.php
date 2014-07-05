@@ -58,14 +58,18 @@ class MDir
      */
     private $fileInfo;
     private $count = null;
+    
+    /**
+     * @var MStringList|null
+     */
     private $nameFilters = null;
+    
     private $filters = Filter::NO_FILTER;
     private $sorting = SortFlag::NO_SORT;
 
-    public function __construct($path)
+    public function __construct($path = '.')
     {
-        $this->fileInfo = new MFileInfo($path);
-        $this->nameFilters = new MStringList();
+        $this->setPath($path);
     }
 
     /**
@@ -208,116 +212,122 @@ class MDir
      */
     public function getEntryInfoList(MStringList $nameFilters = null, $filters = Filter::NO_FILTER, $sort = SortFlag::NO_SORT)
     {
-        var_dump($filters);
-
-        $_nameFilters = $nameFilters;
-
-        if ($_nameFilters == null)
+        if ($this->fileInfo->exists() === false || $this->fileInfo->isReadable() === false)
         {
-            $_nameFilters = $this->nameFilters;
+            return new MFileInfoList();
         }
 
-        if ($_nameFilters->size() == 0)
+        $files = array();
+        if ($handle = opendir($this->fileInfo->getAbsoluteFilePath()))
         {
-            $_nameFilters->append(new MString('*'));
+            while (false !== ($entry = readdir($handle)))
+            {
+                $files[] = $entry;
+            }
+            closedir($handle);
         }
+        
+//        var_dump($files);
 
-        $_filters = $filters;
-        if ($_filters == Filter::NO_FILTER)
-        {
-            $_filters = $this->filters;
-        }
-
-        $_sort = $sort;
-        if ($_sort == SortFlag::NO_SORT)
-        {
-            $_sort = $this->sorting;
-        }
-
-        // Name filters
+        // Apply the name filters
         $nameFilteredFiles = array();
-
-        foreach ($_nameFilters as /* @var $nameFilter MString */ $nameFilter)
+        
+        if($nameFilters===null)
         {
-            $_nameFilteredFiles = glob($this->getAbsolutePath() . MDir::getSeparator() . (string) $nameFilter);
-            $nameFilteredFiles = array_merge($nameFilteredFiles, $_nameFilteredFiles);
+            $nameFilters=$this->nameFilters;
+        }
+        
+        if ($nameFilters != null && $nameFilters->size()>0)
+        {
+            foreach ($nameFilters as $nameFilter)
+            {
+                foreach ($files as $file)
+                {
+                    if (fnmatch($nameFilter, $this->fileInfo->getAbsoluteFilePath() . MDir::getSeparator() . $file)) 
+                    {
+                        $nameFilteredFiles[] = $file;
+                    }
+                }
+            }
+        }
+        else
+        {
+            $nameFilteredFiles=$files;
         }
 
-        $nameFilteredFiles = array_unique($nameFilteredFiles);
-
-        // Filters
+        // Apply the filters        
         $filteredFiles = array();
 
         foreach ($nameFilteredFiles as $nameFilteredFile)
         {
-            $fileInfo = new MFileInfo($nameFilteredFile);
-            $toAdd = false;
+            $fileInfo = new MFileInfo($this->fileInfo->getAbsoluteFilePath() . MDir::getSeparator() . $nameFilteredFile);
+            $toAdd = true;
 
             // Filter::DIRS
-            if ($fileInfo->isDir() && ( $_filters & Filter::DIRS ))
+            if ($fileInfo->isDir()===false && ( $filters & Filter::DIRS ))
             {
-                $toAdd = $toAdd || true;
+                $toAdd = $toAdd && false;
             }
 
             // Filter::FILES
-            if ($fileInfo->isFile() && ( $_filters & Filter::FILES ))
+            if ($fileInfo->isFile()===false && ( $filters & Filter::FILES ))
             {
-                $toAdd = $toAdd || true;
+                $toAdd = $toAdd && false;
             }
 
             // Filter::NO_SYM_LINKS
-            if ($fileInfo->isSymLink() && ( $_filters & Filter::NO_SYM_LINKS ))
+            if ($fileInfo->isSymLink()===false && ( $filters & Filter::NO_SYM_LINKS ))
             {
-                $toAdd = $toAdd || false;
+                $toAdd = $toAdd && false;
             }
 
             // Filter::NO_DOT_AND_DOT_DOT
-            if (( $nameFilteredFile == "." || $nameFilteredFile == ".." ) && ( $_filters & Filter::NO_DOT_AND_DOT_DOT ))
+            if (( $nameFilteredFile == "." || $nameFilteredFile == ".." ) && ( $filters & Filter::NO_DOT_AND_DOT_DOT ))
             {
-                $toAdd = $toAdd || false;
+                $toAdd = $toAdd && false;
             }
 
             // Filter::NO_DOT
-            if (( $nameFilteredFile == "." ) && ( $_filters & Filter::NO_DOT ))
+            if (( $nameFilteredFile == "." ) && ( $filters & Filter::NO_DOT ))
             {
-                $toAdd = $toAdd || false;
+                $toAdd = $toAdd && false;
             }
 
             // Filter::NO_DOT_DOT
-            if (( $nameFilteredFile == ".." ) && ( $_filters & Filter::NO_DOT_AND_DOT_DOT ))
+            if (( $nameFilteredFile == ".." ) && ( $filters & Filter::NO_DOT_DOT ))
             {
-                $toAdd = $toAdd || false;
+                $toAdd = $toAdd && false;
             }
 
             // Filter::ALL_ENTRIES
-//            if ($_filters & Filter::ALL_ENTRIES)
+//            if ($filters & Filter::ALL_ENTRIES)
 //            {
 //                $toAdd = $toAdd || true;
 //            }
             // Filter::READABLE
-            if ($fileInfo->isReadable() && ( $_filters & Filter::READABLE ))
+            if ($fileInfo->isReadable()===false && ( $filters & Filter::READABLE ))
             {
-                $toAdd = $toAdd || true;
+                $toAdd = $toAdd && false;
             }
 
             // Filter::WRITABLE
-            if ($fileInfo->isWritable() && ( $_filters & Filter::WRITABLE ))
+            if ($fileInfo->isWritable()===false && ( $filters & Filter::WRITABLE ))
             {
-                $toAdd = $toAdd || true;
+                $toAdd = $toAdd && false;
             }
 
             // Filter::EXECUTABLE
-            if ($fileInfo->isExecutable() && ( $_filters & Filter::EXECUTABLE ))
+            if ($fileInfo->isExecutable()===false && ( $filters & Filter::EXECUTABLE ))
             {
-                $toAdd = $toAdd || true;
+                $toAdd = $toAdd && false;
             }
 
             // Unsupported filter
             if (
-                    ( $_filters & Filter::MODIFIED ) || ( $_filters & Filter::HIDDEN ) || ( $_filters & Filter::SYSTEM ) || ( $_filters & Filter::DRIVES )
+                    ( $filters & Filter::MODIFIED ) || ( $filters & Filter::HIDDEN ) || ( $filters & Filter::SYSTEM ) || ( $filters & Filter::DRIVES )
             )
             {
-                throw new \Exception("Filter " . $_filters . " not yet supported.");
+                throw new \Exception("Filter " . $filters . " not yet supported.");
             }
 
             if ($toAdd === true)
@@ -326,59 +336,59 @@ class MDir
             }
         }
 
-        if (( $_filters & Filter::ALL_DIRS))
+        if (( $filters & Filter::ALL_DIRS))
         {
             $dirs = array_filter(glob($this->getAbsolutePath() . MDir::getSeparator() . '*'), 'is_dir');
             $filteredFiles = array_merge($filteredFiles, $dirs);
             $filteredFiles = array_unique($filteredFiles);
         }
-
+        
         $filesInfos = array();
 
         foreach ($filteredFiles as $filteredFile)
         {
-            $filesInfos[] = new MFileInfo($filteredFile);
+            $filesInfos[] = new MFileInfo($this->getAbsolutePath() . MDir::getSeparator() .$filteredFile);
         }
 
         // Sort
-        if ($_sort != SortFlag::NO_SORT)
+        if ($sort != SortFlag::NO_SORT)
         {
-            if (( $_sort & SortFlag::NAME))
+            if (( $sort & SortFlag::NAME))
             {
                 usort($filesInfos, array($this, "sortByName"));
             }
 
-            if (( $_sort & SortFlag::TIME))
+            if (( $sort & SortFlag::TIME))
             {
                 usort($filesInfos, array($this, "sortByTime"));
             }
 
-            if (( $_sort & SortFlag::SIZE))
+            if (( $sort & SortFlag::SIZE))
             {
                 usort($filesInfos, array($this, "sortBySize"));
             }
 
-            if (( $_sort & SortFlag::TYPE))
+            if (( $sort & SortFlag::TYPE))
             {
                 usort($filesInfos, array($this, "sortByType"));
             }
 
-            if (( $_sort & SortFlag::DIRS_FIRST))
+            if (( $sort & SortFlag::DIRS_FIRST))
             {
                 usort($filesInfos, array($this, "sortByDirsFirst"));
             }
 
-            if (( $_sort & SortFlag::DIRS_LAST))
+            if (( $sort & SortFlag::DIRS_LAST))
             {
                 usort($filesInfos, array($this, "sortByDirsLast"));
             }
 
-            if (( $_sort & SortFlag::REVERSED))
+            if (( $sort & SortFlag::REVERSED))
             {
                 usort($filesInfos, array($this, "sortReversed"));
             }
 
-            if (( $_sort & SortFlag::IGNORE_CASE))
+            if (( $sort & SortFlag::IGNORE_CASE))
             {
                 usort($filesInfos, array($this, "sortIgnoreCase"));
             }
@@ -688,10 +698,62 @@ class MDir
         return rename($this->fileInfo->getAbsoluteFilePath() . MDir::getSeparator() . $oldName, $this->fileInfo->getAbsoluteFilePath() . MDir::getSeparator() . $newName);
     }
 
-//    bool	rmdir(const QString & dirName) const
+    /**
+     * Removes the directory specified by <i>$dirName</i>.<br />
+     * <br />
+     * The directory must be empty for rmdir() to succeed.<br />
+     * <br />
+     * Returns true if successful; otherwise returns false.
+     * 
+     * @param string $dirName
+     * @return boolean
+     */
+    public function rmdir($dirName)
+    {
+        MDataType::mustBeString($dirName);
+        
+        return unlink($this->fileInfo->getAbsoluteFilePath().MDir::getSeparator().$dirName);
+    }
+
 //    bool	rmpath(const QString & dirPath) const
-//    void	setPath(const QString & path)
-//    void	swap(QDir & other)
+
+    /**
+     * Sets the path of the directory to <i>$path</i>. The path is cleaned of redundant 
+     * "<i>.</i>", "<i>..</i>" and of multiple separators. No check is made to see whether a 
+     * directory with this path actually exists; but you can check for yourself 
+     * using exists().<br />
+     * <br />
+     * The path can be either absolute or relative. Absolute paths begin with 
+     * the directory separator "/" (optionally preceded by a drive specification 
+     * under Windows). Relative file names begin with a directory name or a file 
+     * name and specify a path relative to the current directory. An example of 
+     * an absolute path is the string "/tmp/quartz", a relative path might look 
+     * like "<i>src/fatlib</i>".
+     * 
+     * @param string $path
+     */
+    public function setPath($path)
+    {
+        MDataType::mustBeString($path);
+        
+        $this->fileInfo = new MFileInfo($path);
+        $this->nameFilters = new MStringList();
+    }
+
+    /**
+     * Swaps this MDir instance with <i>$other</i>. This function is very fast and never fails.
+     * 
+     * @param \MToolkit\Core\MDir $other
+     */
+    public function swap(MDir $other)
+    {
+        $this->count=$other->count;
+        $this->fileInfo=$other->fileInfo;
+        $this->filters=$other->filters;
+        $this->nameFilters=$other->nameFilters;
+        $this->sorting=$other->sorting;
+    }
+    
 // STATIC 
 //    void	addSearchPath(const QString & prefix, const QString & path)
 //    QString	cleanPath(const QString & path)
@@ -720,8 +782,35 @@ class MDir
         return getenv("HOME");
     }
 
-//    bool	isAbsolutePath(const QString & path)
-//    bool	isRelativePath(const QString & path)
+    /**
+     * Returns true if <i>$path</i> is absolute; returns false if it is relative.
+     * 
+     * @param string $path
+     * @return boolean
+     */
+    public function isAbsolutePath($path)
+    {
+        MDataType::mustBeString($path);
+        
+        $fileInfo=new MFileInfo($path);
+        return $fileInfo->isAbsolute();
+    }
+    
+    /**
+     * Returns true if the directory <i>$path</i> is relative; otherwise returns 
+     * false. (Under Unix a path is relative if it does not start with a "/").
+     * 
+     * @param string $path
+     * @return boolean
+     */
+    public function isRelativePath($path)
+    {
+        MDataType::mustBeString($path);
+        
+        $fileInfo=new MFileInfo($path);
+        return $fileInfo->isAbsolute()===false;
+    }
+    
 //    bool	match(const QString & filter, const QString & fileName)
 //    bool	match(const QStringList & filters, const QString & fileName)
 //    QDir	root()
