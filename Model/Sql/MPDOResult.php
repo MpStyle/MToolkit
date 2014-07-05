@@ -209,5 +209,10 @@ class MPDOResult extends MAbstractSqlResult
     {
         return ( $this->at >= 0 && $this->at < $this->rowCount() );
     }
+    
+    public function toArray()
+    {
+        return $this->rows;
+    }
 
 }
