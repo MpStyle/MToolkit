@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Network\RPC\Json\Server;
 
 /*
@@ -20,17 +21,20 @@ namespace MToolkit\Network\RPC\Json\Server;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/../MRPCJsonResponse.php';
-require_once __DIR__.'/../MRPCJsonRequest.php';
-require_once __DIR__.'/../MRPCJsonError.php';
-require_once __DIR__.'/../../../../Core/MObject.php';
-require_once __DIR__.'/MRPCJsonServerException.php';
+require_once __DIR__ . '/../MRPCJsonResponse.php';
+require_once __DIR__ . '/../MRPCJsonRequest.php';
+require_once __DIR__ . '/../MRPCJsonError.php';
+require_once __DIR__ . '/../../../../Controller/MAbstractController.php';
+require_once __DIR__ . '/MRPCJsonException.php';
+require_once __DIR__ . '/../../../../Core/MString.php';
+require_once __DIR__ . '/../../../../Core/Enum/ContentType.php';
 
-use MToolkit\Core\MObject;
+use MToolkit\Controller\MAbstractController;
 use MToolkit\Network\RPC\Json\MRPCJsonRequest;
 use MToolkit\Network\RPC\Json\MRPCJsonResponse;
 use MToolkit\Network\RPC\Json\MRPCJsonError;
 use MToolkit\Network\RPC\Json\MRPCJsonServerException;
+use MToolkit\Core\Enum\ContentType;
 
 /**
  * This class is the base class for the web service classes.
@@ -62,39 +66,49 @@ use MToolkit\Network\RPC\Json\MRPCJsonServerException;
  * An example of JSON request could be:
  * {"jsonrpc": "2.0", "method": "add", "params": { 'a': 2, 'b':3 }, "id": 1}
  */
-class MAbstractWebService extends MObject
+class MRPCJsonWebService extends MAbstractController
 {
     /**
      * The response from the web service.
      * 
      * @var MRPCJsonResponse
      */
-    private $response=null;
-    
+    private $response = null;
+
+    /**
+     * @var string
+     */
+    private $className = "";
+
+    /**
+     * @var array
+     */
+    private $methodsDefinitions = array();
+
     /**
      * The request received by the web service.
      * 
      * @var MRPCJsonRequest
      */
-    private $request=null;
-    
+    private $request = null;
+
     public function __construct()
     {
-        
+        $this->response = new MRPCJsonResponse();
     }
-    
+
     /**
      * @return MRPCJsonResponse 
      */
-    public function getResponse()
+    protected function &getResponse()
     {
         return $this->response;
     }
-    
+
     /**
      * @return MRPCJsonRequest 
      */
-    public function getRequest()
+    protected function getRequest()
     {
         return $this->request;
     }
@@ -105,81 +119,143 @@ class MAbstractWebService extends MObject
      * 
      * @param MRPCJsonResponse $response 
      */
-    public function setResponse( MRPCJsonResponse $response)
+    protected function setResponse( MRPCJsonResponse $response )
     {
         $this->response = $response;
     }
 
-    public function init()
-    {}
-    
     /**
      * Reads the request and run the web method.
      */
-    public function execute()
+    public function execute( $className )
     {
-        try
+        $this->className = $className;
+
+
+        // Parse the request
+        $rawRequest = file_get_contents( 'php://input' );
+        /* @var $request array */ $request = json_decode( $rawRequest, true );
+
+        // Is valid request?
+        if( $request == false )
         {
-            // Parse the request
-            $rawRequest=file_get_contents('php://input');
-            /* @var $request Request */ $request=json_decode($rawRequest, false);
-
-            // Is valid request?
-            if( $request==false )
-            {
-                throw new MRPCJsonServerException(sprintf('Invalid body (%s).', $rawRequest));
-            }
-            
-            // Does the request respect the 2.0 specification?
-            if( $request->jsonrpc!='2.0' )
-            {
-                throw new MRPCJsonServerException(sprintf('The request does not respect the 2.0 specification.'));
-            }
-            
-            // Set the request properties
-            $this->request=new MRPCJsonRequest();
-            $this->request
-                    ->setMethod($request->method)
-                    ->setParams($request->params)
-                    ->setId($request->id);
-
-            // Call the procedure/member
-            $callResponse=call_user_func(
-                    array($this, $this->request->getMethod())
-                    , $this->request->getParams());
-            
-            // Does the call fail?
-            if( $callResponse===false )
-            {
-                throw new MRPCJsonServerException('No service.');
-            }
+            throw new MRPCJsonServerException( sprintf( 'Invalid body (%s).', $rawRequest ) );
         }
-        catch(MRPCJsonServerException $ex)
-        {            
-            $error=new MRPCJsonError();
-            $error->setCode( -1 );
-            $error->setMessage( $ex->getMessage() );
-            
-            $this->response=new Response();
-            $this->response->setError( $error );
+
+        // Does the request respect the 2.0 specification?
+        if( $request["jsonrpc"] != '2.0' )
+        {
+            throw new MRPCJsonServerException( sprintf( 'The request does not respect the 2.0 specification.' ) );
+        }
+
+        // Set the request properties
+        $this->request = new MRPCJsonRequest();
+        $this->request
+                ->setMethod( $request["method"] )
+                ->setParams( $request["params"] )
+                ->setId( $request["id"] );
+
+        // Call the procedure/member
+        $callResponse = call_user_func(
+                array( $this, $this->request->getMethod() )
+                , $this->request->getParams() );
+
+        // Does the call fail?
+        if( $callResponse === false )
+        {
+            throw new MRPCJsonServerException( 'No service.' );
         }
     }
-    
+
+    /**
+     * Sets the array of the definitions of the methods.
+     */
+    private function definition()
+    {
+        $class = new \ReflectionClass( $this->className );
+        $methods = $class->getMethods( \ReflectionMethod::IS_PUBLIC );
+
+        foreach( $methods as /* @var $reflect \ReflectionMethod */ $reflect )
+        {
+            if( $reflect->class != $this->className )
+            {
+                continue;
+            }
+
+            $docComment = $reflect->getDocComment();
+            $phpDoc = array( 'name' => $reflect->getName(), 'definition' => implode( "\n", array_map( 'trim', explode( "\n", $docComment ) ) ) );
+
+            $this->methodsDefinitions[] = $phpDoc;
+        }
+    }
+
     /**
      * Run the instance of the web service.
      */
     public static function run()
     {
-        /* @var $classes string[] */ $classes = get_declared_classes();
+        /* @var $classes string[] */ $classes = array_reverse( get_declared_classes() );
 
-        /* @var $entryPoint string */ $entryPoint = $classes[count($classes) - 1];
+        foreach( $classes as $class )
+        {
+            $type = new \ReflectionClass( $class );
+            $abstract = $type->isAbstract();
 
-        /* @var $webService MAbstractWebService */ $webService=new $entryPoint();
-        $webService->init();
-        $webService->execute();
-        
-        echo json_encode( $this->getResponse()->toArray() );
+            if( is_subclass_of( $class, 'MToolkit\Network\RPC\Json\Server\MRPCJsonWebService' ) === false || $abstract === true )
+            {
+                continue;
+            }
+
+            /* @var $webService MRPCJsonWebService */ $webService = new $class();
+
+            // If the definitions are reuqested
+            if( $_SERVER['QUERY_STRING'] == "definition" )
+            {
+                $this->definition();
+                echo "<html><body>";
+                echo "<h1>Methods definitions</h1>";
+
+                foreach( $webService->methodsDefinitions as $methodDefinition )
+                {
+                    echo "<h2>" . $methodDefinition["name"] . "</h2>";
+                    echo "<pre>" . $methodDefinition["definition"] . "</pre>";
+
+                    echo "<h3>Request example</h3>";
+                    echo "<pre>" . '{"jsonrpc": "2.0", "method": "' . $methodDefinition["name"] . '", "params": {"name_1": value_1, "name_2": value_2, ...}, "id": 3}' . "</pre>";
+                }
+
+                echo "</body></html>";
+            }
+            // Normal web service execution
+            else
+            {
+                header( ContentType::APPLICATION_JSON );
+
+                try
+                {
+                    $webService->execute( $class );
+                    $webService->getResponse()->setId( $webService->getRequest()->getId() );
+                }
+                catch( MRPCJsonServerException $ex )
+                {
+                    $error = new MRPCJsonError();
+                    $error->setCode( -1 );
+                    $error->setMessage( $ex->getMessage() );
+
+                    $webService->response = new MRPCJsonResponse();
+                    $webService->response->setError( $error );
+                }
+                
+                echo $webService->getResponse()->toJSON();
+            }
+
+            // Clean the $_SESSION from signals.
+            $webService->disconnectSignals();
+
+            return;
+        }
     }
+
 }
 
-register_shutdown_function(array('MToolkit\Network\RPC\Json\Server\MAbstractWebService','run'));
+register_shutdown_function( array( 'MToolkit\Network\RPC\Json\Server\MRPCJsonWebService', 'run' ) );

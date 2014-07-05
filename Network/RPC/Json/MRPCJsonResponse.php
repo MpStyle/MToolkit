@@ -21,11 +21,9 @@ namespace MToolkit\Network\RPC\Json;
  */
 
 require_once __DIR__.'/MRPCJsonError.php';
-require_once __DIR__.'/../../../Core/Json/MJsonObject.php';
 require_once __DIR__.'/MRPCJson.php';
 require_once __DIR__.'/../MRPCResponse.php';
 
-use MToolkit\Core\Json\MJsonObject;
 use MToolkit\Network\RPC\Json\MRPCJsonError;
 use MToolkit\Network\RPC\Json\MRPCJson;
 use MToolkit\Network\RPC\Json\MRPCResponse;
@@ -37,8 +35,11 @@ use MToolkit\Network\RPC\Json\MRPCResponse;
  * <li>{"jsonrpc": "2.0", "error": {"code": -32601, "message": "Procedure not found."}, "id": 10} </li>
  * </ul>
  */
-class MRPCJsonResponse extends MRPCResponse implements MJsonObject
+class MRPCJsonResponse extends MRPCResponse 
 {    
+    /**
+     * @return array
+     */
     public function toArray()
     {        
         $array=array(
@@ -47,14 +48,25 @@ class MRPCJsonResponse extends MRPCResponse implements MJsonObject
             , 'id' => $this->getId()
         );
         
-        if( $this->error!=null )
+        if( $this->getError()!=null )
         {
             $array['error']=$this->getError()->toArray();
         }
         
-        return json_encode($array);
+        return $array;
+    }
+    
+    /**
+     * @return string
+     */
+    public function toJSON()
+    {
+        return json_encode($this->toArray());
     }
 
+    /**
+     * @param array $json
+     */
     public static function fromArray(array $json)
     {
         $response=new MRPCJsonResponse();

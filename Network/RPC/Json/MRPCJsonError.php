@@ -20,13 +20,11 @@ namespace MToolkit\Network\RPC\Json;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/../../../Core/Json/MJsonObject.php';
 require_once __DIR__.'/../MRPCError.php';
 
-use MToolkit\Core\Json\MJsonObject;
 use MToolkit\Network\RPC\MRPCError;
 
-class MRPCJsonError extends MRPCError implements MJsonObject
+class MRPCJsonError extends MRPCError
 {
     /**
      * @return array

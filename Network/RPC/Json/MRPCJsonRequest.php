@@ -20,11 +20,9 @@ namespace MToolkit\Network\RPC\Json;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/../../../Core/Json/MJsonObject.php';
 require_once __DIR__.'/MRPCJson.php';
 require_once __DIR__.'/../MRPCRequest.php';
 
-use MToolkit\Core\Json\MJsonObject;
 use MToolkit\Network\RPC\Json\MRPCJson;
 use MToolkit\Network\RPC\Json\MRPCRequest;
 
@@ -34,7 +32,7 @@ use MToolkit\Network\RPC\Json\MRPCRequest;
  * Example
  * {"jsonrpc": "2.0", "method": "subtract", "params": [42, 23], "id": 1} 
  */
-class MRPCJsonRequest extends MRPCRequest implements MJsonObject
+class MRPCJsonRequest extends MRPCRequest 
 {   
     public function toArray()
     {
