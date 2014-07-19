@@ -21,11 +21,25 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-class MLog
+require_once __DIR__ . '/MObject.php';
+
+use MToolkit\Core\MObject;
+
+/**
+ * @const SIGNAL_INFORMATION_ENTERED This signal is emitted when an information message is added.
+ * @const SIGNAL_ERROR_ENTERED This signal is emitted when an error message is added.
+ * @const SIGNAL_WARNING_ENTERED This signal is emitted when an warning message is added.
+ */
+class MLog extends MObject
 {
     const INFO = "INFO";
     const WARNING = "WARNING";
     const ERROR = "ERROR";
+
+    /* SIGNALS */
+    const SIGNAL_INFORMATION_ENTERED = "SIGNAL_INFORMATION_ENTERED";
+    const SIGNAL_ERROR_ENTERED = "SIGNAL_ERROR_ENTERED";
+    const SIGNAL_WARNING_ENTERED = "SIGNAL_WARNING_ENTERED";
 
     /**
      * @var MLogMessage[]
@@ -33,6 +47,8 @@ class MLog
     private $messages = array();
 
     /**
+     * Add a information message.
+     * 
      * @param string $tag
      * @param string $text
      */
@@ -44,9 +60,13 @@ class MLog
                 ->setText( $text );
 
         $this->messages[] = $message;
+
+        parent::emit( self::SIGNAL_INFORMATION_ENTERED );
     }
 
     /**
+     * Add a warning message.
+     * 
      * @param string $tag
      * @param string $text
      */
@@ -58,9 +78,13 @@ class MLog
                 ->setText( $text );
 
         $this->messages[] = $message;
+
+        parent::emit( self::SIGNAL_WARNING_ENTERED );
     }
 
     /**
+     * Add a error message.
+     * 
      * @param string $tag
      * @param string $text
      */
@@ -72,6 +96,8 @@ class MLog
                 ->setText( $text );
 
         $this->messages[] = $message;
+
+        parent::emit( self::SIGNAL_ERROR_ENTERED );
     }
 
     /**
@@ -92,7 +118,7 @@ class MLog
      */
     public function getMessage( $i )
     {
-        if (isset( $this->messages[$i] ) === false)
+        if( isset( $this->messages[$i] ) === false )
         {
             return false;
         }
@@ -105,7 +131,8 @@ class MLog
      */
     public function __toString()
     {
-        $rowTemplate = '<tr style="background-color: %s" class="log">
+        $rowTemplate = '
+            <tr style="background-color: %s" class="log">
                 <td class="log_timestamp">
                     %s
                 </td>
@@ -118,12 +145,13 @@ class MLog
             </tr>';
         $rows = "";
 
-        foreach ( $this->messages as /* @var $message MLogMessage */ $message )
+        foreach( $this->messages as /* @var $message MLogMessage */ $message )
         {
             $color = "black";
 
-            switch ($message->getType())
+            switch( $message->getType() )
             {
+                default:
                 case MLog::INFO:
                     $color = "#00c500";
                     break;
@@ -143,8 +171,8 @@ class MLog
                     , $message->getText() );
         }
 
-        $table = sprintf(
-                '<table style="background: #000;" class="logs_table">
+        $table = sprintf( '
+            <table style="background: #000;" class="logs_table">
                 %s
             </table>'
                 , $rows );
