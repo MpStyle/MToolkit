@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Model\Sql;
 
 /*
@@ -20,8 +21,9 @@ namespace MToolkit\Model\Sql;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/MAbstractSqlResult.php';
-require_once __DIR__.'/../../Core/MObject.php';
+require_once __DIR__ . '/MAbstractSqlResult.php';
+require_once __DIR__ . '/../../Core/MObject.php';
+require_once __DIR__ . '/MSqlError.php';
 
 use MToolkit\Model\Sql\MAbstractSqlResult;
 use MToolkit\Core\MObject;
@@ -32,24 +34,28 @@ use MToolkit\Core\MObject;
  */
 abstract class MAbstractSqlQuery extends MObject
 {
+    /**
+     * @var MSqlError
+     */
+    private $lastError = null;
+
     public function __construct( MObject $parent = null )
     {
         parent::__construct( $parent );
+        
+        $this->lastError=new MSqlError();
     }
-    
+
     /**
      * @var string 
      */
     private $query;
-    
+
     /**
      * @var mixed The connection to db.
      */
     private $connection;
-    
-    private $error;
-    private $errorCode;
-    
+
     /**
      * Executes a previously prepared SQL query. Returns true if the query 
      * executed successfully; otherwise returns false.<br />
@@ -58,7 +64,7 @@ abstract class MAbstractSqlQuery extends MObject
      * @return bool The correct execution of the query.
      */
     public abstract function exec();
-    
+
     /**
      * Returns the result associated with the query.
      * 
@@ -102,28 +108,26 @@ abstract class MAbstractSqlQuery extends MObject
         return $this;
     }
 
-    public function getError()
+    /**
+     * Returns the last error associated with the result.
+     * 
+     * @return MSqlError
+     */
+    public function getLastError()
     {
-        return $this->error;
+        return $this->lastError;
     }
 
-    protected function setError( $error )
+    /**
+     * This function is provided for derived classes to set the last error to <i>$error</i>.
+     * 
+     * @param MSqlError $lastError
+     * @return \MToolkit\Model\Sql\MAbstractSqlResult
+     */
+    public function setLastError( $lastError )
     {
-        $this->error = $error;
+        $this->lastError = $lastError;
         return $this;
     }
-
-    public function getErrorCode()
-    {
-        return $this->errorCode;
-    }
-
-    protected function setErrorCode( $errorCode )
-    {
-        $this->errorCode = $errorCode;
-        return $this;
-    }
-
 
 }
-

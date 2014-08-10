@@ -46,8 +46,10 @@ class MPDOQuery extends MAbstractSqlQuery
      * @param string $query
      * @param \PDO $connection
      */
-    public function __construct( $query = null, \PDO $connection = null )
+    public function __construct( $query = null, \PDO $connection = null, MObject $parent = null )
     {
+        parent::__construct( $parent );
+
         $this->setQuery( $query )
                 ->setConnection( $connection );
 
@@ -139,8 +141,11 @@ class MPDOQuery extends MAbstractSqlQuery
 
         if ( $sqlStmt === false )
         {
-            parent::setError( $this->getConnection()->errorInfo() );
-            parent::setErrorCode( $this->getConnection()->errorCode() );
+            $errorInfo=$this->getConnection()->errorInfo();
+            
+            parent::setLastError(new MSqlError($errorInfo[2], (string)$errorInfo[1], ErrorType::CONNECTION_ERROR, $this->getConnection()->errorCode()));
+            
+            $this->result = new MPDOResult( $sqlStmt );            
             return false;
         }
 
@@ -158,8 +163,9 @@ class MPDOQuery extends MAbstractSqlQuery
 
             if ( $bindParamsResult === false )
             {
-                parent::setError( $sqlStmt->errorInfo() );
-                parent::setErrorCode( $sqlStmt->errorCode() );
+                $errorInfo=$sqlStmt->errorInfo();
+                
+                parent::setLastError(new MSqlError($errorInfo[2], (string)$errorInfo[1], ErrorType::STATEMENT_ERROR, $sqlStmt->errorCode()));
 
                 return false;
             }
@@ -170,8 +176,9 @@ class MPDOQuery extends MAbstractSqlQuery
 
         if ( $result == false )
         {
-            parent::setError( $sqlStmt->errorInfo() );
-            parent::setErrorCode( $sqlStmt->errorCode() );
+            $errorInfo=$sqlStmt->errorInfo();
+            
+            parent::setLastError(new MSqlError($errorInfo[2], (string)$errorInfo[1], ErrorType::STATEMENT_ERROR, $sqlStmt->errorCode()));
 
             return false;
         }

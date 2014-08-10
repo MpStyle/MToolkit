@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Controller;
 
 /*
@@ -46,12 +47,12 @@ abstract class MAbstractPageController extends MAbstractViewController
     /**
      * @var array
      */
-    private $css = array( );
+    private $css = array();
 
     /**
      * @var array
      */
-    private $javascript = array( );
+    private $javascript = array();
 
     /**
      * @var MAbstractMasterPageController 
@@ -61,7 +62,7 @@ abstract class MAbstractPageController extends MAbstractViewController
     /**
      * @var array
      */
-    private $masterPageParts = array( );
+    private $masterPageParts = array();
 
     /**
      * @var string|null 
@@ -79,7 +80,7 @@ abstract class MAbstractPageController extends MAbstractViewController
 
     public function addCss( $href, $media = CssMedia::ALL, $rel = CssRel::STYLESHEET )
     {
-        if( MString::isNullOrEmpty( $href )===false )
+        if( MString::isNullOrEmpty( $href ) === false )
         {
             $this->css[] = array(
                 "href" => $href
@@ -90,7 +91,7 @@ abstract class MAbstractPageController extends MAbstractViewController
 
     public function addJavascript( $src )
     {
-        if( MString::isNullOrEmpty( $src )===false )
+        if( MString::isNullOrEmpty( $src ) === false )
         {
             $this->javascript[] = array( "src" => $src );
         }
@@ -100,12 +101,12 @@ abstract class MAbstractPageController extends MAbstractViewController
     {
         return $this->css;
     }
-    
+
     protected function getJavascript()
     {
         return $this->javascript;
     }
-    
+
     /**
      * Render the link tag for CSS at the end of head tag.
      */
@@ -189,15 +190,17 @@ abstract class MAbstractPageController extends MAbstractViewController
     protected function render()
     {
         // If the master page is not set, render the page.
-        if( $this->masterPage==null )
+        if( $this->masterPage == null )
         {
             parent::render();
+            $this->renderTitle();
+            $this->renderCss();
+            $this->renderJavascript();
             return;
         }
 
         // renders the master page
         ob_start();
-        $this->masterPage->init();
         $this->masterPage->show();
         $masterPageRendered = ob_get_clean();
 
@@ -236,7 +239,7 @@ abstract class MAbstractPageController extends MAbstractViewController
     protected function renderTitle()
     {
         // Render page title
-        if( $this->pageTitle!=null )
+        if( $this->pageTitle != null )
         {
             $title = mb_convert_encoding( $this->pageTitle, $this->getCharset(), 'auto' );
 
@@ -266,14 +269,14 @@ abstract class MAbstractPageController extends MAbstractViewController
 
         foreach( $classes as $class )
         {
-            if( is_subclass_of( $class, '\MToolkit\Controller\MAbstractController' )===true )
+            if( is_subclass_of( $class, '\MToolkit\Controller\MAbstractController' ) === true )
             {
                 /* @var $controller \MToolkit\Controller\MAbstractController */ $controller = new $class();
                 $controller->show();
 
                 // Clean the $_SESSION from signals.
                 $controller->disconnectSignals();
-                
+
                 return;
             }
         }
