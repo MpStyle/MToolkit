@@ -21,7 +21,6 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__ . '/../Network/MNetworkSession.php';
 require_once __DIR__ . '/MGet.php';
 require_once __DIR__ . '/MPost.php';
 
@@ -118,11 +117,11 @@ class MObject
         $this->signals[$signal][] = $slot;
     }
 
-    public function connectClosure( MObject $sender, $signal, $callback )
+    public function connectClosure( MObject $sender, $signal, \Closure $callback )
     {
         if( $sender != $this )
         {
-            $sender->connect( $sender, $signal, $callback );
+            $sender->connectClosure( $sender, $signal, $callback );
             return;
         }
 
