@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of MToolkit.
  *
@@ -18,7 +19,12 @@
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/MApplication.php';
+if( class_exists( "\MToolkit\Core\MCoreApplication" ) === false )
+{
+    require_once __DIR__ . '/MApplication.php';
+}
+
+$mToolkitAutoloadFile = array();
 
 /**
  * Autoload re-implementation following PSR-0 Standard.
@@ -30,13 +36,13 @@ require_once __DIR__.'/MApplication.php';
 function __autoload( $name )
 {
     $applicationDirPath = \MToolkit\Core\MApplication::getApplicationDirPath();
-    if ( $applicationDirPath == null )
+    if( $applicationDirPath == null )
     {
         $applicationDirPath = array();
     }
 
     $includePaths = explode( ':', get_include_path() );
-    if ( $includePaths === false )
+    if( $includePaths === false )
     {
         $includePaths = array();
     }
@@ -46,13 +52,16 @@ function __autoload( $name )
     $classPath = str_replace( "\\", DIRECTORY_SEPARATOR, $name );
     $classPath.=".php";
 
-    foreach ( $rootPaths as $rootPath )
+    foreach( $rootPaths as $rootPath )
     {
         $path = $rootPath . DIRECTORY_SEPARATOR . $classPath;
+        $autoLoadPath = $GLOBALS["mToolkitAutoloadFile"];
 
-        if ( file_exists( $path ) === true )
+        if( file_exists( $path ) === true && in_array( $name, $autoLoadPath ) === false )
         {
             include_once $path;
+            $autoLoadPath[] = $name;
+            $GLOBALS["mToolkitAutoloadFile"] = $autoLoadPath;
         }
     }
 }
@@ -66,7 +75,7 @@ function __autoload( $name )
  */
 function M_ASSERT( $test )
 {
-    if ( $test !== true )
+    if( $test !== true )
     {
         $trace = debug_backtrace();
         $lastTrace = $trace[0];
