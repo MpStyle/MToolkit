@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Core;
 
 /*
@@ -34,12 +35,12 @@ class MObject
     /**
      * @var MSlot[]
      */
-    private $signals = array( );
+    private $signals = array();
 
     /**
      * @var array
      */
-    private $properties = array( );
+    private $properties = array();
 
     /**
      * @var bool
@@ -49,12 +50,12 @@ class MObject
     /**
      * @var MPost
      */
-    private static $post=null;
+    private static $post = null;
 
     /**
      * @var MGet
      */
-    private static $get=null;
+    private static $get = null;
 
     /**
      * @var MObject 
@@ -104,16 +105,32 @@ class MObject
      */
     public function connect( MObject $sender, $signal, MObject $receiver, $method )
     {
-        if( $sender!=$this )
+        if( $sender != $this )
         {
             $sender->connect( $sender, $signal, $receiver, $method );
+            return;
         }
 
         $slot = new MSlot();
         $slot->setMethod( $method )
-                ->setSender( $sender );
+                ->setReceiver( $receiver );
 
-        $this->signals[$signal] = $slot;
+        $this->signals[$signal][] = $slot;
+    }
+
+    public function connectClosure( MObject $sender, $signal, $callback )
+    {
+        if( $sender != $this )
+        {
+            $sender->connect( $sender, $signal, $callback );
+            return;
+        }
+
+        $slot = new MSlot();
+        $slot->setMethod( $callback )
+                ->setReceiver( null );
+
+        $this->signals[$signal][] = $slot;
     }
 
     /**
@@ -128,9 +145,10 @@ class MObject
      */
     public function disconnect( MObject $sender, $signal, MObject $receiver, $method )
     {
-        if( $this!=$sender )
+        if( $this != $sender )
         {
             $sender->disconnect( $sender, $signal, $receiver, $method );
+            return;
         }
 
         if( !isset( $this->signals[$signal] ) )
@@ -139,7 +157,7 @@ class MObject
         }
 
         unset( $this->signals[$signal] );
-        
+
         return true;
     }
 
@@ -156,25 +174,39 @@ class MObject
             return;
         }
 
-        if( isset( $this->signals[$signal] )===false )
+        if( isset( $this->signals[$signal] ) === false )
         {
             return;
         }
 
         $slots = $this->signals[$signal];
-
+        
         foreach( $slots as /* @var $slot MSlot */ $slot )
         {
             $method = $slot->getMethod();
-            $object = $slot->getObject();
+            $object = $slot->getReceiver();
 
-            if( $args==null )
+            if( $args == null )
             {
-                $object->$method();
+                if( $object == null )
+                {
+                    $method();
+                }
+                else
+                {
+                    $object->$method();
+                }
             }
             else
             {
-                $object->$method( $args );
+                if( $object == null )
+                {
+                    $method( $args );
+                }
+                else
+                {
+                    $object->$method( $args );
+                }
             }
         }
     }
@@ -184,7 +216,7 @@ class MObject
      */
     public function disconnectSignals()
     {
-        $this->signals = array( );
+        $this->signals = array();
     }
 
     /**
@@ -210,7 +242,7 @@ class MObject
      */
     public function post( $key )
     {
-        if( isset( $_POST[$key] )===false )
+        if( isset( $_POST[$key] ) === false )
         {
             return null;
         }
@@ -225,7 +257,7 @@ class MObject
      */
     public function get( $key )
     {
-        if( isset( $_GET[$key] )===false )
+        if( isset( $_GET[$key] ) === false )
         {
             return null;
         }
@@ -240,11 +272,11 @@ class MObject
      */
     public static function getPost()
     {
-        if( MObject::$post==null )
+        if( MObject::$post == null )
         {
             MObject::$post = new MPost();
         }
-        
+
         return MObject::$post;
     }
 
@@ -255,11 +287,11 @@ class MObject
      */
     public static function getGet()
     {
-        if( MObject::$get==null )
+        if( MObject::$get == null )
         {
             MObject::$get = new MGet();
         }
-        
+
         return MObject::$get;
     }
 
@@ -326,7 +358,7 @@ class MObject
      */
     public static function areEquals( $obj1, $obj2 )
     {
-        if( gettype( $obj1 )!=gettype( $obj2 ) )
+        if( gettype( $obj1 ) != gettype( $obj2 ) )
         {
             return false;
         }
@@ -334,15 +366,15 @@ class MObject
         switch( gettype( $obj1 ) )
         {
             case "boolean":
-                return ($obj1===$obj2);
+                return ($obj1 === $obj2);
                 break;
             case "integer":
             case "double":
             case "string":
-                return ($obj1==$obj2);
+                return ($obj1 == $obj2);
                 break;
             case "array":
-                return (count( array_diff( $obj1, $obj2 ) )==0);
+                return (count( array_diff( $obj1, $obj2 ) ) == 0);
                 break;
             case "object":
                 // Do nothing
@@ -355,7 +387,7 @@ class MObject
                 break;
         }
 
-        if( get_class( $obj1 )!=get_class( $obj2 ) )
+        if( get_class( $obj1 ) != get_class( $obj2 ) )
         {
             return false;
         }
@@ -366,12 +398,12 @@ class MObject
         /* @var $propertiesThis \ReflectionProperty[] */ $propertiesObj1 = $reflectObj1->getProperties();
         /* @var $propertiesObj \ReflectionProperty[] */ $propertiesObj2 = $reflectObj2->getProperties();
 
-        if( count( $propertiesObj1 )!=count( $propertiesObj2 ) )
+        if( count( $propertiesObj1 ) != count( $propertiesObj2 ) )
         {
             return false;
         }
 
-        for( $i = 0; $i<count( $obj1 ); $i++ )
+        for( $i = 0; $i < count( $obj1 ); $i++ )
         {
             /* @var $propertyObj1 \ReflectionProperty */ $propertyObj1 = $propertiesObj1[$i];
             /* @var $propertyObj2 \ReflectionProperty */ $propertyObj2 = $propertiesObj2[$i];
@@ -380,7 +412,7 @@ class MObject
             $propertyObj2->setAccessible( true );
 
             $areEquals = MObject::areEquals( $propertyObj1->getValue( $obj1 ), $propertyObj2->getValue( $obj2 ) );
-            if( $areEquals===false )
+            if( $areEquals === false )
             {
                 return false;
             }
@@ -394,33 +426,36 @@ class MObject
 /**
  * @ignore
  */
-class MSlot
+final class MSlot
 {
     /**
-     *
-     * @var MObject
+     * @var MObject|null
      */
-    private $sender;
+    private $receiver=null;
 
     /**
      * @var string
      */
-    private $method;
+    private $method=null;
 
     /**
      * @return MObject
      */
-    public function getSender()
+    public function getReceiver()
     {
-        return $this->sender;
+        return $this->receiver;
     }
 
-    public function setSender( MObject $sender )
+    /**
+     * @param \MToolkit\Core\MObject $receiver
+     * @return \MToolkit\Core\MSlot
+     */
+    public function setReceiver( $receiver )
     {
-        $this->sender = $sender;
+        $this->receiver = $receiver;
         return $this;
     }
-
+    
     public function getMethod()
     {
         return $this->method;
@@ -433,4 +468,3 @@ class MSlot
     }
 
 }
-
