@@ -57,7 +57,7 @@ function __autoload( $name )
         // If the file exists and id the class is not declared
         if( file_exists( $path ) === true && class_exists($name) === false )
         {
-            include_once $path;
+            require_once $path;
         }
     }
 }
