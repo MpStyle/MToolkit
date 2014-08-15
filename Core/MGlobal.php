@@ -21,10 +21,8 @@
 
 if( class_exists( "\MToolkit\Core\MCoreApplication" ) === false )
 {
-    require_once __DIR__ . '/MApplication.php';
+    require_once __DIR__ . '/MCoreApplication.php';
 }
-
-$mToolkitAutoloadFile = array();
 
 /**
  * Autoload re-implementation following PSR-0 Standard.
@@ -55,13 +53,11 @@ function __autoload( $name )
     foreach( $rootPaths as $rootPath )
     {
         $path = $rootPath . DIRECTORY_SEPARATOR . $classPath;
-        $autoLoadPath = $GLOBALS["mToolkitAutoloadFile"];
 
-        if( file_exists( $path ) === true && in_array( $name, $autoLoadPath ) === false )
+        // If the file exists and id the class is not declared
+        if( file_exists( $path ) === true && class_exists($name) === false )
         {
             include_once $path;
-            $autoLoadPath[] = $name;
-            $GLOBALS["mToolkitAutoloadFile"] = $autoLoadPath;
         }
     }
 }
