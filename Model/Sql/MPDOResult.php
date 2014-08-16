@@ -25,14 +25,22 @@ require_once __DIR__ . '/MAbstractSqlResult.php';
 require_once __DIR__ . '/MSqlRecord.php';
 require_once __DIR__ . '/MSql.php';
 require_once __DIR__ . '/../../Core/Exception/MReadOnlyObjectException.php';
+require_once __DIR__ . '/../../Core/MDataType.php';
 
 use MToolkit\Model\Sql;
 use MToolkit\Model\Sql\MSqlRecord;
 use MToolkit\Core\Exception\MReadOnlyObjectException;
+use MToolkit\Core\MDataType;
 
 class MPDOResult extends MAbstractSqlResult
 {
-
+    /**
+     * Used to map a row of the resultset into an object.
+     * 
+     * @var string
+     */
+    private $className=null;
+    
     /**
      * Contains the names of the fields.
      * 
@@ -44,16 +52,26 @@ class MPDOResult extends MAbstractSqlResult
      * @var \PDOStatement
      */
     private $statement;
-    
+
     /**
      * @var int
      */
     private $at = 0;
-    
+
     /**
      * @var array
      */
-    private $rows=null;
+    private $rows = null;
+
+    /**
+     * @var int
+     */
+    private $rowCount = 0;
+
+    /**
+     * @var int
+     */
+    private $columnCount = 0;
 
     /**
      * @param \PDOStatement $statement
@@ -61,12 +79,13 @@ class MPDOResult extends MAbstractSqlResult
      */
     public function __construct( \PDOStatement $statement, MObject $parent = null )
     {
-        parent::__construct($parent);
+        parent::__construct( $parent );
 
         $this->statement = $statement;
-
         $this->rows = $this->statement->fetchAll( \PDO::FETCH_ASSOC );
-        $this->fields = empty( $this->rows ) ? array() : array_keys( ( array ) $this->rows[ 0 ] );
+        $this->fields = empty( $this->rows ) ? array() : array_keys( (array) $this->rows[0] );
+        $this->rowCount = count( $this->rows );
+        $this->columnCount = count( $this->fields );
     }
 
     /**
@@ -76,7 +95,7 @@ class MPDOResult extends MAbstractSqlResult
      */
     public function rowCount()
     {
-        return $this->statement->rowCount();
+        return $this->rowCount;
     }
 
     /**
@@ -86,7 +105,7 @@ class MPDOResult extends MAbstractSqlResult
      */
     public function columnCount()
     {
-        return $this->statement->columnCount();
+        return $this->columnCount;
     }
 
     /**
@@ -107,7 +126,7 @@ class MPDOResult extends MAbstractSqlResult
      */
     public function getData( $row, $column )
     {
-        return $this->rows[ $row ][ $column ];
+        return $this->rows[$row][$column];
     }
 
     public function getNumRowsAffected()
@@ -123,7 +142,7 @@ class MPDOResult extends MAbstractSqlResult
      */
     public function getRecord()
     {
-        return new MSqlRecord( $this->rows[ $this->at ] );
+        return new MSqlRecord( $this->rows[$this->at] );
     }
 
     /**
@@ -134,12 +153,12 @@ class MPDOResult extends MAbstractSqlResult
      */
     public function getAt()
     {
-        if ( $this->at < 0 )
+        if( $this->at < 0 )
         {
             return MSql\Location::BeforeFirstRow;
         }
 
-        if ( $this->at > $this->rowCount() )
+        if( $this->at > $this->rowCount() )
         {
             return MSql\Location::AfterLastRow;
         }
@@ -170,6 +189,9 @@ class MPDOResult extends MAbstractSqlResult
         return $this->getAt();
     }
 
+    /**
+     * Positions the result to the next available record (row) in the result.
+     */
     public function next()
     {
         $this->at++;
@@ -177,42 +199,107 @@ class MPDOResult extends MAbstractSqlResult
 
     public function offsetExists( $offset )
     {
-        return (array_key_exists($offset, $this->rows)===true);
+        return (array_key_exists( $offset, $this->rows ) === true);
     }
 
     public function offsetGet( $offset )
     {
-        if( $this->offsetExists($offset) )
+        if( $this->offsetExists( $offset ) )
         {
             return $this->rows[$offset];
         }
-        
+
         return null;
     }
 
     public function offsetSet( $offset, $value )
     {
-        throw new MReadOnlyObjectException(__CLASS__, __METHOD__);
+        throw new MReadOnlyObjectException( __CLASS__, __METHOD__ );
     }
 
     public function offsetUnset( $offset )
     {
-        throw new MReadOnlyObjectException(__CLASS__, __METHOD__);
+        throw new MReadOnlyObjectException( __CLASS__, __METHOD__ );
     }
 
+    /**
+     * Set current 0 as current row.
+     */
     public function rewind()
     {
         $this->at = 0;
     }
 
+    /**
+     * Returns true if the result is positioned on a valid record (that is, the 
+     * result is not positioned before the first or after the last record); 
+     * otherwise returns false.
+     * 
+     * @return boolean
+     */
     public function valid()
     {
         return ( $this->at >= 0 && $this->at < $this->rowCount() );
     }
-    
+
+    /**
+     * Returns the resultset as array.
+     * 
+     * @return array
+     */
     public function toArray()
     {
         return $this->rows;
     }
 
+    /**
+     * @return string
+     */
+    public function getClassName()
+    {
+        return $this->className;
+    }
+
+    /**
+     * @param string $className
+     * @return \MToolkit\Model\Sql\MPDOResult
+     */
+    public function setClassName( $className )
+    {
+        MDataType::mustBeNullableString($className);
+        
+        $this->className = $className;
+        return $this;
+    }
+
+    /**
+     * Returns instances of the specified class, mapping the columns of the 
+     * current row to named properties in the class.
+     * 
+     * @return object
+     */
+    public function getCurrentObject()
+    {
+        return $this->getObjectAt($this->at);
+    }
+    
+    /**
+     * Returns instances of the specified class, mapping the columns of the 
+     * <i>$at</i> pos row to named properties in the class.
+     * 
+     * @param int $at
+     * @return object
+     */
+    public function getObjectAt( $at )
+    {
+        $row=$this->rows[$at];
+        $obj=new $this->className();
+        
+        foreach( $row as $key => $value )
+        {
+            $obj->$key=$value;
+        }
+        
+        return $obj;
+    }
 }
