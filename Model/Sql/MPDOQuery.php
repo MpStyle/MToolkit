@@ -43,6 +43,11 @@ class MPDOQuery extends MAbstractSqlQuery
     private $result = null;
 
     /**
+     * Constructs a MPDOQuery object using the SQL <i>$query</i> and the database 
+     * <i>$connection</i>. If <i>$connection</i> is not specified, or is invalid, 
+     * the application's default database is used. <br />
+     * If query is not an empty string, it will be executed.
+     * 
      * @param string $query
      * @param \PDO $connection
      */
