@@ -189,6 +189,8 @@ class MPDOQuery extends MAbstractSqlQuery
         }
 
         $this->result = new MPDOResult( $sqlStmt );
+        
+        $sqlStmt->closeCursor();
 
         return true;
     }
