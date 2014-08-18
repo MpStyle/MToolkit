@@ -181,6 +181,11 @@ class MPDOResult extends MAbstractSqlResult
 
     public function current()
     {
+        if( $this->className!=null )
+        {
+            return $this->getCurrentObject();
+        }
+        
         return $this->rows[$this->getAt()];
     }
 
