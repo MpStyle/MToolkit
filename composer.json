@@ -18,12 +18,12 @@
         "email": "pagnin.michele@gmail.com"
     },
     "autoload": {
+        "files": ["mtoolkit/MSettings.php"],
         "psr-0": {
             "MToolkit\\": "mtoolkit/",
-            "Vendor\\Namespace\\": "",
-            "Vendor_Namespace_": ""
-        },
-        "files": ["mtoolkit/MSettings.php"]
+            "Vendor\\Namespace\\": "mtoolkit/",
+            "Vendor_Namespace_": "mtoolkit/"
+        }
     },
     "require": {
         "php": ">=5.3.0"
