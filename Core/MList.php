@@ -21,8 +21,8 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/MAbstractTemplate.php';
-require_once __DIR__.'/Exception/MWrongTypeException.php';
+require_once __DIR__ . '/MAbstractTemplate.php';
+require_once __DIR__ . '/Exception/MWrongTypeException.php';
 require_once __DIR__ . '/MDataType.php';
 
 use \MToolkit\Core\Exception\MWrongTypeException;
@@ -39,22 +39,22 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      * @var integer
      */
     private $pos = 0;
-    
+
     /**
      * @var array
      */
-    private $list = array( );
+    private $list = array();
 
     /**
      * Constructs a list with the values of <i>$list</i>.
      * 
      * @param \MToolkit\Core\MList $list
      */
-    public function __construct( array $list = array(), $type=null, MObject $parent = null )
+    public function __construct( array $list = array(), $type = null )
     {
-        parent::__construct($type, $parent);
-        
-        $this->list= array_values( $list );
+        parent::__construct( $type );
+
+        $this->list = array_values( $list );
     }
 
     /**
@@ -65,11 +65,11 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function append( $value )
     {
-        if( $this->isValidType( $value)===false )
+        if( $this->isValidType( $value ) === false )
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
-            
+
         $this->list[] = $value;
     }
 
@@ -107,7 +107,7 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function &at( $i )
     {
-        MDataType::mustBeInt($i);
+        MDataType::mustBeInt( $i );
 
         if( $i >= $this->count() )
         {
@@ -141,7 +141,7 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function clear()
     {
-        $this->list = array( );
+        $this->list = array();
     }
 
     /**
@@ -241,12 +241,12 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function /* int */ indexOf( $value, $from = 0 )
     {
-        if( $this->isValidType( $value)===false )
+        if( $this->isValidType( $value ) === false )
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
-        
-        MDataType::mustBeInt($from);
+
+        MDataType::mustBeInt( $from );
 
         $to = $this->count() - 1;
 
@@ -274,13 +274,13 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      * @throws MWrongTypeException
      */
     public function insert( $i, $value )
-    {        
-        if( $this->isValidType( $value)===false )
+    {
+        if( $this->isValidType( $value ) === false )
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
-        
-        MDataType::mustBeInt($i);
+
+        MDataType::mustBeInt( $i );
 
         array_splice( $this->list, $i, 0, $value );
     }
@@ -299,12 +299,12 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
 
     public function lastIndexOf( $value, $from = -1 )
     {
-        if( $this->isValidType( $value)===false )
+        if( $this->isValidType( $value ) === false )
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
-        
-        MDataType::mustBeInt($from);
+
+        MDataType::mustBeInt( $from );
 
         $position = -1;
         $to = $this->count() - 1;
@@ -332,8 +332,8 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
 
     public function move( $from, $to )
     {
-        MDataType::mustBeInt($from);
-        MDataType::mustBeInt($to);
+        MDataType::mustBeInt( $from );
+        MDataType::mustBeInt( $to );
 
         $value = $this->list[$from];
 
@@ -372,37 +372,37 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
 
     public function prepend( $value )
     {
-        if( $this->isValidType( $value)===false )
+        if( $this->isValidType( $value ) === false )
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
-        
+
         array_unshift( $this->list, $value );
     }
 
     public function push_back( $value )
     {
-        if( $this->isValidType( $value)===false )
+        if( $this->isValidType( $value ) === false )
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
-        
+
         $this->list[] = $value;
     }
 
     public function push_front( $value )
     {
-        if( $this->isValidType( $value)===false )
+        if( $this->isValidType( $value ) === false )
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
-        
+
         $this->prepend( $value );
     }
 
     public function removeAt( $i )
     {
-        MDataType::mustBeInt($i);
+        MDataType::mustBeInt( $i );
 
         if( count( $this->list ) >= $i )
         {
@@ -434,11 +434,11 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
 
     public function removeOne( $value )
     {
-        if( $this->isValidType( $value)===false )
+        if( $this->isValidType( $value ) === false )
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
-        
+
         $result = array_search( $value, $this->list );
 
         if( $result === false )
@@ -453,12 +453,12 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
 
     public function replace( $i, $value )
     {
-        if( $this->isValidType( $value)===false )
+        if( $this->isValidType( $value ) === false )
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
-        
-        MDataType::mustBeInt($i);
+
+        MDataType::mustBeInt( $i );
 
         $this->list[$i] = $value;
     }
@@ -470,11 +470,11 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
 
     public function startsWith( $value )
     {
-        if( $this->isValidType( $value)===false )
+        if( $this->isValidType( $value ) === false )
         {
-            throw new MWrongTypeException( "\$value", $this->getType(), $value);
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
-        
+
         if( $this->count() <= 0 )
         {
             return false;
@@ -490,7 +490,7 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
 
     public function takeAt( $i )
     {
-        MDataType::mustBeInt($i);
+        MDataType::mustBeInt( $i );
 
         $value = $this->list[$i];
 
@@ -512,6 +512,11 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
 
         return $value;
     }
+    
+    public function reverse()
+    {
+        return new MList( array_reverse($this->list) );
+    }
 
     public function takeLast()
     {
@@ -529,12 +534,12 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
 
     public function getValue( $i, $defaultValue = null )
     {
-        MDataType::mustBeInt($i);
+        MDataType::mustBeInt( $i );
 
         if( $i >= $this->count() )
         {
-            $exception= new \OutOfBoundsException();           
-            
+            $exception = new \OutOfBoundsException();
+
             throw $exception;
         }
 
@@ -553,12 +558,12 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function fromArray( $array )
     {
-        for( $i=0; $i<count( $array ); $i++ )
+        for( $i = 0; $i < count( $array ); $i++ )
         {
             $this->append( $array[$i] );
         }
     }
-    
+
     public function __toArray()
     {
         return $this->list;
@@ -572,9 +577,9 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function offsetExists( $offset )
     {
-        MDataType::mustBeInt($offset);
-        
-        return (array_key_exists($offset, $this->list)===true);
+        MDataType::mustBeInt( $offset );
+
+        return (array_key_exists( $offset, $this->list ) === true);
     }
 
     /**
@@ -583,13 +588,13 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function offsetGet( $offset )
     {
-        MDataType::mustBeInt($offset);
-        
-        if( $this->offsetExists($offset) )
+        MDataType::mustBeInt( $offset );
+
+        if( $this->offsetExists( $offset ) )
         {
             return $this->list[$offset];
         }
-        
+
         return null;
     }
 
@@ -599,20 +604,20 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function offsetSet( $offset, $value )
     {
-        MDataType::mustBeInt($offset);
-        
-        if( $this->isValidType( $value)===false )
+        MDataType::mustBeInt( $offset );
+
+        if( $this->isValidType( $value ) === false )
         {
-            throw new MWrongTypeException( "\$value", $this->getType(), $value);
+            throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
-        
-        if( $offset==null )
+
+        if( $offset == null )
         {
-            $this->list[]=$value;
+            $this->list[] = $value;
         }
         else
         {
-            $this->list[$offset]=$value;
+            $this->list[$offset] = $value;
         }
     }
 
@@ -621,15 +626,15 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function offsetUnset( $offset )
     {
-        MDataType::mustBeInt($offset);
-        
+        MDataType::mustBeInt( $offset );
+
         if( $this->offsetExists( $offset ) )
         {
             unset( $this->list[$offset] );
         }
     }
 
-    public function &current()
+    public function current()
     {
         return $this->at( $this->pos );
     }
@@ -653,5 +658,19 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
     {
         return ( $this->pos >= 0 && $this->pos < $this->count() );
     }
-}
 
+    /**
+     * @param int $start
+     * @param int $end
+     * @return \MToolkit\Core\MList
+     */
+    public function slice( $start, $end )
+    {
+        MDataType::mustBeInt( $start );
+        MDataType::mustBeInt( $end );
+        
+        $list = array_slice( $this->list, $start, $end );
+        return new MList( $list );
+    }
+
+}

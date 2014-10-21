@@ -204,5 +204,35 @@ class MPDOQuery extends MAbstractSqlQuery
     {
         return $this->result;
     }
+    
+    /**
+     * Returns the object ID of the most recent inserted row if the database 
+     * supports it. An invalid QVariant will be returned if the query did not 
+     * insert any value or if the database does not report the id back. If more 
+     * than one row was touched by the insert, the behavior is undefined.
+     * 
+     * @return string
+     */
+    public function getLastInsertId()
+    {
+        return $this->getConnection()->lastInsertId();
+    }
+    
+    /**
+     * Returns the number of rows affected by the result's SQL statement, or -1 
+     * if it cannot be determined. Note that for SELECT statements, the value is 
+     * undefined; use size() instead. If the query is not active, -1 is returned.
+     * 
+     * @return int
+     */
+    public function getNumRowsAffected()
+    {
+        if( $this->result==null )
+        {
+            return -1;
+        }
+        
+        return $this->result->getNumRowsAffected();
+    }
 
 }

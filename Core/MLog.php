@@ -21,30 +21,21 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__ . '/MObject.php';
+require_once __DIR__ . '/MCoreApplication.php';
 
-use MToolkit\Core\MObject;
+use MToolkit\Core\MCoreApplication;
 
 /**
  * @const SIGNAL_INFORMATION_ENTERED This signal is emitted when an information message is added.
  * @const SIGNAL_ERROR_ENTERED This signal is emitted when an error message is added.
  * @const SIGNAL_WARNING_ENTERED This signal is emitted when an warning message is added.
  */
-class MLog extends MObject
+final class MLog
 {
+    const MESSAGES = "MToolkit\Core\MLog\Messages";
     const INFO = "INFO";
     const WARNING = "WARNING";
     const ERROR = "ERROR";
-
-    /* SIGNALS */
-    const SIGNAL_INFORMATION_ENTERED = "SIGNAL_INFORMATION_ENTERED";
-    const SIGNAL_ERROR_ENTERED = "SIGNAL_ERROR_ENTERED";
-    const SIGNAL_WARNING_ENTERED = "SIGNAL_WARNING_ENTERED";
-
-    /**
-     * @var MLogMessage[]
-     */
-    private $messages = array();
 
     /**
      * Add a information message.
@@ -52,16 +43,9 @@ class MLog extends MObject
      * @param string $tag
      * @param string $text
      */
-    public function i( $tag, $text )
-    {
-        $message = new MLogMessage();
-        $message->setType( MLog::INFO )
-                ->setTag( $tag )
-                ->setText( $text );
-
-        $this->messages[] = $message;
-
-        parent::emit( self::SIGNAL_INFORMATION_ENTERED );
+    public static function i( $tag, $text )
+    {        
+        self::addMessage( MLog::INFO, $tag, $text );
     }
 
     /**
@@ -70,16 +54,9 @@ class MLog extends MObject
      * @param string $tag
      * @param string $text
      */
-    public function w( $tag, $text )
+    public static function w( $tag, $text )
     {
-        $message = new MLogMessage();
-        $message->setType( MLog::WARNING )
-                ->setTag( $tag )
-                ->setText( $text );
-
-        $this->messages[] = $message;
-
-        parent::emit( self::SIGNAL_WARNING_ENTERED );
+        self::addMessage( MLog::WARNING, $tag, $text );
     }
 
     /**
@@ -88,149 +65,152 @@ class MLog extends MObject
      * @param string $tag
      * @param string $text
      */
-    public function e( $tag, $text )
+    public static function e( $tag, $text )
     {
-        $message = new MLogMessage();
-        $message->setType( MLog::ERROR )
-                ->setTag( $tag )
-                ->setText( $text );
-
-        $this->messages[] = $message;
-
-        parent::emit( self::SIGNAL_ERROR_ENTERED );
+        self::addMessage( MLog::ERROR, $tag, $text );
     }
 
     /**
-     * Return the number of the message in log.
-     * 
-     * @return int
+     * @param string $type
+     * @param string $tag
+     * @param string $text
+     * @param string $signal
      */
-    public function messageCount()
+    private static function addMessage( $type, $tag, $text )
     {
-        return count( $this->messages );
+        if( !MCoreApplication::isDebug() )
+        {
+            return;
+        }
+        
+        /* @var $messages MList */
+        $messages = self::getMessages();
+
+        $message = new MLogMessage();
+        $message->setType( $type )
+                ->setTag( $tag )
+                ->setText( $text );
+
+        $messages->append( $message );
+
+        $_SESSION[self::MESSAGES] = serialize( $messages );
     }
 
     /**
      * Return the message at position <i>$i</i>.
      * 
-     * @param int $i
-     * @return boolean
+     * @return MList<MLogMessage>
      */
-    public function getMessage( $i )
+    public static function getMessages()
     {
-        if( isset( $this->messages[$i] ) === false )
+        /* @var $messages MList */
+        $messages = new MList();
+        if( isset( $_SESSION[self::MESSAGES] ) )
         {
-            return false;
+            $messages = unserialize( $_SESSION[self::MESSAGES] );
         }
 
-        return $this->messages[$i];
+        return $messages;
     }
 
     /**
-     * Print all messages in a HTML table ready to print on screen.
+     * Remove all stored messages.
      */
-    public function __toString()
+    public static function clearAllMessages()
     {
-        $rowTemplate = '
-            <tr style="background-color: %s" class="log">
-                <td class="log_timestamp">
-                    %s
-                </td>
-                <td class="log_tag">
-                    %s
-                </td>
-                <td class="log_message">
-                    %s
-                </td>
-            </tr>';
-        $rows = "";
-
-        foreach( $this->messages as /* @var $message MLogMessage */ $message )
-        {
-            $color = "black";
-
-            switch( $message->getType() )
-            {
-                default:
-                case MLog::INFO:
-                    $color = "#00c500";
-                    break;
-                case MLog::WARNING:
-                    $color = "#ffa500";
-                    break;
-                case MLog::ERROR:
-                    $color = "#ff0000";
-                    break;
-            }
-
-            $rows.=sprintf(
-                    $rowTemplate
-                    , $color
-                    , $message->getTime()->format( 'Y-m-d H:i:s.u' )
-                    , $message->getTag()
-                    , $message->getText() );
-        }
-
-        $table = sprintf( '
-            <table style="background: #000;" class="logs_table">
-                %s
-            </table>'
-                , $rows );
-
-        return $table;
+        $_SESSION[self::MESSAGES] = serialize( new MList() );
     }
 
 }
 
 /**
  * <b>Don't istantiate an object of type MLogMessage.</b>
- * It is used only from <i>MLog</i> class to return a MLogMessage
+ * It is used only from <i>MLog</i> class to store a MLogMessage
  */
 final class MLogMessage
 {
-    private $type;
-    private $tag;
-    private $text;
-    private $time;
+    /**
+     * @var string
+     */
+    private $type = null;
+
+    /**
+     * @var string
+     */
+    private $tag = null;
+
+    /**
+     * @var string
+     */
+    private $text = null;
+
+    /**
+     * @var \DateTime
+     */
+    private $time = null;
 
     public function __construct()
     {
         $this->time = new \DateTime();
     }
 
+    /**
+     * @return string
+     */
     public function getType()
     {
         return $this->type;
     }
 
+    /**
+     * @param string $type
+     * @return \MToolkit\Core\MLogMessage
+     */
     public function setType( $type )
     {
         $this->type = $type;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getTag()
     {
         return $this->tag;
     }
 
+    /**
+     * @param string $tag
+     * @return \MToolkit\Core\MLogMessage
+     */
     public function setTag( $tag )
     {
         $this->tag = $tag;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getText()
     {
         return $this->text;
     }
 
+    /**
+     * @param string $text
+     * @return \MToolkit\Core\MLogMessage
+     */
     public function setText( $text )
     {
         $this->text = $text;
         return $this;
     }
 
+    /**
+     * @return \DateTime
+     */
     public function getTime()
     {
         return $this->time;

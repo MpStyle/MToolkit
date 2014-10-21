@@ -40,14 +40,14 @@ class MCoreApplication
     const ORGANIZATION_DOMAIN='MToolkit\Core\MCoreApplication\OrganizationDomain';
     const ORGANIZATION_NAME='MToolkit\Core\MCoreApplication\OrganizationName';
     const APPLICATION_DIR_PATH = "MToolkit\Core\MCoreApplication\ApplicationDirPath";
-    const DEBUG = "MToolkit\Core\MObject\Debug";
+    const DEBUG = "MToolkit\Core\MObject\IsDebug";
     
     /**
      * Set the debug mode.
      * 
-     * @param string $path
+     * @param string $bool
      */
-    public static function setDebug( $bool )
+    public static function setIsDebug( $bool )
     {
         MNetworkSession::set( MCoreApplication::DEBUG, $bool );
     }
@@ -57,7 +57,7 @@ class MCoreApplication
      * 
      * @return string|null
      */
-    public static function getDebug()
+    public static function isDebug()
     {
         $debug = MNetworkSession::get( MCoreApplication::DEBUG );
 

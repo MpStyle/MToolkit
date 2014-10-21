@@ -19,7 +19,7 @@
  * @author  Michele Pagnin
  */
 
-if( class_exists( "\MToolkit\Core\MCoreApplication" ) === false )
+if( class_exists( "MToolkit\Core\MCoreApplication" ) === false )
 {
     require_once __DIR__ . '/MCoreApplication.php';
 }
@@ -28,12 +28,10 @@ if( class_exists( "\MToolkit\Core\MCoreApplication" ) === false )
  * Autoload re-implementation following PSR-0 Standard.
  * No namespaces are defined here, otherwise this method is not
  * called from PHP engine.
- * 
- * @param string $name The class name, namespace included.
  */
-function __autoload( $name )
-{
-    $applicationDirPath = \MToolkit\Core\MApplication::getApplicationDirPath();
+spl_autoload_register( function( $name )
+{    
+    $applicationDirPath = MToolkit\Core\MCoreApplication::getApplicationDirPath();
     if( $applicationDirPath == null )
     {
         $applicationDirPath = array();
@@ -55,12 +53,12 @@ function __autoload( $name )
         $path = $rootPath . DIRECTORY_SEPARATOR . $classPath;
 
         // If the file exists and id the class is not declared
-        if( file_exists( $path ) === true && class_exists($name) === false )
+        if( file_exists( $path ) === true && class_exists( $name ) === false )
         {
             require_once $path;
         }
     }
-}
+} );
 
 /**
  * Prints a warning message containing the source code file name and line number 

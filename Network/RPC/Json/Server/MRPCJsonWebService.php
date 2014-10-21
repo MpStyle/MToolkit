@@ -25,8 +25,6 @@ require_once __DIR__ . '/../MRPCJsonResponse.php';
 require_once __DIR__ . '/../MRPCJsonRequest.php';
 require_once __DIR__ . '/../MRPCJsonError.php';
 require_once __DIR__ . '/../../../../Controller/MAbstractController.php';
-require_once __DIR__ . '/MRPCJsonException.php';
-require_once __DIR__ . '/../../../../Core/MString.php';
 require_once __DIR__ . '/../../../../Core/Enum/ContentType.php';
 
 use MToolkit\Controller\MAbstractController;

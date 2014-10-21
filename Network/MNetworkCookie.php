@@ -21,12 +21,6 @@ namespace MToolkit\Network;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__ . '/../Core/MDataType.php';
-require_once __DIR__ . '/../Core/MString.php';
-
-use MToolkit\Core\MDataType;
-use MToolkit\Core\MString;
-
 /**
  * The MNetworkCookie class holds one network cookie.<br />
  * Cookies are small bits of information that stateless protocols like HTTP use 
