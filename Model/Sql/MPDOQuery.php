@@ -161,7 +161,7 @@ class MPDOQuery extends MAbstractSqlQuery
 
             if ( $type === false )
             {
-                throw new Exception( 'Invalid type of binded value at position ' . $i+1 . '.' );
+                throw new \Exception( 'Invalid type of binded value at position ' . $i+1 . '.' );
             }
 
             $bindParamsResult = $sqlStmt->bindValue( $i+1, $bindedValue, $type );

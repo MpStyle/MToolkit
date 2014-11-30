@@ -53,7 +53,7 @@ class MRepeaterView extends MAbstractViewController
     {
         if( file_exists( $headerTemplateFile )==false )
         {
-            throw new Exception( 'The header template file ' . $headerTemplateFile . ' does not exists.' );
+            throw new \Exception( 'The header template file ' . $headerTemplateFile . ' does not exists.' );
         }
 
         $this->headerTemplateFile = $headerTemplateFile;
@@ -70,7 +70,7 @@ class MRepeaterView extends MAbstractViewController
     {
         if( file_exists( $bodyTemplateFile )==false )
         {
-            throw new Exception( 'The body template file ' . $bodyTemplateFile . ' does not exists.' );
+            throw new \Exception( 'The body template file ' . $bodyTemplateFile . ' does not exists.' );
         }
         
         $this->bodyTemplateFile = $bodyTemplateFile;
@@ -87,7 +87,7 @@ class MRepeaterView extends MAbstractViewController
     {
         if( file_exists( $footerTemplateFile )==false )
         {
-            throw new Exception( 'The footer template file ' . $footerTemplateFile . ' does not exists.' );
+            throw new \Exception( 'The footer template file ' . $footerTemplateFile . ' does not exists.' );
         }
 
         $this->footerTemplateFile = $footerTemplateFile;

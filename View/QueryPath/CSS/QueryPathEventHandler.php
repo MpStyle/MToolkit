@@ -99,7 +99,7 @@ class QueryPathEventHandler implements EventHandler, Traverser
             }
             else
             {
-                //throw new Exception("Setting DOM to Null");
+                //throw new \Exception("Setting DOM to Null");
                 $this->dom = NULL;
             }
             $this->matches = $matches;

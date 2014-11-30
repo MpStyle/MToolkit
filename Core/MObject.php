@@ -382,7 +382,7 @@ class MObject
                 return true;
                 break;
             default:
-                throw new Exception( 'Types like "resource" and "unknown type" are incomparable.' );
+                throw new \Exception( 'Types like "resource" and "unknown type" are incomparable.' );
                 break;
         }
 

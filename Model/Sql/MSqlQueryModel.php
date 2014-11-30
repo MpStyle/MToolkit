@@ -67,7 +67,7 @@ class MSqlQueryModel extends MAbstractDataModel
         }
         else
         {
-            throw new Exception("Database connection not supported.");
+            throw new \Exception("Database connection not supported.");
         }
         
         $this->query->exec();

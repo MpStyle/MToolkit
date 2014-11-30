@@ -46,7 +46,7 @@ class MMySQLCache extends MAbstractCache
 
         if( $connection->getAttribute( \PDO::ATTR_DRIVER_NAME )!='mysql' )
         {
-            throw new Exception( 'Invalid database connection, required mysql, passed ' . $connection->getAttribute( \PDO::ATTR_DRIVER_NAME ) );
+            throw new \Exception( 'Invalid database connection, required mysql, passed ' . $connection->getAttribute( \PDO::ATTR_DRIVER_NAME ) );
         }
 
         $this->connection = $connection;
