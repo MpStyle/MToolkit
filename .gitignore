@@ -1,1 +1,5 @@
 /nbproject/private/
+nbproject export-ignore
+UnitTest/ export-ignore
+composer.json export-ignore
+README.md export-ignore
