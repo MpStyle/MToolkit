@@ -208,22 +208,18 @@ abstract class MAbstractPageController extends MAbstractViewController
         parent::render();
         $pageRendered = $this->getOutput();
 
+        $a=qp( $masterPageRendered );
+        
         // assemblies the master page and current page
         foreach( $this->masterPageParts as $masterPagePart )
         {
             $masterPagePlaceholderId = '#' . $masterPagePart[MAbstractPageController::MASTER_PAGE_PLACEHOLDER_ID];
             $pageContentId = '#' . $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID];
-
-            ob_start();
-
-            qp( $masterPageRendered, $masterPagePlaceholderId )
-                    ->append(
-                            qp( $pageRendered, $pageContentId )
-                            ->innerHtml()
-                    )
-                    ->writeHTML();
-            $masterPageRendered = ob_get_clean();
+            
+            $a->find( $masterPagePlaceholderId )->html( qp( $pageRendered, $pageContentId )->innerHtml() );
         }
+        
+        $masterPageRendered = $a->html();
 
         // set the output of page with the assemblies
         $this->setOutput( $masterPageRendered );
