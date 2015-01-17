@@ -39,6 +39,7 @@ namespace MToolkit\Network;
  */
 class MNetworkCookie
 {
+
     /**
      * Returns the value saved in <i>$_COOKIE</i> with <i>$key</i>.
      * 
@@ -47,12 +48,15 @@ class MNetworkCookie
      */
     public static function get( $key )
     {
-        if ( isset( $_COOKIE[ $key ] ) === false )
+        if( isset( $_COOKIE[$key] ) === false )
         {
             return null;
         }
 
-        return unserialize( $_COOKIE[ $key ] );
+        $serializedValue = $_COOKIE[$key];
+        $value = unserialize( $serializedValue );
+
+        return $value;
     }
 
     /**
@@ -64,12 +68,19 @@ class MNetworkCookie
      */
     public static function set( $key, $value, $expire = 0, $path = "/", $domain = null, $secure = false, $httponly = false )
     {
-        setcookie( $key, serialize( $value ), $expire, $path, ($domain == null ? $_SERVER[ 'HTTP_HOST' ] : $domain ), $secure, $httponly );
+        if( $domain == null )
+        {
+            setcookie( $key, serialize( $value ), $expire, $path );
+        }
+        else
+        {
+            setcookie( $key, serialize( $value ), $expire, $path, $domain, $secure, $httponly );
+        }
     }
 
-    public static function delete($key)
+    public static function delete( $key )
     {
-        unset($_COOKIE[$key]);
+        unset( $_COOKIE[$key] );
     }
 
 }
