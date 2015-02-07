@@ -18,7 +18,7 @@ use MToolkit\DebugConsole\Languages\Languages;
         <form method="post" class="col-xs-6 col-sm-5 col-md-4 col-lg-4 text-right">
             <div class="btn-group btn-group-sm">
                 <a href="Log.php" class="btn btn-default"><?php echo Languages::getString( "log_page_refresh_log_messages" ) ?></a>
-                
+
                 <button type="submit" name="action" value="ClearLogMessages" class="btn btn-default"><?php echo Languages::getString( "log_page_clear_log_messages" ) ?></button>
 
                 <?php if( MCoreApplication::isDebug() ): ?>
@@ -36,7 +36,11 @@ use MToolkit\DebugConsole\Languages\Languages;
         </div>
     <?php endif; ?>
 
-    <div class="table-responsive">
+    <div class="form-group">
+        <input id="SearchTextBox"  class="form-control col-xs-12 col-sm-12 col-md-12 col-lg-12" type="text" placeholder="Search..." />
+    </div>
+
+    <div id="LogTable" class="table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -54,8 +58,8 @@ use MToolkit\DebugConsole\Languages\Languages;
                 <?php foreach( MLog::getMessages()->reverse() as /* @var $message \MToolkit\Core\MLogMessage */ $message ): ?>
                     <tr class="log-<?php echo strtolower( $message->getType() ); ?> <?php echo Log::getBootstrapTdClass( $message->getType() ) ?>">
                         <td><?php echo $message->getTime()->format( "Y/m/d H:i:s" ) ?></td>
-                        <td><?php echo $message->getTag() ?></td>
-                        <td><?php echo $message->getText() ?></td>
+                        <td class="TagCell"><?php echo $message->getTag() ?></td>
+                        <td class="TextCell"><?php echo $message->getText() ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

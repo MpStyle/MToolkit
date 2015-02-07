@@ -17,6 +17,7 @@ class Log extends MAbstractPageController
         parent::__construct( __DIR__ . '/Log.view.php' );
         parent::setMasterPage( new MainMasterPage( $this ) );
         parent::addMasterPagePart( "Content", "Content" );
+        parent::addJavascript("Javascripts/Log.js");
         parent::setPageTitle( Languages::getString( "menu_item_log" ) . " - " . Languages::getString( "mtoolkit" ) );
                 
         if( !$this->isPostBack() )
