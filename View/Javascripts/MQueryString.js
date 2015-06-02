@@ -13,14 +13,14 @@ var MQueryString = function ()
 };
 
 /**
- * Restituisce il valore di <i>name</i>, altrimenti null.
+ * Returns the value of the key in query string.
  * 
- * @param string name
+ * @param {string} key
  * @returns null|string
  */
-MQueryString.prototype.getValue = function (name)
+MQueryString.prototype.getValue = function (key)
 {
-    var toReturn = this.map[name];
+    var toReturn = this.map[key];
 
     if (typeof toReturn === "undefined")
     {
