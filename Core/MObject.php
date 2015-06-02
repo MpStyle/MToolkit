@@ -326,6 +326,11 @@ class MObject
      */
     public function getProperty( $name )
     {
+        if( property_exists($this, $name) )
+        {
+            return $this->$name;
+        }
+        
         return $this->properties[$name];
     }
 
@@ -337,6 +342,12 @@ class MObject
      */
     public function setProperty( $name, $value )
     {
+        if( property_exists($this, $name) )
+        {
+            $this->$name=$value;
+            return;
+        }
+        
         $this->properties[$name] = $value;
     }
 
