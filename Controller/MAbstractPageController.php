@@ -21,14 +21,11 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require __DIR__.'/../Core/MGlobal.php';
-//require_once __DIR__ . '/../Core/MString.php';
-//require_once __DIR__ . '/../View/QueryPath.php';
-//require_once __DIR__ . '/MAbstractViewController.php';
+require_once __DIR__.'/../Core/MGlobal.php';
+require_once __DIR__ . '/../View/QueryPath.php';
 
 use MToolkit\Core\MString;
 use MToolkit\Controller\MAbstractMasterPageController;
-use MToolkit\Core\Exception\MElementIdNotFoundException;
 use MToolkit\Controller\MAbstractViewController;
 
 /**
