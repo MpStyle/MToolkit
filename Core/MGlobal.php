@@ -44,6 +44,7 @@ spl_autoload_register( function( $name )
     }
 
     $rootPaths = array_merge( (array) $includePaths, (array) $applicationDirPath );
+    $rootPaths[]=__DIR__."../";
 
     $classPath = str_replace( "\\", DIRECTORY_SEPARATOR, $name );
     $classPath.=".php";

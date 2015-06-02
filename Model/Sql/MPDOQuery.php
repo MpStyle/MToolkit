@@ -2,9 +2,9 @@
 
 namespace MToolkit\Model\Sql;
 
-require_once __DIR__ . '/MDbConnection.php';
-require_once __DIR__ . '/MPDOResult.php';
-require_once __DIR__ . '/MAbstractSqlQuery.php';
+require_once __DIR__ . '/../../Core/MGlobal.php';
+
+use MToolkit\Model\Sql\MPDOResult;
 
 /*
  * This file is part of MToolkit.

@@ -21,9 +21,10 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__ . '/../Core/MString.php';
-require_once __DIR__ . '/../View/QueryPath.php';
-require_once __DIR__ . '/MAbstractViewController.php';
+require __DIR__.'/../Core/MGlobal.php';
+//require_once __DIR__ . '/../Core/MString.php';
+//require_once __DIR__ . '/../View/QueryPath.php';
+//require_once __DIR__ . '/MAbstractViewController.php';
 
 use MToolkit\Core\MString;
 use MToolkit\Controller\MAbstractMasterPageController;
