@@ -25,14 +25,21 @@ class MHttpResponse
     private $contentType='text/html';
     
     /**
-     * Redirects a client to a new URL. 
-     * Specifies the new URL and whether execution of the current page should terminate.
+     * Redirects a client to a new URL. <br />
+     * Specifies the new URL and whether execution of the current page should terminate.<br />
+     * The redirect will not be done in case of a PHP error or PHP warning.
      * 
      * @param string $url
      * @param boolean $endResponse
      */
     public function redirect($url, $endResponse=true)
     {
+        $lastError=  error_get_last();
+        if( $lastError["type"]==E_ERROR || $lastError["type"]==E_WARNING )
+        {
+            return;
+        }
+        
         header('location: ' . $url);
         
         if( $endResponse===true )
