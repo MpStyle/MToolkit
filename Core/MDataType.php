@@ -303,4 +303,27 @@ class MDataType
             throw new MWrongTypeException('\$value', 'string|null', gettype( $value ));
         }
     }
+    
+    public static function convert( $value, $type )
+    {        
+        switch( $type )
+        {
+            case MDataType::BOOLEAN:
+                return settype($value, "boolean");
+            case MDataType::DOUBLE:
+                return settype($value, "float");
+            case MDataType::FLOAT:
+                return settype($value, "float");
+            case MDataType::INT:
+                return settype($value, "integer");
+            case MDataType::LONG:
+                return settype($value, "integer");
+            case MDataType::NULL:
+                return null;
+            case MDataType::STRING:
+                return settype($value, "string");
+        }
+        
+        return $value;
+    }
 }

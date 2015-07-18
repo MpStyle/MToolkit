@@ -111,11 +111,6 @@ class MGet extends MMap
      */
     public function getValue( $key, $defaultValue = null )
     {
-        if( isset( filter_input(INPUT_GET, $key) )===false )
-        {
-            return $defaultValue;
-        }
-        
         return parent::getValue($key, $defaultValue);
     }
 }

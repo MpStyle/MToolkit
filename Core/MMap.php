@@ -305,19 +305,12 @@ class MMap extends MAbstractTemplate implements \ArrayAccess, \Iterator
             throw new MWrongTypeException( "\$value", $this->getType(), $defaultValue );
         }
 
-        if (is_string( $key ) === false)
+        if (isset( $this->map[$key] ) === false)
         {
-            throw new MWrongTypeException( "\$key", "string", $key );
+            return $defaultValue;
         }
 
-        $value = $this->map[$key];
-
-        if (is_null( $value ) === true)
-        {
-            $value = $defaultValue;
-        }
-
-        return $value;
+        return $this->map[$key];
     }
     
     public function getValueByType( $key, $type, $defaultValue = null )
@@ -329,25 +322,7 @@ class MMap extends MAbstractTemplate implements \ArrayAccess, \Iterator
             return $defaultValue;
         }
         
-        switch( $type )
-        {
-            case MDataType::BOOLEAN:
-                return settype($value, "boolean");
-            case MDataType::DOUBLE:
-                return settype($value, "float");
-            case MDataType::FLOAT:
-                return settype($value, "float");
-            case MDataType::INT:
-                return settype($value, "integer");
-            case MDataType::LONG:
-                return settype($value, "integer");
-            case MDataType::NULL:
-                return null;
-            case MDataType::STRING:
-                return settype($value, "string");
-        }
-        
-        return $value;
+        return MDataType::convert($value, $type);
     }
 
     /**
