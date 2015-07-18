@@ -33,7 +33,14 @@ class MPost extends MMap
 {
     public function __construct( )
     {
-        parent::__construct( filter_input_array(INPUT_POST) );
+        $array=filter_input_array(INPUT_POST);
+        
+        if( is_array( $array )===false )
+        {
+            $array=array();
+        }
+        
+        parent::__construct($array);
     }
     
     /**

@@ -33,7 +33,14 @@ class MGet extends MMap
 {
     public function __construct(  )
     {   
-        parent::__construct( filter_input_array(INPUT_GET) );
+        $array=filter_input_array(INPUT_GET);
+        
+        if( is_array( $array )===false )
+        {
+            $array=array();
+        }
+        
+        parent::__construct($array);
     }
     
     /**
