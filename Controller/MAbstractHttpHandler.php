@@ -33,6 +33,9 @@ abstract class MAbstractHttpHandler extends MAbstractController
      */
     private $output=null;
     
+    public function init()
+    {}
+    
     public abstract function run();
     
     public static function autorun()
@@ -47,7 +50,7 @@ abstract class MAbstractHttpHandler extends MAbstractController
             if( is_subclass_of($class, '\MToolkit\Controller\MAbstractHttpHandler')===true && $abstract===false )
             {
                 /* @var $handler MAbstractHttpHandler */ $handler = new $class();
-                
+                $handler->init();
                 $handler->run();
                 
                 MDataType::mustBeNullableString($handler->getOutput());
