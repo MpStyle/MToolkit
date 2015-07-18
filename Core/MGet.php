@@ -33,7 +33,7 @@ class MGet extends MMap
 {
     public function __construct(  )
     {   
-        parent::__construct( $_GET );
+        parent::__construct( filter_input_array(INPUT_GET) );
     }
     
     /**
@@ -111,7 +111,7 @@ class MGet extends MMap
      */
     public function getValue( $key, $defaultValue = null )
     {
-        if( isset( $_GET[$key] )===false )
+        if( isset( filter_input(INPUT_GET, $key) )===false )
         {
             return $defaultValue;
         }

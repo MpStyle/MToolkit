@@ -33,7 +33,7 @@ class MPost extends MMap
 {
     public function __construct( )
     {
-        parent::__construct( $_POST );
+        parent::__construct( filter_input_array(INPUT_POST) );
     }
     
     /**
@@ -111,7 +111,7 @@ class MPost extends MMap
      */
     public function getValue( $key, $defaultValue = null )
     {
-        if( isset( $_POST[$key] )===false )
+        if( isset( filter_input(INPUT_POST, $key) )===false )
         {
             return $defaultValue;
         }

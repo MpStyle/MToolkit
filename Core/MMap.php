@@ -298,7 +298,7 @@ class MMap extends MAbstractTemplate implements \ArrayAccess, \Iterator
      * @return mixed
      * @throws MWrongTypeException
      */
-    public function &getValue( /* string */ $key, /* mixed */ $defaultValue = null )
+    public function &getValue( $key, $defaultValue = null )
     {
         if ($this->isValidType( $defaultValue ) === false)
         {
@@ -317,6 +317,36 @@ class MMap extends MAbstractTemplate implements \ArrayAccess, \Iterator
             $value = $defaultValue;
         }
 
+        return $value;
+    }
+    
+    public function getValueByType( $key, $type, $defaultValue = null )
+    {
+        $value=$this->getValue($key, $defaultValue);
+        
+        if( isset($value)===false )
+        {
+            return $defaultValue;
+        }
+        
+        switch( $type )
+        {
+            case MDataType::BOOLEAN:
+                return settype($value, "boolean");
+            case MDataType::DOUBLE:
+                return settype($value, "float");
+            case MDataType::FLOAT:
+                return settype($value, "float");
+            case MDataType::INT:
+                return settype($value, "integer");
+            case MDataType::LONG:
+                return settype($value, "integer");
+            case MDataType::NULL:
+                return null;
+            case MDataType::STRING:
+                return settype($value, "string");
+        }
+        
         return $value;
     }
 
