@@ -27,10 +27,13 @@ require_once __DIR__ . '/MSql.php';
 require_once __DIR__ . '/../../Core/Exception/MReadOnlyObjectException.php';
 require_once __DIR__ . '/../../Core/MDataType.php';
 
-use MToolkit\Model\Sql;
-use MToolkit\Model\Sql\MSqlRecord;
 use MToolkit\Core\Exception\MReadOnlyObjectException;
 use MToolkit\Core\MDataType;
+use MToolkit\Core\MObject;
+use MToolkit\Model\Sql\MSql\Location;
+use MToolkit\Model\Sql\MSqlRecord;
+use PDO;
+use PDOStatement;
 
 class MPDOResult extends MAbstractSqlResult
 {
@@ -49,7 +52,7 @@ class MPDOResult extends MAbstractSqlResult
     private $fields = array();
 
     /**
-     * @var \PDOStatement
+     * @var PDOStatement
      */
     private $statement;
 
@@ -74,15 +77,15 @@ class MPDOResult extends MAbstractSqlResult
     private $columnCount = 0;
 
     /**
-     * @param \PDOStatement $statement
+     * @param PDOStatement $statement
      * @param \MToolkit\Model\Sql\MObject $parent
      */
-    public function __construct( \PDOStatement $statement, MObject $parent = null )
+    public function __construct( PDOStatement $statement, MObject $parent = null )
     {
         parent::__construct( $parent );
 
         $this->statement = $statement;
-        $this->rows = $this->statement->fetchAll( \PDO::FETCH_ASSOC );
+        $this->rows = $this->statement->fetchAll( PDO::FETCH_ASSOC );
         $this->fields = empty( $this->rows ) ? array() : array_keys( (array) $this->rows[0] );
         $this->rowCount = count( $this->rows );
         $this->columnCount = count( $this->fields );
@@ -138,7 +141,7 @@ class MPDOResult extends MAbstractSqlResult
      * Returns the current record if the query is active; otherwise returns an empty QSqlRecord. <br />
      * The default implementation always returns an empty QSqlRecord.
      * 
-     * @return \MToolkit\Model\Sql\MSqlRecord
+     * @return MSqlRecord
      */
     public function getRecord()
     {
@@ -155,12 +158,12 @@ class MPDOResult extends MAbstractSqlResult
     {
         if( $this->at < 0 )
         {
-            return MSql\Location::BeforeFirstRow;
+            return Location::BeforeFirstRow;
         }
 
         if( $this->at > $this->rowCount() )
         {
-            return MSql\Location::AfterLastRow;
+            return Location::AfterLastRow;
         }
 
         return $this->at;
@@ -171,7 +174,7 @@ class MPDOResult extends MAbstractSqlResult
      * (zero-based) row position to <i>$at</i>.
      * 
      * @param int $at
-     * @return \MToolkit\Model\Sql\MPDOResult
+     * @return MPDOResult
      */
     public function setAt( $at )
     {
@@ -262,7 +265,7 @@ class MPDOResult extends MAbstractSqlResult
 
     /**
      * @param string $className
-     * @return \MToolkit\Model\Sql\MPDOResult
+     * @return MPDOResult
      */
     public function setClassName( $className )
     {

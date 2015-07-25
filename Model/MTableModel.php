@@ -25,9 +25,8 @@ require_once __DIR__ . '/MAbstractDataModel.php';
 require_once __DIR__ . '/../Core/MObject.php';
 require_once __DIR__ . '/../Core/MDataType.php';
 
-use MToolkit\Core\MObject;
 use MToolkit\Core\Enum\Orientation;
-use MToolkit\Core\MDataType;
+use MToolkit\Core\MObject;
 
 class MTableModel extends MAbstractDataModel
 {

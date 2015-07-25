@@ -2,12 +2,6 @@
 
 namespace MToolkit\Model\Sql;
 
-require_once __DIR__ . '/../MTableModel.php';
-require_once __DIR__ . '/MSql.php';
-require_once __DIR__ . '/MSqlError.php';
-
-use MToolkit\Model\MTableModel;
-
 /*
  * This file is part of MToolkit.
  *
@@ -27,7 +21,16 @@ use MToolkit\Model\MTableModel;
  * @author  Michele Pagnin
  */
 
-abstract class MAbstractSqlResult extends MTableModel implements \ArrayAccess, \Iterator
+require_once __DIR__ . '/../MTableModel.php';
+require_once __DIR__ . '/MSql.php';
+require_once __DIR__ . '/MSqlError.php';
+
+use ArrayAccess;
+use Iterator;
+use MToolkit\Core\MObject;
+use MToolkit\Model\MTableModel;
+
+abstract class MAbstractSqlResult extends MTableModel implements ArrayAccess, Iterator
 {
     /**
      * @var MSqlError
@@ -62,7 +65,7 @@ abstract class MAbstractSqlResult extends MTableModel implements \ArrayAccess, \
      * This function is provided for derived classes to set the last error to <i>$error</i>.
      * 
      * @param MSqlError $lastError
-     * @return \MToolkit\Model\Sql\MAbstractSqlResult
+     * @return MAbstractSqlResult
      */
     protected function setLastError( $lastError )
     {
