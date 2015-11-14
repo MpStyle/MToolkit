@@ -110,6 +110,17 @@ class MPDOQuery extends MAbstractSqlQuery
     {
         $this->bindedValues[] = $value;
     }
+    
+    /**
+     * Bind the <i>values</i> to query.
+     * Sort the values in the array in order with the '<i>?</i>' in the sql statement.
+     * 
+     * @param array $values
+     */
+    public function bindValues( array $values )
+    {
+        $this->bindedValues = $values;
+    }
 
     /**
      * 
