@@ -108,6 +108,11 @@ class MPDOQuery extends MAbstractSqlQuery
      */
     public function bindValue( $value )
     {
+        if( $this->getPDOType( $value ) === false )
+        {
+            throw new \Exception( gettype($value) . " is an invalid type to bind. ");
+        }
+        
         $this->bindedValues[] = $value;
     }
     
@@ -119,7 +124,7 @@ class MPDOQuery extends MAbstractSqlQuery
      */
     public function bindValues( array $values )
     {
-        $this->bindedValues = $values;
+        $this->bindedValues = new \ArrayObject($values);
     }
 
     /**
@@ -128,7 +133,7 @@ class MPDOQuery extends MAbstractSqlQuery
      * @return \PDO::PARAM_INT|\PDO::PARAM_BOOL|\PDO::PARAM_NULL|\PDO::PARAM_STR
      */
     private function getPDOType( $value )
-    {
+    {        
         switch ( true )
         {
             case is_int( $value ):
@@ -172,7 +177,7 @@ class MPDOQuery extends MAbstractSqlQuery
 
             if ( $type === false )
             {
-                throw new \Exception( 'Invalid type of binded value at position ' . $i+1 . '.' );
+                throw new \Exception( 'Invalid type of binded value at position ' . ($i+1) . '.' );
             }
 
             $bindParamsResult = $sqlStmt->bindValue( $i+1, $bindedValue, $type );
