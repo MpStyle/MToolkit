@@ -195,10 +195,11 @@ abstract class MAbstractPageController extends MAbstractViewController
         ob_start();
         $this->masterPage->show();
         $masterPageRendered = ob_get_clean();
-        /* @var $qp \QueryPath\DOMQuery */ $qp = qp( $masterPageRendered );
+        /* @var $qpMasterPage \QueryPath\DOMQuery */ $qpMasterPage = qp( $masterPageRendered );
 
         // renders the current page
         $pageRendered = $this->getOutput();
+        $qpPage=qp( $pageRendered );
 
         // assemblies the master page and current page
         foreach( $this->masterPageParts as $masterPagePart )
@@ -206,10 +207,10 @@ abstract class MAbstractPageController extends MAbstractViewController
             $masterPagePlaceholderId = '#' . $masterPagePart[MAbstractPageController::MASTER_PAGE_PLACEHOLDER_ID];
             $pageContentId = '#' . $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID];
 
-            $qp->find( $masterPagePlaceholderId )->html( qp( $pageRendered, $pageContentId )->innerHtml() );
+            $qpMasterPage->find( $masterPagePlaceholderId )->html( $qpPage->find( $pageContentId )->innerHtml() );
         }
 
-        $this->setOutput( $qp->html() );
+        $this->setOutput( $qpMasterPage->html() );
         
         $this->renderPage();
     }
