@@ -44,6 +44,11 @@ Here the list:
 - [Controller](Controller)
 - [View](View)
 
+Software using MToolkit
+-----------------------
+- [Back-end of TVGuide](https://play.google.com/store/apps/details?id=net.micene.minigroup.palimpsests.lite)
+- [Notification Manager](https://github.com/MpStyle/NotificationManager)
+- [TV Guide web site](http://tvguide.micene.net/)
 
 Let's start
 -----------
