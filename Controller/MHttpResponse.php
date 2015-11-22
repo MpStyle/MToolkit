@@ -30,7 +30,7 @@ class MHttpResponse
      * The redirect will not be done in case of a PHP error or PHP warning.
      * 
      * @param string $url
-     * @param boolean $endResponse
+     * @param boolean $endResponse Default <i>true</i>
      */
     public function redirect($url, $endResponse=true)
     {
