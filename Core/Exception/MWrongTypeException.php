@@ -24,8 +24,14 @@ namespace MToolkit\Core\Exception;
 class MWrongTypeException extends \InvalidArgumentException
 {
 
-    public function __construct( $varName, $typeRequired, $given, $code = -1, \Exception $previous = null )
+    public function __construct( $varName, $typeRequired=null, $given=null, $code = -1, \Exception $previous = null )
     {
+        if( $typeRequired==null && $given==null )
+        {
+            parent::__construct($varName);
+            return;
+        }
+        
         $typeGiven = gettype( $given );
 
         if ($typeGiven == 'object')

@@ -29,19 +29,19 @@ use MToolkit\Core\Exception\MWrongTypeException;
  * type of the data.<br />
  * The data type supported are:
  * <ul>
- * <li>int</li>
- * <li>long</li>
- * <li>boolean</li>
- * <li>float</li>
- * <li>double</li>
- * <li>string</li>
- * <li>nullable int</li>
- * <li>nullable long</li>
- * <li>nullable boolean</li>
- * <li>nullable float</li>
- * <li>nullable double</li>
- * <li>nullable string</li>
- * <li>nullable null</li>
+ *      <li>int</li>
+ *      <li>long</li>
+ *      <li>boolean</li>
+ *      <li>float</li>
+ *      <li>double</li>
+ *      <li>string</li>
+ *      <li>nullable int</li>
+ *      <li>nullable long</li>
+ *      <li>nullable boolean</li>
+ *      <li>nullable float</li>
+ *      <li>nullable double</li>
+ *      <li>nullable string</li>
+ *      <li>nullable null</li>
  * </ul>
  * <br />
  * If the data type is not corrected a <i>MWrongTypeException</i> will be 
@@ -51,15 +51,107 @@ class MDataType
 {
     const INT=1;
     const LONG=2;
-    const BOOLEAN=3;
-    const FLOAT=4;
-    const DOUBLE=5;
-    const STRING=6;
-    const NULL=7;
-    const __ARRAY=8;
-    const OBJECT=9;
-    const RESOURCE=10;
-    const UNKNOWN=99;
+    const BOOLEAN=4;
+    const FLOAT=8;
+    const DOUBLE=16;
+    const STRING=32;
+    const NULL=64;
+    const __ARRAY=128;
+    const OBJECT=256;
+    const RESOURCE=512;
+    
+    const UNKNOWN=1024;
+    
+    /**
+     * Checks the type of the arguments of the method caller with the type passed 
+     * in <i>$dataTypes</i>.<br>
+     * If the number of elements in <i>$dataTypes</i> isn't the same of the number
+     * of the arguments of the caller, it will throw an Exception.<br>
+     * If the type mismatch then it will be throw a {@link MWrongTypeException MWrongTypeException}.
+     * 
+     * @param array $dataTypes The possible value of the elements of the array are: case MDataType::INT, 
+     *                         MDataType::LONG, MDataType::BOOLEAN, MDataType::FLOAT: return "MDataType::FLOAT, 
+     *                         MDataType::DOUBLE, MDataType::STRING, MDataType::NULL, MDataType::__ARRAY, 
+     *                         MDataType::OBJECT, MDataType::RESOURCE
+     * @throws Exception|MWrongTypeException
+     */
+    public static function mustBe( array $dataTypes )
+    {        
+        $trace=debug_backtrace();
+        $caller=$trace[1];
+        $args=$caller["args"];
+        
+        for( $i=0; $i<count($args); $i++ )
+        {
+            $dataType=$dataTypes[$i];
+            
+            if( ($dataType) & MDataType::getType( $args[$i] ) )
+            {
+                continue;
+            }
+            
+            $callerName= ( isset( $caller["class"] ) ? $caller["class"]."::".$caller["function"] : $caller["function"] );
+            $mustBe=MDataType::getTypeName( $dataType );
+            $itIs=MDataType::getTypeName( MDataType::getType( $args[$i] ) );
+
+            $message="Argument " . ($i+1) . " passed to " . $callerName . " must be of the type " . $mustBe . ", " . $itIs 
+                    . " given, called in " . $caller["file"] . " on line " . $caller["line"] . " and defined";
+
+            throw new MWrongTypeException($message);
+        }
+    }
+    
+    public static function getTypeName($value)
+    {
+        $types=array();
+        if( MDataType::INT & $value )
+        {
+            $types[] = "MDataType::INT";
+        }
+        if( MDataType::LONG & $value )
+        {
+            $types[] = "MDataType::LONG";
+        }
+        if( MDataType::BOOLEAN & $value )
+        {
+            $types[] = "MDataType::BOOLEAN";
+        }
+        if( MDataType::FLOAT & $value )
+        {
+            $types[] = "MDataType::FLOAT";
+        }
+        if( MDataType::DOUBLE & $value )
+        {
+            $types[] = "MDataType::DOUBLE";
+        }
+        if( MDataType::STRING & $value )
+        {
+            $types[] = "MDataType::STRING";
+        }
+        if( MDataType::NULL & $value )
+        {
+            $types[] = "MDataType::NULL";
+        }
+        if( MDataType::__ARRAY & $value )
+        {
+            $types[] = "MDataType::__ARRAY";
+        }
+        if( MDataType::OBJECT & $value )
+        {
+            $types[] = "MDataType::OBJECT";
+        }
+        if( MDataType::RESOURCE & $value )
+        {
+            $types[] = "MDataType::RESOURCE";
+        }
+
+        if( count($types)<=0 )
+        {
+            return "MDataType::UNKNOWN";
+        }
+
+        return implode(" or ", $types);
+    }
     
     /**
      * Returns the type of <i>$value</i>.
