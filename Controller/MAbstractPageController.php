@@ -21,7 +21,7 @@ namespace MToolkit\Controller;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/../Core/MGlobal.php';
+require_once __DIR__ . '/../Core/MGlobal.php';
 require_once __DIR__ . '/../View/QueryPath.php';
 
 use MToolkit\Core\MString;
@@ -66,6 +66,11 @@ abstract class MAbstractPageController extends MAbstractViewController
      * @var string|null 
      */
     private $pageTitle = null;
+    
+    /**
+     * @var \QueryPath\DOMQuery|null
+     */
+    private $qp = null;
 
     /**
      * @param string $template
@@ -117,13 +122,7 @@ abstract class MAbstractPageController extends MAbstractViewController
             $html.=sprintf( MAbstractPageController::CSS_TEMPLATE, $item["rel"], $item["href"], $item["media"] ) . "\n";
         }
 
-        ob_start();
-        qp( $this->getOutput(), "head" )
-                ->append( $html )
-                ->writeHTML();
-        $output = ob_get_clean();
-
-        $this->setOutput( $output );
+        $this->qp->find( "head" )->append( $html );
     }
 
     /**
@@ -138,13 +137,7 @@ abstract class MAbstractPageController extends MAbstractViewController
             $html.=sprintf( MAbstractPageController::JAVASCRIPT_TEMPLATE, $item["src"] ) . "\n";
         }
 
-        ob_start();
-        qp( $this->getOutput(), "head" )
-                ->append( $html )
-                ->writeHTML();
-        $output = ob_get_clean();
-
-        $this->setOutput( $output );
+        $this->qp->find( "head" )->append( $html );
     }
 
     /**
@@ -187,13 +180,14 @@ abstract class MAbstractPageController extends MAbstractViewController
 
     protected function render()
     {
+        parent::render();
+            
         // If the master page is not set, render the page.
         if( $this->masterPage == null )
         {
-            parent::render();
-            $this->renderTitle();
-            $this->renderCss();
-            $this->renderJavascript();
+
+            $this->renderPage();
+
             return;
         }
 
@@ -201,30 +195,38 @@ abstract class MAbstractPageController extends MAbstractViewController
         ob_start();
         $this->masterPage->show();
         $masterPageRendered = ob_get_clean();
+        /* @var $qp \QueryPath\DOMQuery */ $qp = qp( $masterPageRendered );
 
         // renders the current page
-        parent::render();
         $pageRendered = $this->getOutput();
 
-        $a=qp( $masterPageRendered );
-        
         // assemblies the master page and current page
         foreach( $this->masterPageParts as $masterPagePart )
         {
             $masterPagePlaceholderId = '#' . $masterPagePart[MAbstractPageController::MASTER_PAGE_PLACEHOLDER_ID];
             $pageContentId = '#' . $masterPagePart[MAbstractPageController::PAGE_CONTENT_ID];
-            
-            $a->find( $masterPagePlaceholderId )->html( qp( $pageRendered, $pageContentId )->innerHtml() );
-        }
-        
-        $masterPageRendered = $a->html();
 
-        // set the output of page with the assemblies
-        $this->setOutput( $masterPageRendered );
+            $qp->find( $masterPagePlaceholderId )->html( qp( $pageRendered, $pageContentId )->innerHtml() );
+        }
+
+        $this->setOutput( $qp->html() );
+        
+        $this->renderPage();
+    }
+    
+    private function renderPage()
+    {
+        $this->qp = qp( $this->getOutput() );
 
         $this->renderTitle();
         $this->renderCss();
         $this->renderJavascript();
+
+        ob_start();
+        $this->qp->writeHTML();
+        $output = ob_get_clean();
+
+        $this->setOutput( $output );
     }
 
     /**
@@ -237,13 +239,7 @@ abstract class MAbstractPageController extends MAbstractViewController
         {
             $title = mb_convert_encoding( $this->pageTitle, $this->getCharset(), 'auto' );
 
-            ob_start();
-            qp( $this->getOutput(), "title" )
-                    ->append( $title )
-                    ->writeHTML();
-            $output = ob_get_clean();
-
-            $this->setOutput( $output );
+            $this->qp->find( "title" )->append( $title );
         }
     }
 
