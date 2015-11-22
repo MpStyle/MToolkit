@@ -130,3 +130,38 @@ And the *view* file. Every view file must contains the meta tag, with the correc
     </body>
 </html>
 ```
+
+Using Composer
+--------------
+*composer.json*:
+```
+{
+  "require": {
+    "mpstyle/mtoolkit": "dev-master"
+  }
+}
+```
+
+On the root of your project create a new file (*Settings.php*) with this content:
+
+```
+
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+use MToolkit\Core\MApplication;
+
+class Settings
+{
+    public static function run()
+    {
+        // Set the root path of the project
+        MApplication::setApplicationDirPath(__DIR__);
+    }
+}
+
+Settings::run();
+
+```
+
+And now you can create your web app.
