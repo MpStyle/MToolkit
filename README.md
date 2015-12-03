@@ -59,7 +59,7 @@ Download the latest version of MToolkit in the project folder.
 
 On the root of your project create a new file (*Settings.php*) with this content:
 
-```
+```php
 
 <?php
 require_once __DIR__.'/MToolkit/Core/MCore.php';
@@ -91,7 +91,7 @@ Now, we will see how create the controller of the entry page and his html code.
 
 Controller (Index.php):
 
-```
+```php
 <?php
 
 require_once __DIR__ . '/Settings.php';
@@ -118,12 +118,12 @@ class Index extends MAbstractPageController
 ```
 
 And the *view* file. Every view file must contains the meta tag, with the correct *content-type*:
-```
+```html
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 ```
 *Index.view*:
 
-```
+```php
 <?php /* @var $this Index */ ?>
 <html>
     <head>
@@ -139,7 +139,7 @@ And the *view* file. Every view file must contains the meta tag, with the correc
 Using Composer
 --------------
 *composer.json*:
-```
+```json
 {
   "require": {
     "mpstyle/mtoolkit": "dev-master"
@@ -149,7 +149,7 @@ Using Composer
 
 On the root of your project create a new file (*Settings.php*) with this content:
 
-```
+```php
 
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
