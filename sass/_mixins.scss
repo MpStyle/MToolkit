@@ -1,0 +1,9 @@
+@mixin background-opacity($color, $opacity: 0.3) {
+    background: $color; /* The Fallback */
+    background: rgba($color, $opacity);
+}
+
+@mixin border-color-opacity($color, $opacity: 0.3) {
+    border-color: $color;
+    border-color: rgba($color, $opacity);
+}
