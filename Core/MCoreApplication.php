@@ -68,29 +68,33 @@ class MCoreApplication
 
         return $debug;
     }
-    
+
     /**
      * Set the root path of the project.
-     * 
-     * @param string|array $path
+     *
+     * @param string $path
+     * @param string $namespace
      */
-    public static function setApplicationDirPath( $path )
+    public static function setApplicationDirPath( $path, $namespace="" )
     {
-        $paths=array_merge(array(), (array)$path );
-        MNetworkSession::set( MCoreApplication::APPLICATION_DIR_PATH, $paths );
+        $applicationDir=new MApplicationDir();
+        $applicationDir->setPath($path);
+        $applicationDir->setNamespace($namespace);
+
+        MNetworkSession::set( MCoreApplication::APPLICATION_DIR_PATH, $applicationDir );
     }
 
     /**
      * Return the root path of the project.
-     * 
-     * @return array|null
+     *
+     * @return MApplicationDir|null
      */
     public static function getApplicationDirPath()
     {
         $rootPath = MNetworkSession::get( MCoreApplication::APPLICATION_DIR_PATH );
         return $rootPath;
     }
-    
+
     /**
      * This property holds the name of this application.<br />
      * The value is used by the MSettings class when it is constructed using the 

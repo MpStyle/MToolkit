@@ -29,35 +29,27 @@ if( class_exists( "MToolkit\Core\MCoreApplication" ) === false )
  * No namespaces are defined here, otherwise this method is not
  * called from PHP engine.
  */
-spl_autoload_register( function( $name )
+spl_autoload_register( function( $rawName )
 {    
-    $applicationDirPath = MToolkit\Core\MCoreApplication::getApplicationDirPath();
-    if( $applicationDirPath == null )
+    $applicationDir = MToolkit\Core\MCoreApplication::getApplicationDirPath();
+    
+    $classCompleteName=new \MToolkit\Core\MString($rawName);
+    if( $classCompleteName->startsWith( $applicationDir->getNamespace() ) )
     {
-        $applicationDirPath = array();
+        $name = str_replace( $applicationDir->getNamespace(), "", $rawName );
     }
 
-    $includePaths = explode( ':', get_include_path() );
-    if( $includePaths === false )
+    $classPath = sprintf("%s%s%s%s",
+        $applicationDir->getPath(),
+        DIRECTORY_SEPARATOR,
+        str_replace( "\\", DIRECTORY_SEPARATOR, $name ),
+        '.php'
+    );
+
+    // If the file exists and id the class is not declared
+    if( file_exists( $classPath ) === true && class_exists( $rawName ) === false )
     {
-        $includePaths = array();
-    }
-
-    $rootPaths = array_merge( (array) $includePaths, (array) $applicationDirPath );
-    $rootPaths[]=__DIR__."../";
-
-    $classPath = str_replace( "\\", DIRECTORY_SEPARATOR, $name );
-    $classPath.=".php";
-
-    foreach( $rootPaths as $rootPath )
-    {
-        $path = $rootPath . DIRECTORY_SEPARATOR . $classPath;
-
-        // If the file exists and id the class is not declared
-        if( file_exists( $path ) === true && class_exists( $name ) === false )
-        {
-            require_once $path;
-        }
+        require_once $classPath;
     }
 } );
 
