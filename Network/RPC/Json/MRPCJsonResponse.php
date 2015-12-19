@@ -1,4 +1,5 @@
 <?php
+
 namespace MToolkit\Network\RPC\Json;
 
 /*
@@ -20,9 +21,7 @@ namespace MToolkit\Network\RPC\Json;
  * @author  Michele Pagnin
  */
 
-require_once __DIR__.'/MRPCJsonError.php';
-require_once __DIR__.'/MRPCJson.php';
-require_once __DIR__.'/../MRPCResponse.php';
+require_once __DIR__ . '/../../../Core/MGlobal.php';
 
 use MToolkit\Network\RPC\Json\MRPCJsonError;
 use MToolkit\Network\RPC\Json\MRPCJson;
@@ -35,45 +34,85 @@ use MToolkit\Network\RPC\Json\MRPCResponse;
  * <li>{"jsonrpc": "2.0", "error": {"code": -32601, "message": "Procedure not found."}, "id": 10} </li>
  * </ul>
  */
-class MRPCJsonResponse extends MRPCResponse 
-{    
+class MRPCJsonResponse extends MRPCResponse
+{
+    private $options = 0;
+
+    /**
+     * Returns the JSON options.<br>
+     * <br>
+     * Bitmask consisting of JSON_HEX_QUOT, JSON_HEX_TAG, JSON_HEX_AMP, 
+     * JSON_HEX_APOS, JSON_NUMERIC_CHECK, JSON_PRETTY_PRINT, 
+     * JSON_UNESCAPED_SLASHES, JSON_FORCE_OBJECT, JSON_PRESERVE_ZERO_FRACTION, 
+     * JSON_UNESCAPED_UNICODE, JSON_PARTIAL_OUTPUT_ON_ERROR. <br>
+     * The behaviour of these constants is described on the 
+     * <a href="http://php.net/manual/en/json.constants.php">JSON constants</a> 
+     * page.
+     * 
+     * @return type
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * Sets the JSON options.<br>
+     * <br>
+     * Bitmask consisting of JSON_HEX_QUOT, JSON_HEX_TAG, JSON_HEX_AMP, 
+     * JSON_HEX_APOS, JSON_NUMERIC_CHECK, JSON_PRETTY_PRINT, 
+     * JSON_UNESCAPED_SLASHES, JSON_FORCE_OBJECT, JSON_PRESERVE_ZERO_FRACTION, 
+     * JSON_UNESCAPED_UNICODE, JSON_PARTIAL_OUTPUT_ON_ERROR. <br>
+     * The behaviour of these constants is described on the 
+     * <a href="http://php.net/manual/en/json.constants.php">JSON constants</a> 
+     * page.
+     * 
+     * @param type $options
+     * @return \MToolkit\Network\RPC\Json\MRPCJsonResponse
+     */
+    public function setOptions( $options )
+    {
+        $this->options = $options;
+        return $this;
+    }
+
     /**
      * @return array
      */
     public function toArray()
-    {        
-        $array=array(
+    {
+        $array = array(
             'jsonrpc' => MRPCJson::VERSION
             , 'result' => $this->getResult()
             , 'id' => $this->getId()
         );
-        
-        if( $this->getError()!=null )
+
+        if( $this->getError() != null )
         {
-            $array['error']=$this->getError()->toArray();
+            $array['error'] = $this->getError()->toArray();
         }
-        
+
         return $array;
     }
-    
+
     /**
      * @return string
      */
     public function toJSON()
     {
-        return json_encode($this->toArray());
+        return json_encode( $this->toArray() );
     }
 
     /**
      * @param array $json
      */
-    public static function fromArray(array $json)
+    public static function fromArray( array $json )
     {
-        $response=new MRPCJsonResponse();
-        
-        $response->setError( MRPCJsonError::fromArray($json["error"]) );
-        $response->setId($json["id"]);
-        $response->setResult($json["result"]);
+        $response = new MRPCJsonResponse();
+
+        $response->setError( MRPCJsonError::fromArray( $json["error"] ) );
+        $response->setId( $json["id"] );
+        $response->setResult( $json["result"] );
     }
 
 }
