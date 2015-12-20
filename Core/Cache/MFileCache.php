@@ -23,6 +23,8 @@ namespace MToolkit\Core\Cache;
 
 require_once __DIR__.'/MAbstractCache.php';
 
+use MToolkit\Core\MObject;
+
 /**
  * MFileCache class extends MAbstractCache.<br />
  * This class stores cache records into files (in a chosen <i>path</i>).
@@ -30,7 +32,8 @@ require_once __DIR__.'/MAbstractCache.php';
 class MFileCache extends MAbstractCache
 {
     /**
-     * @param \MToolkit\Core\Cache\MObject $parent
+     * MFileCache constructor.
+     * @param MObject|null $parent
      */
     public function __construct( MObject $parent = null )
     {
@@ -63,7 +66,7 @@ class MFileCache extends MAbstractCache
      * Set the path of the cache.
      * 
      * @param string $path
-     * @return \MToolkit\Core\MCache
+     * @return MFileCache
      */
     public function setPath( $path )
     {
@@ -96,7 +99,7 @@ class MFileCache extends MAbstractCache
      */
     public function flush()
     {
-        $files = glob( $this->path . MCache::CACHE_FILE_PREFIX . '*' ); // get all file names
+        $files = glob( $this->path . MFileCache::CACHE_FILE_PREFIX . '*' ); // get all file names
         foreach( $files as $file )
         {
             if( is_file( $file ) )
@@ -119,9 +122,9 @@ class MFileCache extends MAbstractCache
 
         $fileContent = file_get_contents( $this->getFileName( $key ) );
 
-        $separatorPosition = strrpos( $fileContent, MCache::DELIMITER );
+        $separatorPosition = strrpos( $fileContent, MFileCache::DELIMITER );
         $expired = substr( $fileContent, 0, $separatorPosition );
-        $cache = substr( $fileContent, $separatorPosition + strlen( MCache::DELIMITER ) );
+        $cache = substr( $fileContent, $separatorPosition + strlen( MFileCache::DELIMITER ) );
         
         if( $expired==-1 || $expired > time() )
         {
@@ -151,13 +154,13 @@ class MFileCache extends MAbstractCache
         
         $expired=time()+$ttl;
         
-        $success = file_put_contents( $this->getFileName( $key ), $expired . MCache::DELIMITER . serialize($value) );
+        $success = file_put_contents( $this->getFileName( $key ), $expired . MFileCache::DELIMITER . serialize($value) );
         return ($success != false);
     }
 
     private function getFileName( $key )
     {
-        return $this->path . MCache::CACHE_FILE_PREFIX . $key . '.' . MCache::FILE_EXTENSION;
+        return $this->path . MFileCache::CACHE_FILE_PREFIX . $key . '.' . MFileCache::FILE_EXTENSION;
     }
 
 }

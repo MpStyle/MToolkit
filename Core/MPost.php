@@ -78,8 +78,9 @@ class MPost extends MMap
 
     /**
      * Throws an exception, because the <i>$this</i> object is read-only.
-     * 
+     *
      * @param string $key
+     * @return int
      * @throws MReadOnlyObjectException
      */
     public function remove( $key )
@@ -92,6 +93,7 @@ class MPost extends MMap
      * 
      * @param int|string|null $offset
      * @param mixed $value
+     * @throws MReadOnlyObjectException
      */
     public function offsetSet( $offset, $value )
     {
@@ -102,6 +104,7 @@ class MPost extends MMap
      * Throws an exception, because the <i>$this</i> object is read-only.
      * 
      * @param int|string $offset
+     * @throws MReadOnlyObjectException
      */
     public function offsetUnset( $offset )
     {

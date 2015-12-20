@@ -53,15 +53,15 @@ final class Scanner
     }
 
     /**
-     * Get the next token in the input stream.
+     * Get the next token in the input stream.<br>
+     * <br>
+     * This sets the current token to the value of the next token in the stream.
      *
-     * This sets the current token to the value of the next token in
-     * the stream.
-     *
-     * @return int
-     *  Returns an int value corresponding to one of the Token constants,
-     *  or FALSE if the end of the string is reached. (Remember to use
-     *  strong equality checking on FALSE, since 0 is a valid token id.)
+     * @return int Returns an int value corresponding to one of the Token constants, or FALSE if
+     * the end of the string is reached. (Remember to use strong equality checking on FALSE,
+     * since 0 is a valid token id.)
+     * @throws ParseException
+     * @throws \QueryPath\Exception
      */
     public function nextToken()
     {
@@ -72,7 +72,6 @@ final class Scanner
             if ($this->recurse)
             {
                 throw new \QueryPath\Exception("Recursion error detected at iteration " . $this->it . '.');
-                exit();
             }
             //print "{$this->it}: All done\n";
             $this->recurse = TRUE;

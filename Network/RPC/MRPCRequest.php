@@ -46,7 +46,8 @@ abstract class MRPCRequest
     }
 
     /**
-     * @param string $method 
+     * @param string $method
+     * @return MRPCRequest
      */
     public function setMethod($method)
     {

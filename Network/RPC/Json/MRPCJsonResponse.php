@@ -49,7 +49,7 @@ class MRPCJsonResponse extends MRPCResponse
      * <a href="http://php.net/manual/en/json.constants.php">JSON constants</a> 
      * page.
      * 
-     * @return type
+     * @return int
      */
     public function getOptions()
     {
@@ -67,7 +67,7 @@ class MRPCJsonResponse extends MRPCResponse
      * <a href="http://php.net/manual/en/json.constants.php">JSON constants</a> 
      * page.
      * 
-     * @param type $options
+     * @param int $options
      * @return \MToolkit\Network\RPC\Json\MRPCJsonResponse
      */
     public function setOptions( $options )

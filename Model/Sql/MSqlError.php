@@ -35,12 +35,13 @@ class MSqlError
     private $code;
 
     /**
-     * Constructs an error containing the driver error text <i>$driverText</i>, the database-specific error text <i>$databaseText</i>, the type <i>$type</i> and the error code <i>$code</i>.
-     * 
-     * @param string|null $driverText
-     * @param string|null $databaseText
-     * @param ErrorType $type
-     * @param string|null $code
+     * Constructs an error containing the driver error text <i>$driverText</i>, the database-specific error text
+     * <i>$databaseText</i>, the type <i>$type</i> and the error code <i>$code</i>.
+     *
+     * @param string $driverText
+     * @param string $databaseText
+     * @param int $type
+     * @param string $code
      */
     public function __construct( $driverText = "", $databaseText = "", $type = ErrorType::NO_ERROR, $code = "" )
     {

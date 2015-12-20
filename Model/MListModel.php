@@ -25,6 +25,7 @@ require_once __DIR__ . '/../Core/MObject.php';
 require_once __DIR__ . '/../Core/MList.php';
 require_once __DIR__ . '/MAbstractDataModel.php';
 
+use MToolkit\Core\Enum\Orientation;
 use MToolkit\Core\MObject;
 use MToolkit\Model\MAbstractDataModel;
 use MToolkit\Core\MList;
@@ -38,7 +39,6 @@ class MListModel extends MAbstractDataModel
     private $data = null;
 
     /**
-     * @param MList|array|null $array
      * @param \MToolkit\Core\MObject $parent
      */
     public function __construct(MObject $parent = null)
@@ -78,6 +78,7 @@ class MListModel extends MAbstractDataModel
      * 
      * @param int $row
      * @param int $column
+     * @return mixed
      */
     public function getData($row, $column = 0)
     {
@@ -95,17 +96,17 @@ class MListModel extends MAbstractDataModel
     {
         $headerData = null;
 
-        if( count( $this->data )>0 )
+        if( $this->data->size() >0 )
         {
             return $headerData;
         }
 
         switch( $orientation )
         {
-            case Orientation::Horizontal:
+            case Orientation::HORIZONTAL:
                 break;
-            case Orientation::Vertical:
-                $fields = array_keys( $this->data );
+            case Orientation::VERTICAL:
+                $fields = array_keys( $this->data->__toArray() );
                 $headerData = $fields[$section];
                 break;
         }
@@ -126,18 +127,18 @@ class MListModel extends MAbstractDataModel
     {
         $toReturn = false;
 
-        if( count( $this->data )>0 )
+        if( $this->data->size() >0 )
         {
             return $toReturn;
         }
 
         switch( $orientation )
         {
-            case Orientation::Horizontal:
+            case Orientation::HORIZONTAL:
                 break;
-            case Orientation::Vertical:
-                $fields = array_keys( $this->data );
-                $values = array_values( $this->data );
+            case Orientation::VERTICAL:
+                $fields = array_keys( $this->data->__toArray() );
+                $values = array_values( $this->data->__toArray() );
                 $fields[$section] = $value;
                 $this->data = array_combine( $fields, $values );
                 $toReturn = true;

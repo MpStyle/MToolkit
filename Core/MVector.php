@@ -36,7 +36,7 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
 
     public function __construct()
     {
-        
+        parent::__construct();
     }
 
     /**
@@ -160,7 +160,7 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
     {
         if (0 >= $this->count())
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         return $this->vector[0];
@@ -171,7 +171,15 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
         return $this->first();
     }
 
-    public function /* int */ indexOf( $value, $from = 0 )
+    /**
+     * Returns the index position of the first occurrence of <i>$value</i> in the vector, searching forward from index position
+     * <i>$from</i>. Returns -1 if no item matched.
+     *
+     * @param mixed $value
+     * @param int $from
+     * @return int
+     */
+    public function indexOf( $value, $from = 0 )
     {
         if ($this->isValidType( $value ) === false)
         {
@@ -197,10 +205,18 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
                 return $i;
             }
         }
+
+        return -1;
     }
 
-    //iterator insert ( iterator before, int count,  T & value )
-    public function /* void */ insert( $i, /* mixed */ $value, $count = 1 )
+    /**
+     * Inserts count copies of value at index position <i>$i</i> in the vector.
+     *
+     * @param int $i
+     * @param mixed $value
+     * @param int $count
+     */
+    public function insert( $i, $value, $count = 1 )
     {
         if ($this->isValidType( $value ) === false)
         {
@@ -217,7 +233,7 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
             throw new MWrongTypeException( "\$count", "int", $count );
         }
 
-        for ( $j = 1; j <= $count; $j++ )
+        for ( $j = 1; $j <= $count; $j++ )
         {
             array_splice( $this->vector, $i, 0, $value );
         }
@@ -228,13 +244,18 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
     {
         if ($this->count() <= 0)
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         return $this->vector[$this->count() - 1];
     }
 
-    public function /* int */ lastIndexOf( /* mixed */ $value, $from = -1 )
+    /**
+     * @param mixed $value
+     * @param int $from
+     * @return int
+     */
+    public function lastIndexOf( $value, $from = -1 )
     {
         if ($this->isValidType( $value ) === false)
         {
@@ -242,12 +263,15 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
         }
     }
 
-    //QVector<T> mid ( int pos, int length = -1 ) 
-    public function /* void */ pop_back()
+    /**
+     * @return mixed
+     * @throws \OutOfBoundsException
+     */
+    public function pop_back()
     {
         if ($this->count() <= 0)
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         $item = $this->vector[$this->count() - 1];
@@ -257,11 +281,27 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
         return $item;
     }
 
-    public function /* void */ pop_front()
+    /**
+     * Removes the last item in the vector. Calling this function is equivalent to calling remove(size() - 1).
+     * The vector must not be empty. If the vector can be empty, call isEmpty() before calling this function.
+     */
+    public function removeLast(){
+        if( count($this->vector)<=0 ){
+            return;
+        }
+
+        unset( $this->vector[count($this->vector)-1] );
+    }
+
+    /**
+     * @return mixed
+     * @throws \OutOfBoundsException
+     */
+    public function pop_front()
     {
         if ($this->count() <= 0)
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         $item = $this->vector[0];
@@ -271,27 +311,44 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
         return $item;
     }
 
-    public function /* void */ prepend( $value )
+    /**
+     * Removes the first item in the vector. Calling this function is equivalent to calling remove(0). The vector must
+     * not be empty. If the vector can be empty, call isEmpty() before calling this function.
+     */
+    public function removeFirst(){
+        $this->remove(0);
+    }
+
+    /**
+     * @param mixed $value
+     */
+    public function prepend( $value )
     {
         if ($this->isValidType( $value ) === false)
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
 
-        array_unshift( $this->list, $value );
+        array_unshift( $this->vector, $value );
     }
 
-    public function /* void */ push_back( $value )
+    /**
+     * @param mixed $value
+     */
+    public function push_back( $value )
     {
         if ($this->isValidType( $value ) === false)
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
 
-        $this->list[] = $value;
+        $this->vector[] = $value;
     }
 
-    public function /* void */ push_front( $value )
+    /**
+     * @param mixed $value
+     */
+    public function push_front( $value )
     {
         if ($this->isValidType( $value ) === false)
         {
@@ -301,7 +358,12 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
         $this->prepend( $value );
     }
 
-    public function /* void */ remove( $i, $count = 1 )
+    /**
+     * @param int $i
+     * @param int $count
+     * @throws \OutOfBoundsException
+     */
+    public function remove( $i, $count = 1 )
     {
         if (is_int( $i ) === false)
         {
@@ -312,14 +374,22 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
         {
             if (count( $this->vector ) >= $j)
             {
-                throw new OutOfBoundsException();
+                throw new \OutOfBoundsException();
             }
 
             unset( $this->vector[$j] );
         }
     }
 
-    public function /* void */ replace( $i, $value )
+    /**
+     * Replaces the item at index position i with value.<br>
+     * <i>$i</i> must be a valid index position in the vector (i.e., 0 <= <i>$i</i> < size()).
+     *
+     * @param int $i
+     * @param mixed $value
+     * @throws \OutOfBoundsException
+     */
+    public function replace( $i, $value )
     {
         if ($this->isValidType( $value ) === false)
         {
@@ -333,26 +403,29 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
 
         if (count( $this->vector ) >= $i)
         {
-            throw new OutOfBoundsException();
+            throw new \OutOfBoundsException();
         }
 
         $this->vector[$i] = $value;
     }
 
-    //public function /* void */ reserve ( $size ) 
-    //{}
-    //public function /* void */ resize ( $size ) 
-    //{}
-
-    public function /* int */ size()
+    /**
+     * Returns the number of items in the vector.
+     *
+     * @return int
+     */
+    public function size()
     {
         return count( $this->vector );
     }
 
-    //public function /* void */ squeeze () 
-    //{}
-
-    public function /* bool */ startsWith( $value )
+    /**
+     * Returns true if this vector is not empty and its first item is equal to <i>$value<i>; otherwise returns false.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    public function startsWith( $value )
     {
         if ($this->isValidType( $value ) === false)
         {
@@ -362,11 +435,12 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
         return ( $this->vector[0] == $value );
     }
 
-    //public function /* void */ swap ( QVector<T> & other )            
-    //QList<T> toList () 
-    //std::vector<T> toStdVector () 
-
-    public function getValue( /* int */ $i, /* mixed */ $defaultValue = null )
+    /**
+     * @param int $i
+     * @param mixed $defaultValue
+     * @return mixed
+     */
+    public function getValue( $i, $defaultValue = null )
     {
         if ($this->isValidType( $defaultValue ) === false)
         {
@@ -378,7 +452,7 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
             throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
         }
 
-        $value = $this->list[$i];
+        $value = $this->vector[$i];
 
         if (is_null( $value ) === true && is_null( $defaultValue ) === false)
         {

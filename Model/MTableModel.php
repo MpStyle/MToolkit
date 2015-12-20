@@ -82,11 +82,11 @@ class MTableModel extends MAbstractDataModel
 
         switch( $orientation )
         {
-            case Orientation::Horizontal:
+            case Orientation::HORIZONTAL:
                 $fields = array_keys( $this->data[0] );
                 $headerData = $fields[$section];
                 break;
-            case Orientation::Vertical:
+            case Orientation::VERTICAL:
                 $fields = array_keys( $this->data );
                 $headerData = $fields[$section];
                 break;
@@ -115,7 +115,7 @@ class MTableModel extends MAbstractDataModel
 
         switch( $orientation )
         {
-            case Orientation::Horizontal:
+            case Orientation::HORIZONTAL:
                 for( $i = 0; $i<$this->rowCount(); $i++ )
                 {
                     $fields = array_keys( $this->data[$i] );
@@ -125,7 +125,7 @@ class MTableModel extends MAbstractDataModel
                 }
                 $toReturn = true;
                 break;
-            case Orientation::Vertical:
+            case Orientation::VERTICAL:
                 $fields = array_keys( $this->data );
                 $values = array_values( $this->data );
                 $fields[$section] = $value;

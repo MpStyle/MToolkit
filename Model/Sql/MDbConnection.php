@@ -22,13 +22,18 @@ namespace MToolkit\Model\Sql;
 
 class MDbConnection
 {
-    private $connection=null;
-    private static $istance=null;
+    /**
+     * @var array
+     */
+    private $connection=array();
+
+    /**
+     * @var MDbConnection
+     */
+    private static $instance=null;
 
     private function  __construct()
-    {
-        $this->connection=array();
-    }
+    {}
 
     /**
      * Deprecated. Use <i>getDbConnection</i>.
@@ -48,26 +53,26 @@ class MDbConnection
      */
     public static function getDbConnection( $name="DefaultConnection" )
     {
-        if( is_null( MDbConnection::$istance ) )
+        if( is_null( MDbConnection::$instance ) )
         {
             return null;
         }
 
-        return MDbConnection::$istance->connection[$name];
+        return MDbConnection::$instance->connection[$name];
     }
 
     /**
      * @param mixed $connection
-     * @param name $name
+     * @param string $name
      */
     public static function addDbConnection( $connection, $name="DefaultConnection" )
     {
-        if( is_null( MDbConnection::$istance ) )
+        if( is_null( MDbConnection::$instance ) )
         {
-            MDbConnection::$istance=new MDbConnection();
+            MDbConnection::$instance=new MDbConnection();
         }
 
-        MDbConnection::$istance->connection[$name]=$connection;
+        MDbConnection::$instance->connection[$name]=$connection;
     }
 
     /**
@@ -76,12 +81,12 @@ class MDbConnection
      */
     public static function removeDbConnection( $name="DefaultConnection" )
     {
-        if( is_null( MDbConnection::$istance ) )
+        if( is_null( MDbConnection::$instance ) )
         {
             return;
         }
 
-        MDbConnection::$istance->connection[$name]=null;
+        MDbConnection::$instance->connection[$name]=null;
     }
 }
 

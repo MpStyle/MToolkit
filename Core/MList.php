@@ -47,8 +47,9 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
 
     /**
      * Constructs a list with the values of <i>$list</i>.
-     * 
-     * @param \MToolkit\Core\MList $list
+     *
+     * @param array|MList $list
+     * @param string|null $type
      */
     public function __construct( array $list = array(), $type = null )
     {
@@ -101,7 +102,7 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      * be a valid index position in the list (i.e., 0 <= <i>$i</i> < size()).
      * 
      * @param int $i
-     * @return type
+     * @return mixed
      * @throws MWrongTypeException
      * @throws \OutOfBoundsException
      */
@@ -239,7 +240,7 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
      * @return int
      * @throws MWrongTypeException
      */
-    public function /* int */ indexOf( $value, $from = 0 )
+    public function indexOf( $value, $from = 0 )
     {
         if( $this->isValidType( $value ) === false )
         {
@@ -262,6 +263,8 @@ class MList extends MAbstractTemplate implements \ArrayAccess, \Iterator
                 return $i;
             }
         }
+
+        return -1;
     }
 
     /**

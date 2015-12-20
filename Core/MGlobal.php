@@ -30,10 +30,11 @@ if( class_exists( "MToolkit\Core\MCoreApplication" ) === false )
  * called from PHP engine.
  */
 spl_autoload_register( function( $rawName )
-{    
+{
+    $name=$rawName;
     $applicationDir = MToolkit\Core\MCoreApplication::getApplicationDirPath();
-    
     $classCompleteName=new \MToolkit\Core\MString($rawName);
+
     if( $classCompleteName->startsWith( $applicationDir->getNamespace() ) )
     {
         $name = str_replace( $applicationDir->getNamespace(), "", $rawName );

@@ -142,7 +142,7 @@ class MImage
      * @param AspectRatioMode $aspectRatioMode
      * @return MImage Description
      */
-    public function scaled( $width, $height, $aspectRatioMode = AspectRatioMode::IgnoreAspectRatio )
+    public function scaled( $width, $height, $aspectRatioMode = AspectRatioMode::IGNORE_ASPECT_RATIO )
     {
         switch( $aspectRatioMode )
         {
@@ -175,7 +175,7 @@ class MImage
      */
     public function scaledToHeight( $height )
     {
-        return $this->scaled( 0, $height, AspectRatioMode::KeepAspectRatioByExpanding );
+        return $this->scaled( 0, $height, AspectRatioMode::KEEP_ASPECT_RATIO_BY_EXPANDING );
     }
 
     /**
@@ -187,7 +187,7 @@ class MImage
      */
     public function scaledToWidth( $width )
     {
-        return $this->scaled( $width, 0, AspectRatioMode::KeepAspectRatio );
+        return $this->scaled( $width, 0, AspectRatioMode::KEEP_ASPECT_RATIO );
     }
 
     /**

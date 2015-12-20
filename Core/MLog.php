@@ -77,7 +77,6 @@ final class MLog
      * @param string $type
      * @param string $tag
      * @param string $text
-     * @param string $signal
      */
     private static function addMessage( $type, $tag, $text )
     {

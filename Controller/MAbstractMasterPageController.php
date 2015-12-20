@@ -42,11 +42,11 @@ abstract class MAbstractMasterPageController extends MAbstractPageController
 {
     /**
      * Constructs an master page controller with the given <i>$template</i> and <i>$parent</i>.
-     * 
+     *
      * @param string $template The path to the template of the master page. Must be set.
      * @param MAbstractViewController $parent Must be set.
      */
-    public function __construct( $template, MAbstractController $parent )
+    public function __construct( $template, MAbstractViewController $parent )
     {
         parent::__construct( $template, $parent );
         

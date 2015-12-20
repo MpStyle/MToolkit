@@ -94,8 +94,9 @@ class MHttpRequest extends MObject
     }
 
     /**
-     * @param HttpRequestMethod $httpRequestMethod
-     * @return \MToolkit\Network\HTTP\MHttpRequest
+     * @param $httpRequestMethod
+     * @return $this
+     * @throws \Exception
      */
     public function setHttpRequestMethod( $httpRequestMethod )
     {

@@ -336,15 +336,15 @@ class MUrl
 
     /**
      * Parses url and sets this object to that value.
-     * 
+     *
      * @param string|null $url
-     * @return \MToolkit\Network\MUrl
+     * @return MUrl|null
      */
     public function setUrl( $url )
     {
         if( $url==null )
         {
-            return;
+            return null;
         }
 
         $urlParts = parse_url( $url );

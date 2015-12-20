@@ -4,6 +4,7 @@ namespace MToolkit\Model\Sql;
 
 require_once __DIR__ . '/../../Core/MGlobal.php';
 
+use MToolkit\Core\MObject;
 use MToolkit\Model\Sql\MPDOResult;
 
 /*
@@ -43,13 +44,14 @@ class MPDOQuery extends MAbstractSqlQuery
     private $result = null;
 
     /**
-     * Constructs a MPDOQuery object using the SQL <i>$query</i> and the database 
-     * <i>$connection</i>. If <i>$connection</i> is not specified, or is invalid, 
+     * Constructs a MPDOQuery object using the SQL <i>$query</i> and the database
+     * <i>$connection</i>. If <i>$connection</i> is not specified, or is invalid,
      * the application's default database is used. <br />
      * If query is not an empty string, it will be executed.
-     * 
-     * @param string $query
-     * @param \PDO $connection
+     *
+     * @param null $query
+     * @param \PDO|null $connection
+     * @param MObject|null $parent
      */
     public function __construct( $query = null, \PDO $connection = null, MObject $parent = null )
     {
@@ -60,7 +62,7 @@ class MPDOQuery extends MAbstractSqlQuery
 
         if ( $this->getConnection() == null )
         {
-            $this->setConnection( MDbConnection::dbConnection() );
+            $this->setConnection( MDbConnection::getDbConnection() );
         }
     }
 
@@ -86,6 +88,7 @@ class MPDOQuery extends MAbstractSqlQuery
      * more than one statements are give, the function returns false.
      * 
      * @param string $query
+     * @return bool
      */
     public function prepare( $query )
     {
@@ -96,15 +99,16 @@ class MPDOQuery extends MAbstractSqlQuery
             return false;
         }
 
-        $this->query = $query;
+        $this->setQuery( $query );
         return true;
     }
 
     /**
      * Bind the <i>value</i> to query.
      * Call this method in order with the '<i>?</i>' in the sql statement.
-     * 
-     * @param int|string|double|null $value
+     *
+     * @param mixed $value
+     * @throws \Exception
      */
     public function bindValue( $value )
     {

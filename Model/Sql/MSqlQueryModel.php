@@ -1,4 +1,4 @@
-l<?php
+<?php
 namespace MToolkit\Model\Sql;
 
 /*
@@ -22,7 +22,7 @@ namespace MToolkit\Model\Sql;
 
 require_once __DIR__.'/../MAbstractDataModel.php';
 require_once __DIR__.'/MAbstractSqlQuery.php';
-require_once __DIR__.'/MMysqliQuery.php';
+require_once __DIR__.'/MPDOQuery.php';
 require_once __DIR__.'/MAbstractSqlQuery.php';
 require_once __DIR__.'/../../Core/MObject.php';
 
@@ -52,13 +52,13 @@ class MSqlQueryModel extends MAbstractDataModel
      * 
      * @param string $query
      * @param \PDO|null $db
-     * @throws Exception
+     * @throws \Exception
      */
     public function setQuery( $query, $db = null )
     {
         if( $db==null )
         {
-            $db= MDbConnection::dbConnection();
+            $db= MDbConnection::getDbConnection();
         }
         
         if( $db instanceof \PDO )

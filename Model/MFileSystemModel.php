@@ -21,8 +21,24 @@ namespace MToolkit\Model;
  * @author  Michele Pagnin
  */
 
+use MToolkit\Core\MObject;
+
 require_once __DIR__ . '/MAbstractDataModel.php';
 
+/**
+ * The MFileSystemModel class provides a data model for the local filesystem.<br>
+ * <br>
+ * This class provides access to the local filesystem, providing functions for renaming and removing files and
+ * directories, and for creating new directories. In the simplest case, it can be used with a suitable display widget
+ * as part of a browser or filter.<br>
+ * <br>
+ * MFileSystemModel can be accessed using the standard interface provided by MAbstractDataModel, but it also provides
+ * some convenience functions that are specific to a directory model. The fileInfo(), isDir(), fileName() and filePath()
+ * functions provide information about the underlying files and directories related to items in the model. Directories
+ * can be created and removed using mkdir(), rmdir().
+ *
+ * @package MToolkit\Model
+ */
 class MFileSystemModel extends MAbstractDataModel
 {
     /**
@@ -94,8 +110,8 @@ class MFileSystemModel extends MAbstractDataModel
     /**
      * Returns the date and time when index was last modified.
      * 
-     * @param type $row
-     * @param type $column
+     * @param int $row
+     * @param int $column
      * @return null|\DateTime
      */
     public function lastModified($row, $column)
@@ -154,24 +170,25 @@ class MFileSystemModel extends MAbstractDataModel
     }
 
     /**
-     * Sets the directory that is being watched by the model to newPath by installing a file system watcher on it. Any changes to files and directories within this directory will be reflected in the model.
+     * Sets the directory that is being watched by the model to newPath by installing a file system watcher on it. Any
+     * changes to files and directories within this directory will be reflected in the model.<br>
      * If the path is changed, the ROOT_PATH_CHANGED signal will be emitted.
      * 
      * @param string $rootPath
-     * @return \MToolkit\Model\QFileSystemModel
+     * @return \MToolkit\Model\MFileSystemModel
      */
     public function setRoot($rootPath)
     {
         if (file_exists($rootPath) === false)
         {
-            return;
+            return null;
         }
 
         $this->rootPath = $rootPath;
 
         $this->fileList = scandir($this->rootPath);
 
-        $this->emit(QFileSystemModel::ROOT_PATH_CHANGED);
+        $this->emit(MFileSystemModel::ROOT_PATH_CHANGED);
 
         return $this;
     }

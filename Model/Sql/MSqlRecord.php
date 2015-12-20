@@ -216,7 +216,7 @@ class MSqlRecord
      * Returns the value of the field located at position <i>$name</i> in the 
      * record. If <i>$name</i> is out of bounds, a null value is returned.
      * 
-     * @param type $name
+     * @param string|int $name
      * @return null
      */
     public function getValue( $name )

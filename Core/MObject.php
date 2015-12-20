@@ -133,26 +133,27 @@ class MObject
     }
 
     /**
-     * Disconnects <i>$signal</i> in object <i>$sender</i> from method in object 
-     * <i>$receiver</i>. Returns true if the connection is successfully broken; 
+     * Disconnects <i>$signal</i> in object <i>$sender</i> from method in object
+     * <i>$receiver</i>. Returns true if the connection is successfully broken;
      * otherwise returns false.
-     * 
-     * @param \MToolkit\Core\MObject $sender
-     * @param string $signal
-     * @param \MToolkit\Core\MObject $receiver
+     *
+     * @param MObject $sender
+     * @param $signal
+     * @param MObject $receiver
      * @param string $method
+     * @return bool
      */
     public function disconnect( MObject $sender, $signal, MObject $receiver, $method )
     {
         if( $this != $sender )
         {
             $sender->disconnect( $sender, $signal, $receiver, $method );
-            return;
+            return false;
         }
 
         if( !isset( $this->signals[$signal] ) )
         {
-            return;
+            return false;
         }
 
         unset( $this->signals[$signal] );
@@ -178,6 +179,7 @@ class MObject
             return;
         }
 
+        /* @var $slots MSlot[] */
         $slots = $this->signals[$signal];
         
         foreach( $slots as /* @var $slot MSlot */ $slot )
@@ -364,7 +366,7 @@ class MObject
      * @param mixed $obj1
      * @param mixed $obj2
      * @return boolean
-     * @throws Exception
+     * @throws \Exception
      */
     public static function areEquals( $obj1, $obj2 )
     {

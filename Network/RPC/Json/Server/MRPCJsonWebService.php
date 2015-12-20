@@ -28,6 +28,7 @@ require_once __DIR__ . '/../../../../Controller/MAbstractController.php';
 require_once __DIR__ . '/../../../../Core/Enum/ContentType.php';
 
 use MToolkit\Controller\MAbstractController;
+use MToolkit\Core\MObject;
 use MToolkit\Network\RPC\Json\MRPCJsonRequest;
 use MToolkit\Network\RPC\Json\MRPCJsonResponse;
 use MToolkit\Network\RPC\Json\MRPCJsonError;
@@ -90,8 +91,10 @@ class MRPCJsonWebService extends MAbstractController
      */
     private $request = null;
 
-    public function __construct()
+    public function __construct(MObject $parent=null)
     {
+        parent::__construct($parent);
+
         $this->response = new MRPCJsonResponse();
     }
 
@@ -209,7 +212,7 @@ class MRPCJsonWebService extends MAbstractController
             // If the definitions are reuqested
             if( $_SERVER['QUERY_STRING'] == "definition" )
             {
-                $this->definition();
+                $webService->definition();
                 echo "<html><body>";
                 echo "<h1>Methods definitions</h1>";
 

@@ -563,6 +563,8 @@ X497|SGH-X507|SGH-X600|SGH-X610|SGH-X620|SGH-X630|SGH-X700|SGH-X820|SGH-X890|SGH
         {
             return $this->httpHeaders[$altHeader];
         }
+
+        return null;
     }
 
     public function getMobileHeaders()
@@ -584,7 +586,8 @@ X497|SGH-X507|SGH-X600|SGH-X610|SGH-X620|SGH-X630|SGH-X700|SGH-X820|SGH-X890|SGH
     /**
      * Set the User-Agent to be used.
      *
-     * @param string $userAgent The user agent string to set.
+     * @param string|null $userAgent
+     * @return null|string
      */
     public function setUserAgent( $userAgent = null )
     {
@@ -810,14 +813,14 @@ X497|SGH-X507|SGH-X600|SGH-X610|SGH-X620|SGH-X630|SGH-X700|SGH-X820|SGH-X890|SGH
      * @param  string                 $name
      * @param  array                  $arguments
      * @return mixed
-     * @throws BadMethodCallException when the method doesn't exist and doesn't start with 'is'
+     * @throws \BadMethodCallException when the method doesn't exist and doesn't start with 'is'
      */
     public function __call( $name, $arguments )
     {
         //make sure the name starts with 'is', otherwise
         if( substr( $name, 0, 2 )!='is' )
         {
-            throw new BadMethodCallException( "No such method exists: $name" );
+            throw new \BadMethodCallException( "No such method exists: $name" );
         }
 
         $this->setDetectionType( self::DETECTION_TYPE_MOBILE );

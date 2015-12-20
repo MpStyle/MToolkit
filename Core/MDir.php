@@ -163,9 +163,9 @@ class MDir
             {
                 while (($file = readdir($handle)) !== false)
                 {
-                    if (!in_array($file, array('.', '..')) && !is_dir($dir . $file))
+                    if (!in_array($file, array('.', '..')))
                     {
-                        $i++;
+                        $this->count++;
                     }
                 }
 
@@ -471,7 +471,7 @@ class MDir
      * @param SortFlag|int $sort
      * @return \MToolkit\Core\MStringList
      */
-    public function getEntryList(MStringList $nameFilters = null, $filters = Filter::NoFilter, $sort = SortFlag::NoSort)
+    public function getEntryList(MStringList $nameFilters = null, $filters = Filter::NO_FILTER, $sort = SortFlag::NO_SORT)
     {
         $fileInfoList = $this->getEntryInfoList($nameFilters, $filters, $sort);
 
@@ -479,7 +479,8 @@ class MDir
 
         foreach ($fileInfoList as /* @var $fileInfo MFileInfo */ $fileInfo)
         {
-            $toReturn->append($fileInfo->getAbsoluteFilePath());
+            $toAppend=new MString($fileInfo->getAbsoluteFilePath());
+            $toReturn->append($toAppend);
         }
 
         return $toReturn;
@@ -769,7 +770,7 @@ class MDir
      */
     public static function getHome()
     {
-        return new MDir(MDir::homePath());
+        return new MDir(MDir::getHomePath());
     }
 
     /**
@@ -838,7 +839,7 @@ class MDir
      */
     public static function getTemp()
     {
-        return new MDir(MDir::tempPath());
+        return new MDir(MDir::getTempPath());
     }
 
     /**

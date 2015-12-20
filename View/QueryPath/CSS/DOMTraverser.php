@@ -277,7 +277,6 @@ class DOMTraverser implements Traverser
             case SimpleSelector::anotherSelector:
                 // fprintf(STDOUT, "Next selector: %s\n", $selectors[$index]);
                 return $this->matchesSimpleSelector($node, $selectors, $index);
-                ;
         }
         return FALSE;
     }
@@ -806,7 +805,7 @@ class DOMTraverser implements Traverser
                 case 'after':
                     return strlen($node->textContent) > 0;
                 case 'selection':
-                    throw new \QueryPath\CSS\NotImplementedException("::$name is not implemented.");
+                    throw new \QueryPath\CSS\NotImplementedException('::$name is not implemented.');
             }
         }
     }

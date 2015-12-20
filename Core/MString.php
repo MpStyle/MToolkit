@@ -51,9 +51,9 @@ class MString
 
     /**
      * Appends the string <i>$text</i> onto the end of this string.
-     * 
-     * @param MString|string $text
-     * @throws WrongTypeException 
+     *
+     * @param string $str
+     * @return MString
      */
     public function append( $str )
     {
@@ -73,7 +73,7 @@ class MString
      * 
      * @param int $i
      * @return string|null
-     * @throws WrongTypeException 
+     * @throws MWrongTypeException
      */
     public function at( $i )
     {
@@ -92,7 +92,7 @@ class MString
      * If <i>$n</i> is greater than size(), the result is an empty string.
      * 
      * @param int $n
-     * @throws WrongTypeException 
+     * @throws MWrongTypeException
      */
     public function chop( $n )
     {
@@ -102,7 +102,7 @@ class MString
             return;
         }
 
-        $result = substr( $this->text, $i, strlen( $this->text ) - $n );
+        $result = substr( $this->text, 0, strlen( $this->text ) - $n );
 
         if( $result === true )
         {
@@ -119,14 +119,14 @@ class MString
     }
 
     /**
-     * Compares this string with <i>$other</i> and returns an integer less than, 
+     * Compares this string with <i>$other</i> and returns an integer less than,
      * equal to, or greater than zero if this string is less than, equal to, or greater than <i>$other</i>.
-     * If <i>$cs</i> is Qt::CaseSensitive, the comparison is case sensitive; 
+     * If <i>$cs</i> is Qt::CaseSensitive, the comparison is case sensitive;
      * otherwise the comparison is case insensitive.
-     * 
+     *
      * @param MString|string $other
-     * @param CaseSensitivity $cs
-     * @return int 
+     * @param int|CaseSensitivity $cs
+     * @return int
      */
     public function compare( $other, $cs = CaseSensitivity::CASE_SENSITIVE )
     {
@@ -152,12 +152,12 @@ class MString
 
     /**
      * Returns true if this string contains an occurrence of the string <i>$str</i>; otherwise returns false.
-     * 
+     *
      * @param MString $str
-     * @param CaseSensitivity $cs
-     * @return type 
+     * @param int|CaseSensitivity $cs
+     * @return bool
      */
-    public function /* bool */ contains( MString $str, $cs = CaseSensitivity::CASE_SENSITIVE )
+    public function contains( MString $str, $cs = CaseSensitivity::CASE_SENSITIVE )
     {
         $text = (string) $this->text;
         $s = (string) $str;
@@ -165,18 +165,15 @@ class MString
         switch( $cs )
         {
             case CaseSensitivity::CASE_SENSITIVE:
-
+                $result = strpos( $text, $s );
                 break;
             case CaseSensitivity::CASE_INSENSITIVE:
-                $s = strtolower( $other );
-                $text = strtolower( $this->text );
+                $result = stripos( $text, $s );
                 break;
             default:
                 throw new MWrongTypeException( "\$cs", "CaseSensitivity", $cs );
                 break;
         }
-
-        $result = strpos( $text, $s );
 
         return ( $result !== false );
     }
@@ -198,18 +195,17 @@ class MString
     }
 
     /**
-     * Returns the index position of the first occurrence of the string str in this string, 
+     * Returns the index position of the first occurrence of the string str in this string,
      * searching forward from index position from. Returns -1 if str is not found.
-     * 
+     *
      * @param string|MString $str
      * @param int $from
-     * @param CaseSensitivity $cs
-     * @return int 
+     * @param int|CaseSensitivity $cs
+     * @return int
      */
     public function indexOf( $str, $from = 0, $cs = CaseSensitivity::CASE_INSENSITIVE )
     {
         $toSearch = (string) $str;
-        $pos = false;
 
         switch( $cs )
         {
@@ -233,19 +229,18 @@ class MString
     }
 
     /**
-     * Returns the index position of the last occurrence of the string str in this string, 
-     * searching backward from index position from. If from is -1 (default), 
+     * Returns the index position of the last occurrence of the string str in this string,
+     * searching backward from index position from. If from is -1 (default),
      * the search starts at the last character; if from is -2, at the next to last character and so on. Returns -1 if str is not found.
-     * 
+     *
      * @param string|MString $str
      * @param int $from
-     * @param CaseSensitivity $cs
+     * @param int|CaseSensitivity $cs
      * @return int
      */
     public function lastIndexOf( $str, $from = 0, $cs = CaseSensitivity::CASE_INSENSITIVE )
     {
         $toSearch = (string) $str;
-        $pos = false;
 
         switch( $cs )
         {
@@ -285,20 +280,18 @@ class MString
     }
 
     /**
-     * Replaces every occurrence of the string before with the string after and 
+     * Replaces every occurrence of the string before with the string after and
      * returns a reference to this string.
-     * If cs is Qt::CaseSensitive (default), the search is case sensitive; 
+     * If cs is Qt::CaseSensitive (default), the search is case sensitive;
      * otherwise the search is case insensitive:
-     * 
+     *
      * @param MString|string $before
      * @param MString|string $after
-     * @param CaseSensitivity $cs
-     * @return \MToolkit\Core\MString
+     * @param int|CaseSensitivity $cs
+     * @return MString
      */
     public function replace( $before, $after, $cs = CaseSensitivity::CASE_SENSITIVE )
     {
-        $string = (string) $this;
-
         switch( $cs )
         {
             case CaseSensitivity::CASE_SENSITIVE:
@@ -456,15 +449,15 @@ class MString
     }
 
     /**
-     * Removes every occurrence of the given str string in this string, and 
+     * Removes every occurrence of the given str string in this string, and
      * returns a reference to this string.
-     * If cs is Qt::CaseSensitive (default), the search is case sensitive; 
+     * If cs is Qt::CaseSensitive (default), the search is case sensitive;
      * otherwise the search is case insensitive.
      * This is the same as replace(str, "", cs).
-     * 
+     *
      * @param MString|string $string
-     * @param CaseSensitivity $cs
-     * @return \MToolkit\Core\MString
+     * @param int|CaseSensitivity $cs
+     * @return MString
      */
     public function removeOccurences( $string, $cs = CaseSensitivity::CASE_SENSITIVE )
     {
@@ -519,10 +512,10 @@ class MString
 
     /**
      * Return true if the string starts with <i>$needle</i>, otherwise false.
-     * 
-     * @param string $haystack
+     *
      * @param string $needle
-     * @return boolean
+     * @return bool
+     * @internal param string $haystack
      */
     public function startsWith( $needle )
     {
@@ -531,10 +524,9 @@ class MString
 
     /**
      * Return true if the string ends with <i>$needle</i>, otherwise false.
-     * 
-     * @param string $haystack
+     *
      * @param string $needle
-     * @return boolean
+     * @return bool
      */
     public function endsWith( $needle )
     {

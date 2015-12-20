@@ -30,7 +30,7 @@ class MHash
     private $hashAlgorithm;
 
     /**
-     * @param HashAlgorithm $hashAlgorithm
+     * @param HashAlgorithm|string $hashAlgorithm
      * 
      * @throws \Exception Thrown when the <i>$hashAlgorithm</i> is not supported.
      */

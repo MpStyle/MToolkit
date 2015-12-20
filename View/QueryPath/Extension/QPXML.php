@@ -70,7 +70,6 @@ class QPXML implements \QueryPath\Extension
                 $element->appendChild($cdata);
             }
             return $this->qp;
-            ;
         }
 
         // Look for CDATA sections.

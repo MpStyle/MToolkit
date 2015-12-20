@@ -38,9 +38,9 @@ class MRPCJsonRequest extends MRPCRequest
     {
         $array=array(
             'jsonrpc' => MRPCJson::VERSION
-            , 'method' => $this->method
-            , 'params' => $this->params->toArray()
-            , 'id' => $this->id
+            , 'method' => $this->getMethod()
+            , 'params' => $this->getParams()
+            , 'id' => $this->getId()
         );
         
         return json_encode($array);

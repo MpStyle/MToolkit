@@ -73,7 +73,7 @@ class MDataType
      *                         MDataType::LONG, MDataType::BOOLEAN, MDataType::FLOAT: return "MDataType::FLOAT, 
      *                         MDataType::DOUBLE, MDataType::STRING, MDataType::NULL, MDataType::__ARRAY, 
      *                         MDataType::OBJECT, MDataType::RESOURCE
-     * @throws Exception|MWrongTypeException
+     * @throws \Exception|MWrongTypeException
      */
     public static function mustBe( array $dataTypes )
     {        

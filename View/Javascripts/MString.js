@@ -8,5 +8,5 @@ MString.prototype.endsWith = function(prefix) {
 };
 
 MString.prototype.endsWith = function(suffix) {
-    return this.string.indexOf(suffix, this.length - suffix.length) !== -1;
+    return this.string.indexOf(suffix, this.string.length - suffix.length) !== -1;
 };

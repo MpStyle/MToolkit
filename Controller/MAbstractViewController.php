@@ -137,7 +137,7 @@ abstract class MAbstractViewController extends MAbstractController
     {
         MDataType::mustBeString( $id );
 
-        if( array_key_exists( $id, $this->controls ) )
+        if( array_key_exists( $id, $this->controls->__toArray() ) )
         {
             return $this->controls[$id];
         }
@@ -198,7 +198,7 @@ abstract class MAbstractViewController extends MAbstractController
      * The method sets the path of the html of the controler.
      * 
      * @param string $template
-     * @return \MToolkit\Controller\AbstractController
+     * @return MAbstractViewController
      */
     protected function setTemplate( $template )
     {

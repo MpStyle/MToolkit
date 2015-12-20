@@ -38,7 +38,7 @@ class MTranslator
      * <i>$locale</i> is a string containing a key for the language.
      * You can use <i>$locate</i> with the standard ('en-UK') or
      * you can use your standard ('foo').
-     * 
+     *
      * Static file example:
      * <code>
      * return array(
@@ -47,9 +47,11 @@ class MTranslator
      *      , ...
      * );
      * </code>
-     * 
+     *
      * @param string $filePath The path of the file.
-     * @param string $locale 
+     * @param string $locale
+     * @param string $fileType
+     * @throws MTranslationFilePathNotFoundException
      */
     public function addTranslationFile($filePath, $locale, $fileType=MTranslatorFileType::__ARRAY)
     {

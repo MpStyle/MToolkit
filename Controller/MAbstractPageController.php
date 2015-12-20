@@ -260,9 +260,9 @@ abstract class MAbstractPageController extends MAbstractViewController
 
         foreach( $classes as $class )
         {
-            if( is_subclass_of( $class, '\MToolkit\Controller\MAbstractController' ) === true )
+            if( is_subclass_of( $class, '\MToolkit\Controller\MAbstractViewController' ) === true )
             {
-                /* @var $controller \MToolkit\Controller\MAbstractController */ $controller = new $class();
+                /* @var $controller \MToolkit\Controller\MAbstractViewController */ $controller = new $class();
                 $controller->show();
 
                 // Clean the $_SESSION from signals.

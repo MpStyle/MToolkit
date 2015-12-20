@@ -23,13 +23,14 @@ namespace MToolkit\Core;
 
 require_once __DIR__ . '/MList.php';
 
+use MToolkit\Core\Exception\MWrongTypeException;
 use MToolkit\Core\MList;
 
 class MFileInfoList extends MList
 {
-    public function __construct(array $list = array(), \MToolkit\Core\MObject $parent = null)
+    public function __construct(array $list = array())
     {
-        parent::__construct($list, null, $parent);
+        parent::__construct($list, null);
     }
     
     /**
@@ -46,7 +47,7 @@ class MFileInfoList extends MList
     /**
      * Inserts MList <i>$value</i> at the end of the list.
      * 
-     * @param MControlList $value
+     * @param MFileInfoList $value
      */
     public function appendList( MFileInfoList $value )
     {

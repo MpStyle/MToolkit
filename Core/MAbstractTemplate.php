@@ -34,7 +34,7 @@ abstract class MAbstractTemplate
 
     /**
      * @param null|int|string $type MDataType constants or the name of the class.
-     * @param \MToolkit\Core\MObject $parent
+     * @param string|null $type
      */
     public function __construct( $type=null )
     {

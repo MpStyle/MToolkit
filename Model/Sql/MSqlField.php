@@ -80,7 +80,7 @@ class MSqlField
     /**
      * Sets the default value used for this field to value.
      * 
-     * @param type $defaultValue
+     * @param mixed $defaultValue
      * @return \MToolkit\Model\Sql\MSql\MSqlField
      */
     public function setDefaultValue( $defaultValue )
@@ -129,7 +129,7 @@ class MSqlField
      * maximum number of characters the string can hold; the meaning varies for 
      * other types.
      * 
-     * @param type $lenght
+     * @param int $lenght
      * @return \MToolkit\Model\Sql\MSql\MSqlField
      */
     public function setLenght( $lenght )

@@ -62,9 +62,14 @@ class MNetworkCookie
     /**
      * Saves the <i>$value</i> in <i>$_COOKIE</i> with <i>$key</i>.<br />
      * <i>$value</i> must be of every kind of type, but resources.
-     * 
+     *
      * @param string $key
-     * @param mixed $value
+     * @param string $value
+     * @param int $expire
+     * @param string $path
+     * @param string $domain
+     * @param bool $secure
+     * @param bool $httponly
      */
     public static function set( $key, $value, $expire = 0, $path = "/", $domain = null, $secure = false, $httponly = false )
     {

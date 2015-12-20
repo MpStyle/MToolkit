@@ -78,7 +78,7 @@ class MPDOResult extends MAbstractSqlResult
 
     /**
      * @param PDOStatement $statement
-     * @param \MToolkit\Model\Sql\MObject $parent
+     * @param MObject|null $parent
      */
     public function __construct( PDOStatement $statement, MObject $parent = null )
     {

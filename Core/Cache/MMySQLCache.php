@@ -23,7 +23,9 @@ namespace MToolkit\Core\Cache;
 require_once __DIR__ . '/MAbstractCache.php';
 require_once __DIR__ . '/../../Model/Sql/MDbConnection.php';
 
+use MToolkit\Core\MObject;
 use MToolkit\Model\Sql\MDbConnection;
+use QueryPath\Exception;
 
 /**
  * MMySQLCache class extends MAbstractCache.<br />
@@ -36,11 +38,11 @@ class MMySQLCache extends MAbstractCache
 
     /**
      * @param \PDO $connection
-     * @param type $cacheTableName
+     * @param string $cacheTableName
      * @param \MToolkit\Core\MObject $parent
-     * @throws Exception
+     * @throws \Exception
      */
-    public function __construct( \PDO $connection, $cacheTableName = 'MToolkitCache', \MToolkit\Core\MObject $parent = null )
+    public function __construct( \PDO $connection, $cacheTableName = 'MToolkitCache', MObject $parent = null )
     {
         parent::__construct( $parent );
 
@@ -63,7 +65,7 @@ class MMySQLCache extends MAbstractCache
                 `Expired` BIGINT
             );
         ";
-        /* @var $connection \PDO */ $connection = MDbConnection::dbConnection();
+        /* @var $connection \PDO */ $connection = MDbConnection::getDbConnection();
         /* @var $stmt \PDOStatement */ $stmt = $connection->prepare( $query );
         /* @var $result bool */ $result = $stmt->execute();
 
@@ -86,7 +88,7 @@ class MMySQLCache extends MAbstractCache
         $query = "DELETE FROM `" . $this->cacheTableName . "`
             WHERE `Key`=?;
         ";
-        /* @var $connection \PDO */ $connection = MDbConnection::dbConnection();
+        /* @var $connection \PDO */ $connection = MDbConnection::getDbConnection();
         /* @var $stmt \PDOStatement */ $stmt = $connection->prepare( $query );
         /* @var $result bool */ $result = $stmt->execute( array( $key ) );
 
@@ -106,7 +108,7 @@ class MMySQLCache extends MAbstractCache
     public function flush()
     {
         $query = "TRUNCATE TABLE `" . $this->cacheTableName . "`;";
-        /* @var $connection \PDO */ $connection = MDbConnection::dbConnection();
+        /* @var $connection \PDO */ $connection = MDbConnection::getDbConnection();
         /* @var $stmt \PDOStatement */ $stmt = $connection->prepare( $query );
         /* @var $result bool */ $result = $stmt->execute();
 
@@ -120,16 +122,17 @@ class MMySQLCache extends MAbstractCache
 
     /**
      * Store a <i>$value</i> in a cache record with <i>$key</i>.
-     * Time To Live; seconds. After the ttl has 
-     * passed, the stored variable will be expunged from the cache (on the next 
-     * request). If no ttl is supplied (or if the ttl is 0), the value will 
-     * persist until it is removed from the cache manually, or otherwise fails 
+     * Time To Live; seconds. After the ttl has
+     * passed, the stored variable will be expunged from the cache (on the next
+     * request). If no ttl is supplied (or if the ttl is 0), the value will
+     * persist until it is removed from the cache manually, or otherwise fails
      * to exist in the cache (clear, restart, etc.).
-     * 
+     *
      * @param string $key
      * @param string $value
      * @param int $ttl
      * @return bool
+     * @throws \Exception
      */
     public function store( $key, $value, $ttl = -1 )
     {
@@ -140,7 +143,7 @@ class MMySQLCache extends MAbstractCache
         $query = "INSERT INTO `" . $this->cacheTableName . "` (`Key`, `Value`, `Expired`)
             VALUES(?, ?, ?)
         ;";
-        /* @var $connection \PDO */ $connection = MDbConnection::dbConnection();
+        /* @var $connection \PDO */ $connection = MDbConnection::getDbConnection();
         /* @var $stmt \PDOStatement */ $stmt = $connection->prepare( $query );
         /* @var $result bool */ $result = $stmt->execute( array( $key, serialize( $value ), $expired ) );
 
@@ -150,6 +153,8 @@ class MMySQLCache extends MAbstractCache
         }
 
         $stmt->closeCursor();
+
+        return true;
     }
 
     /**
@@ -157,11 +162,12 @@ class MMySQLCache extends MAbstractCache
      * 
      * @param string $key
      * @return string|null
+     * @throws \Exception
      */
     public function fetch( $key )
     {
         $query = "SELECT `Key`, `Value`, `Expired` FROM `" . $this->cacheTableName . "` WHERE `key`=?;";
-        /* @var $connection \PDO */ $connection = MDbConnection::dbConnection();
+        /* @var $connection \PDO */ $connection = MDbConnection::getDbConnection();
         /* @var $stmt \PDOStatement */ $stmt = $connection->prepare( $query );
         /* @var $result bool */ $result = $stmt->execute( array( $key ) );
 

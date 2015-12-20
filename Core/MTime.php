@@ -20,7 +20,9 @@ namespace MToolkit\Core;
  * @author  Michele Pagnin
  */
 
-require_once 'MToolkit/Core/Exception/WrongTypeException.php';
+use MToolkit\Core\Exception\MWrongTypeException;
+
+require_once 'MToolkit/Core/Exception/MWrongTypeException.php';
 
 class MTime
 {
@@ -37,7 +39,7 @@ class MTime
     {
         if( is_int( $ms )===false )
         {
-            throw new WrongTypeException( "\$ms", "int", gettype($ms) );
+            throw new MWrongTypeException( "\$ms", "int", gettype($ms) );
         }
         
         $mseconds=$this->mseconds;
@@ -52,7 +54,7 @@ class MTime
     {
         if( is_int( $s )===false )
         {
-            throw new WrongTypeException( "\$s", "int", gettype($s) );
+            throw new MWrongTypeException( "\$s", "int", gettype($s) );
         }
         
         $mseconds=$this->mseconds;
@@ -118,22 +120,22 @@ class MTime
     {
         if( is_int( $h )===false )
         {
-            throw new WrongTypeException( "\$h", "int", gettype($h) );
+            throw new MWrongTypeException( "\$h", "int", gettype($h) );
         }
         
         if( is_int( $m )===false )
         {
-            throw new WrongTypeException( "\$m", "int", gettype($m) );
+            throw new MWrongTypeException( "\$m", "int", gettype($m) );
         }
         
         if( is_int( $s )===false )
         {
-            throw new WrongTypeException( "\$s", "int", gettype($s) );
+            throw new MWrongTypeException( "\$s", "int", gettype($s) );
         }
         
         if( is_int( $ms )===false )
         {
-            throw new WrongTypeException( "\$ms", "int", gettype($ms) );
+            throw new MWrongTypeException( "\$ms", "int", gettype($ms) );
         }
         
         $this->mseconds=$ms + ( $s*1000 ) + ( $m*60*1000 ) + ( $h*60*60*1000 );

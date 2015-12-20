@@ -25,8 +25,8 @@ require_once __DIR__ . '/../MRPCJsonRequest.php';
 require_once __DIR__ . '/../MRPCJsonResponse.php';
 require_once __DIR__ . '/MRPCJsonClientException.php';
 
-use MToolkit\Network\RPC\Json\Server\MRPCJsonRequest;
-use MToolkit\Network\RPC\Json\Server\MRPCJsonResponse;
+use MToolkit\Network\RPC\Json\MRPCJsonRequest;
+use MToolkit\Network\RPC\Json\MRPCJsonResponse;
 use MToolkit\Network\RPC\Json\Server\MRPCJsonClientException;
 
 class MRPCJsonClient
@@ -98,7 +98,7 @@ class MRPCJsonClient
                 'content' => $jsonRequest
             )
         ));
-        $jsonResponse = file_get_contents($this->uri, false, $ctx);
+        $jsonResponse = file_get_contents($this->url, false, $ctx);
 
         if ($jsonResponse === false)
         {
@@ -119,7 +119,7 @@ class MRPCJsonClient
 
         if (property_exists($response, 'result')===false)
         {
-            throw new MRPCJsonClientError('Invalid JSON-RPC response', -32603);
+            throw new MRPCJsonClientException('Invalid JSON-RPC response', -32603);
         }
         
         $this->response=new MRPCJsonResponse();

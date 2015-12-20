@@ -30,6 +30,9 @@ use MToolkit\Core\Enum\Orientation;
 
 class MRepeaterView extends MAbstractViewController
 {
+    /**
+     * @var MAbstractDataModel
+     */
     private $model;
     private $headerTemplateFile = null;
     private $bodyTemplateFile = null;
@@ -158,7 +161,7 @@ class MRepeaterView extends MAbstractViewController
 
         for( $i = 0; $i<$this->model->rowCount(); $i++ )
         {
-            $this->currentRow = $this->model->getHeaderData( $i, Orientation::Vertical );
+            $this->currentRow = $this->model->getHeaderData( $i, Orientation::VERTICAL );
                         
             eval( "?>" . $this->bodyTemplate );
         }

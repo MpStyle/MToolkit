@@ -20,11 +20,13 @@ namespace MToolkit\Core\Cache;
  * @author  Michele Pagnin
  */
 
+use MToolkit\Core\MObject;
+
 require_once __DIR__ . '/MAbstractCache.php';
 
 class MAPCCache extends MAbstractCache
 {
-    public function __construct( \MToolkit\Core\MObject $parent = null )
+    public function __construct( MObject $parent = null )
     {
         parent::__construct( $parent );
     }

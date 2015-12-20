@@ -78,9 +78,10 @@ class MGet extends MMap
 
     /**
      * Throws an exception, because the <i>$this</i> object is read-only.
-     * 
+     *
      * @param string $key
      * @throws MReadOnlyObjectException
+     * @return int
      */
     public function remove( $key )
     {
@@ -92,6 +93,7 @@ class MGet extends MMap
      * 
      * @param int|string|null $offset
      * @param mixed $value
+     * @throws MReadOnlyObjectException
      */
     public function offsetSet( $offset, $value )
     {
@@ -102,6 +104,7 @@ class MGet extends MMap
      * Throws an exception, because the <i>$this</i> object is read-only.
      * 
      * @param int|string $offset
+     * @throws MReadOnlyObjectException
      */
     public function offsetUnset( $offset )
     {

@@ -23,13 +23,14 @@ namespace MToolkit\Core;
 
 require_once __DIR__ . '/MString.php';
 
+use MToolkit\Core\Exception\MWrongTypeException;
 use MToolkit\Core\MString;
 
 class MStringList extends MList
 {
-    public function __construct(array $list = array(), \MToolkit\Core\MObject $parent = null)
+    public function __construct(array $list = array())
     {
-        parent::__construct($list, null, $parent);
+        parent::__construct($list, null);
     }
     
     /**

@@ -42,10 +42,11 @@ class MJsonObject
     }
 
     /**
-     * Sets the properties of the class, using the <i>$json</i>.
+     * Sets the properties of the class, using the <i>$json</i>.<br>
      * The default implementation returns null.
-     * 
+     *
      * @param array $json
+     * @return null
      */
     public static function fromArray( array $json )
     {

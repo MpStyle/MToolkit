@@ -49,6 +49,8 @@ class MMap extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function __construct( array $other = array() )
     {
+        parent::__construct();
+
         if( count($other)>0 )
         {
             $this->map = array_merge( $this->map, $other );
@@ -256,10 +258,10 @@ class MMap extends MAbstractTemplate implements \ArrayAccess, \Iterator
     //void	swap ( QMap<Key, T> & other )
 
     /**
-     * Returns the number of (key, value) pairs in the map.
+     * Removes the item with the key <i>$key</i> from the map and returns the value associated with it.
      * 
-     * @param type $key
-     * @return type
+     * @param mixed $key
+     * @return mixed
      * @throws MWrongTypeException
      */
     public function take( $key )
@@ -269,7 +271,7 @@ class MMap extends MAbstractTemplate implements \ArrayAccess, \Iterator
             throw new MWrongTypeException( "\$key", "string", $key );
         }
 
-        $key = $this->value( $key );
+        $key = $this->getValue( $key );
         $this->remove( $key );
         return $key;
     }
@@ -283,7 +285,7 @@ class MMap extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function getUniqueKeys()
     {
-        return $this->keys();
+        return $this->getKeys();
     }
 
     //QMap<Key, T> &	unite ( const QMap<Key, T> & other )
@@ -344,8 +346,6 @@ class MMap extends MAbstractTemplate implements \ArrayAccess, \Iterator
      */
     public function __toArray()
     {
-        //$return = clone $this->map;
-
         return $this->map;
     }
 

@@ -31,8 +31,8 @@ class MDropDownList extends MAbstractViewController
     }
 
     /**
-     * @param \MToolkit\Core\MDropDownListItemList $items
-     * @return \MToolkit\Controller\MDropDownList
+     * @param MDropDownListItemList $items
+     * @return MDropDownList
      */
     public function setItems( MDropDownListItemList $items )
     {
@@ -71,9 +71,9 @@ class MDropDownListItemList extends MList
     private $keys=array();
     private $value=array();
     
-    public function __construct( \MToolkit\Core\MObject $parent = null )
+    public function __construct( )
     {
-        parent::__construct( array(), 'MToolkit\Controller\MDropDownListItem', $parent );
+        parent::__construct( array(), 'MToolkit\Controller\MDropDownListItem');
     }
     
     public function append( MDropDownListItem &$item )
