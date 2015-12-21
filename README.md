@@ -10,16 +10,16 @@ MToolkit is a simple PHP toolkit, it is compliant with the PSR-0 Standard:
 - The fully-qualified namespace and class is suffixed with .php when loading from the file system.
 - Alphabetic characters in vendor names, namespaces, and class names may be of any combination of lower case and upper case.
 
-It borns from a requirement: develop a website quickly and powerfully.
+It was born from a requirement: develop a website quickly and powerfully.
 
-I know, someone can says "Use Zend Framwork, CakePHP!", but I could answer: "They are very good toolkits, but they aren't the toolkit that I want!" :P
+I know, someone can say "Use Zend Framwork, CakePHP!", but I could reply: "They are very good toolkits, but they aren't the toolkit that I want!" :P
 
 The development model of MToolkit is *rolling release*. I search some people (developer or not) to increase and modify this strategy: my goal is to manage the versioning of this framework. 
 
 
-The experiences with other toolkit in different platforms have led to create this toolkit.
+The experiences with other toolkits in different platforms have led me to create this toolkit.
 
-MToolkit borns like a mash-up of two frameworks: .NET and Qt. o_O
+MToolkit was born like a mash-up of two frameworks: .NET and Qt. o_O
 
 Yes, the framework of the evil and the desktop framework for excellence.
 
@@ -31,13 +31,13 @@ Some good features
 - Autorun of pages and of RPC Json web services from controller classes
 - Javascript frameworks compatibility (jQuery, Bootstrap, etc)
 - Master page concept (http://msdn.microsoft.com/it-it/library/system.web.ui.masterpage.aspx)
-- Separation between business logic and graphics
+- Decoupling between business logic and graphics
 - Fluent setters
 
 MToolkit components
 -------------------
 Like Qt, MToolkit has a lot of components, one for every type of usage.
-Here the list:
+Here you are the list:
 - [Core](Core)
 - [Network](Network)
 - [Model](Model)/[Sql](Model/Sql)
@@ -79,15 +79,15 @@ Settings::run();
 
 ```
 
-This file sets the root of your project and now you no longer have to use *require*, *require_once*, *include*, *include_once* directives. 
+This file sets the root of your project and now you have no longer to use *require*, *require_once*, *include*, *include_once* directives. 
 
-**This file must be include in every entry page of your project.**
+**This file must be included in every entry page of your project.**
 
 Entry page
 -----------
 
 An entry page is the page loaded at start time.
-Now, we will see how create the controller of the entry page and his html code.
+Now, we will see how to create the controller of the entry page and his html code.
 
 Controller (Index.php):
 
@@ -117,7 +117,7 @@ class Index extends MAbstractPageController
         
 ```
 
-And the *view* file. Every view file must contains the meta tag, with the correct *content-type*:
+And the *view* file. Every view file must contain the meta tag, with the correct *content-type*:
 ```html
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 ```
