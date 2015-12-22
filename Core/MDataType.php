@@ -59,7 +59,7 @@ class MDataType
     const __ARRAY=128;
     const OBJECT=256;
     const RESOURCE=512;
-    
+    const MIXED=2048;
     const UNKNOWN=1024;
     
     /**
@@ -72,7 +72,7 @@ class MDataType
      * @param array $dataTypes The possible value of the elements of the array are: case MDataType::INT, 
      *                         MDataType::LONG, MDataType::BOOLEAN, MDataType::FLOAT: return "MDataType::FLOAT, 
      *                         MDataType::DOUBLE, MDataType::STRING, MDataType::NULL, MDataType::__ARRAY, 
-     *                         MDataType::OBJECT, MDataType::RESOURCE
+     *                         MDataType::OBJECT, MDataType::RESOURCE, MDataType::MIXED
      * @throws \Exception|MWrongTypeException
      */
     public static function mustBe( array $dataTypes )
@@ -84,6 +84,10 @@ class MDataType
         for( $i=0; $i<count($args); $i++ )
         {
             $dataType=$dataTypes[$i];
+
+            if( $dataType === MDataType::MIXED ){
+                continue;
+            }
             
             if( ($dataType) & MDataType::getType( $args[$i] ) )
             {
