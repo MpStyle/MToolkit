@@ -515,7 +515,6 @@ class MString
      *
      * @param string $needle
      * @return bool
-     * @internal param string $haystack
      */
     public function startsWith( $needle )
     {
