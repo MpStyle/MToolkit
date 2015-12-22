@@ -55,7 +55,7 @@ Let's start
 
 Create a folder for your project.
 
-Download the latest version of MToolkit in the project folder.
+Download the latest version of MToolkit in the project folder, we suggest you using Composer.
 
 On the root of your project create a new file (*Settings.php*) with this content:
 
