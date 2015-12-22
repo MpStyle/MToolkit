@@ -23,10 +23,18 @@ namespace MToolkit\Core;
 
 require_once __DIR__ . '/Exception/MWrongTypeException.php';
 require_once __DIR__ . '/MAbstractTemplate.php';
+require_once __DIR__ . '/MDataType.php.php';
 
 use \MToolkit\Core\Exception\MWrongTypeException;
 use \MToolkit\Core\MAbstractTemplate;
+use MToolkit\Core\MDataType;
 
+/**
+ * Class MVector is one of MToolkit's generic container classes.
+ * It stores its item in a PHP array and provides fast index-based access.
+ *
+ * @package MToolkit\Core
+ */
 class MVector extends MAbstractTemplate implements \ArrayAccess
 {
     /**
@@ -34,9 +42,10 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
      */
     private $vector = array();
 
-    public function __construct()
+    public function __construct(array $array=array(), $type = null)
     {
-        parent::__construct();
+        parent::__construct($type);
+        $this->vector=array_values($array);
     }
 
     /**
@@ -54,6 +63,21 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
     }
 
     /**
+     * Inserts all the items in <i>$value</i> at the and of the vector and returns a reference to this vector.
+     *
+     * @param MVector $value
+     * @return MVector $this
+     */
+    public function appendAll( MVector $value )
+    {
+        foreach( $value as $item ){
+            $this->append($item);
+        }
+
+        return $this;
+    }
+
+    /**
      * Returns the item at index position <i>i</i> in the vector.
      * <i>i</i> must be a valid index position in the vector (i.e., 0 <= <i>i</i> < size()).
      * @param int $i
@@ -62,10 +86,7 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
      */
     public function at( $i )
     {
-        if (is_int( $i ) === false)
-        {
-            throw new MWrongTypeException( "\$i", "int", $i );
-        }
+        MDataType::mustBe(array(MDataType::INT));
 
         if ($i >= $this->count())
         {
@@ -85,10 +106,11 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
 
     /**
      * Returns true if the vector contains an occurrence of <i>value</i>; otherwise returns false.
+     *
      * @param mixed $value
      * @return bool 
      */
-    public function contains( /* mixed */ $value )
+    public function contains( $value )
     {
         if ($this->isValidType( $value ) === false)
         {
@@ -97,8 +119,6 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
 
         return in_array( $value, $this->vector );
     }
-
-    //int count (  T & value ) 
 
     /**
      * If <i>value</i> is not null: returns the number of occurrences of value in the vector.
@@ -131,9 +151,6 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
         return $occurrences;
     }
 
-    //T * data()
-    // T * data () 
-
     /**
      * Returns true if the vector has size 0; otherwise returns false.
      * @return bool 
@@ -143,19 +160,85 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
         return ( count( $this->vector ) == 0 );
     }
 
-    public function /* bool */ endsWith( /* mixed */ $value )
+    /**
+     * Returns true if this vector is not empty and its last item is equal to <i>$value</i>, otherwise returnss false.
+     * @param mixed $value
+     * @return bool
+     */
+    public function endsWith( $value )
     {
         if ($this->isValidType( $value ) === false)
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
 
+        if( $this->isEmpty() ){
+            return false;
+        }
+
         return ( $this->vector[$this->size() - 1] == $value );
     }
 
-    //iterator erase ( iterator pos )
-    //iterator erase ( iterator begin, iterator end )
-    //QVector<T> & fill (  T & value, int size = -1 )
+    /**
+     * Removes all item from <i>$start</i> to <i>$end</i> position.
+     * If the <i>$end</i> is equal to -1, the only removed item will be the one at position <i>$start</i>.
+     *
+     * @param int $start
+     * @param int $end
+     */
+    public function erase($start, $end = -1){
+
+        MDataType::mustBe(array(MDataType::INT, MDataType::INT));
+
+        if($end==-1){
+            $end=$start;
+        }
+
+        if( $start<$this->count() && $start>=0 ){
+            return;
+        }
+
+        if( $end<$this->count() && $end>=0 ){
+            return;
+        }
+
+        if($start>$end){
+            return;
+        }
+
+        for($k=$start; $k<$end; $k++){
+            unset($this->vector[$k]);
+        }
+    }
+
+    /**
+     * Assigns <i>$value</i> to all items in the vector. If <i>$size</i> is different from -1 (the default), the vector
+     * is resized to <i>$size</i> beforehand.
+     *
+     * @param mixed $value
+     * @param int $size
+     * @return MVector $this
+     */
+    public function fill($value, $size=-1){
+
+        MDataType::mustBe(array(MDataType::MIXED, MDataType::INT));
+
+        $realSize=$size;
+        if($realSize==-1){
+            $realSize=$this->count();
+        }
+
+        $this->vector=array();
+        for($k=0;$k<$realSize;$k++){
+            $this->vector[$k]=$value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
     public function first()
     {
         if (0 >= $this->count())
@@ -181,14 +264,11 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
      */
     public function indexOf( $value, $from = 0 )
     {
+        MDataType::mustBe(array(MDataType::MIXED, MDataType::INT));
+
         if ($this->isValidType( $value ) === false)
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
-        }
-
-        if (is_int( $from ) === false)
-        {
-            throw new MWrongTypeException( "\$from", "int", $from );
         }
 
         $to = $this->count() - 1;
@@ -218,19 +298,11 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
      */
     public function insert( $i, $value, $count = 1 )
     {
+        MDataType::mustBe(array(MDataType::INT, MDataType::MIXED, MDataType::INT));
+
         if ($this->isValidType( $value ) === false)
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
-        }
-
-        if (is_int( $i ) === false)
-        {
-            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
-        }
-
-        if (is_int( $count ) === false)
-        {
-            throw new MWrongTypeException( "\$count", "int", $count );
         }
 
         for ( $j = 1; $j <= $count; $j++ )
@@ -255,12 +327,23 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
      * @param int $from
      * @return int
      */
-    public function lastIndexOf( $value, $from = -1 )
+    public function lastIndexOf( $value, $from = 0 )
     {
+        MDataType::mustBe(array(MDataType::MIXED, MDataType::INT));
+
         if ($this->isValidType( $value ) === false)
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
         }
+
+        $index=-1;
+        for( $k=$from; $k<$this->size(); $k++ ){
+            if( MObject::areEquals($this->at($k), $value) ){
+                $index=$k;
+            }
+        }
+
+        return $index;
     }
 
     /**
@@ -365,18 +448,10 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
      */
     public function remove( $i, $count = 1 )
     {
-        if (is_int( $i ) === false)
-        {
-            throw new MWrongTypeException( "\$i", "int", $i );
-        }
+        MDataType::mustBe(array(MDataType::INT, MDataType::INT));
 
-        for ( $j = 0; $j < $count; $j++ )
+        for ( $j = $i; $j < $this->count() && $j < ($i + $count); $j++ )
         {
-            if (count( $this->vector ) >= $j)
-            {
-                throw new \OutOfBoundsException();
-            }
-
             unset( $this->vector[$j] );
         }
     }
@@ -391,14 +466,11 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
      */
     public function replace( $i, $value )
     {
+        MDataType::mustBe(array(MDataType::INT, MDataType::MIXED));
+
         if ($this->isValidType( $value ) === false)
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
-        }
-
-        if (is_int( $i ) === false)
-        {
-            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
         }
 
         if (count( $this->vector ) >= $i)
@@ -442,14 +514,11 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
      */
     public function getValue( $i, $defaultValue = null )
     {
+        MDataType::mustBe(array(MDataType::INT, MDataType::MIXED));
+
         if ($this->isValidType( $defaultValue ) === false)
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $defaultValue );
-        }
-
-        if (is_int( $i ) === false)
-        {
-            throw new MWrongTypeException( "\$i", "int", gettype( $i ) );
         }
 
         $value = $this->vector[$i];
@@ -465,20 +534,24 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
     /**
      * Return if a key exists.
      * 
-     * @param int|string $offset
+     * @param int $offset
      * @return bool
      */
     public function offsetExists( $offset )
     {
+        MDataType::mustBe(array(MDataType::INT));
+
         return (array_key_exists( $offset, $this->vector ) === true);
     }
 
     /**
-     * @param int|string $offset
+     * @param int $offset
      * @return mixed
      */
     public function offsetGet( $offset )
     {
+        MDataType::mustBe(array(MDataType::INT));
+
         if ($this->offsetExists( $offset ))
         {
             return $this->vector[$offset];
@@ -488,11 +561,13 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
     }
 
     /**
-     * @param int|string|null $offset
+     * @param int $offset
      * @param mixed $value
      */
     public function offsetSet( $offset, $value )
     {
+        MDataType::mustBe(array(MDataType::INT, MDataType::MIXED));
+
         if ($this->isValidType( $value ) === false)
         {
             throw new MWrongTypeException( "\$value", $this->getType(), $value );
@@ -509,23 +584,37 @@ class MVector extends MAbstractTemplate implements \ArrayAccess
     }
 
     /**
-     * @param int|string $offset
+     * @param int $offset
      */
     public function offsetUnset( $offset )
     {
+        MDataType::mustBe(array(MDataType::INT));
+
         if ($this->offsetExists( $offset ))
         {
             unset( $this->vector[$offset] );
         }
     }
 
-    //bool operator!= (  QVector<T> & other ) 
+    public function equals(MVector $other){
+        if( $this->size()!= $other->size() ){
+            return false;
+        }
+
+        for($k=0; $k<$this->count(); $k++){
+            if( MObject::areEquals($this->at($k), $other->at($k))===false){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     //QVector<T> operator+ (  QVector<T> & other ) 
     //QVector<T> & operator+= (  QVector<T> & other )
     //QVector<T> & operator+= (  T & value )
     //QVector<T> & operator<< (  T & value )
     //QVector<T> & operator<< (  QVector<T> & other )
     //QVector<T> & operator= (  QVector<T> & other )
-    //bool operator== (  QVector<T> & other ) 
 }
 
