@@ -25,7 +25,7 @@ require_once __DIR__ . '/../../../Core/MGlobal.php';
 
 use MToolkit\Network\RPC\Json\MRPCJsonError;
 use MToolkit\Network\RPC\Json\MRPCJson;
-use MToolkit\Network\RPC\Json\MRPCResponse;
+use MToolkit\Network\RPC\MRPCResponse;
 
 /**
  * Examples:

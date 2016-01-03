@@ -1,5 +1,5 @@
 <?php
-namespace MToolkit\Network\RPC\Json;
+namespace MToolkit\Network\RPC;
 
 /*
  * This file is part of MToolkit.
